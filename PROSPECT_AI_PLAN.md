@@ -2488,7 +2488,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 4 — Value Objects (1 item por VO, com spec)
 
 ```
-[ ] 15. Criar `src/app/domain/lead/value-objects/lead-id.vo.ts` conforme Seção 2.1.2. Usar globalThis.crypto.randomUUID() em generate(). Validar UUID v4 regex em fromString. + spec completo com casos da Seção 6.4.
+[x] 15. Criar `src/app/domain/lead/value-objects/lead-id.vo.ts` conforme Seção 2.1.2. Usar globalThis.crypto.randomUUID() em generate(). Validar UUID v4 regex em fromString. + spec completo com casos da Seção 6.4.
 
 [ ] 16. Criar `src/app/domain/lead/value-objects/business-name.vo.ts` (2-120 chars após trim). + spec completo.
 
