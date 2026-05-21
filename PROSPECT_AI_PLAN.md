@@ -2476,7 +2476,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 12. Criar `src/app/domain/shared/events/domain-event.base.ts` com classe abstrata DomainEvent conforme Seção 2.1.1.
 
-[ ] 13. Criar `src/app/domain/shared/index.ts` reexportando domain-error.base e domain-event.base.
+[x] 13. Criar `src/app/domain/shared/index.ts` reexportando domain-error.base e domain-event.base.
 ```
 
 ### Fase 3 — Domain Errors do Lead
