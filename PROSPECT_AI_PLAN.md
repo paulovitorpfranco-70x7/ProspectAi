@@ -2462,9 +2462,9 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 1 — Schema do Banco
 
 ```
-[ ] 8. Criar migration `supabase/migrations/20260518000000_init_leads.sql` com o SQL completo da Seção 4.2 do plano (tabela leads + tipo lead_status + constraints + índices + trigger updated_at + RLS habilitado + policy mvp_open_access + grants).
+[x] 8. Criar migration `supabase/migrations/20260518000000_init_leads.sql` com o SQL completo da Seção 4.2 do plano (tabela leads + tipo lead_status + constraints + índices + trigger updated_at + RLS habilitado + policy mvp_open_access + grants).
 
-[ ] 9. Rodar `supabase db reset` localmente e confirmar que migration aplica sem erro. Validar via psql que: (a) tabela leads existe, (b) tipo lead_status tem 5 valores, (c) unique index parcial leads_phone_city_unique existe, (d) trigger touch_updated_at está ativo.
+[x] 9. Rodar `supabase db reset` localmente e confirmar que migration aplica sem erro. Validar via psql que: (a) tabela leads existe, (b) tipo lead_status tem 5 valores, (c) unique index parcial leads_phone_city_unique existe, (d) trigger touch_updated_at está ativo.
 
 [ ] 10. Gerar tipos TypeScript do Supabase: `pnpm dlx supabase gen types typescript --local > src/app/infrastructure/supabase/types/database.types.ts`. Confirmar que o arquivo tem o tipo `Database` exportado.
 ```
