@@ -2466,7 +2466,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 9. Rodar `supabase db reset` localmente e confirmar que migration aplica sem erro. Validar via psql que: (a) tabela leads existe, (b) tipo lead_status tem 5 valores, (c) unique index parcial leads_phone_city_unique existe, (d) trigger touch_updated_at está ativo.
 
-[ ] 10. Gerar tipos TypeScript do Supabase: `pnpm dlx supabase gen types typescript --local > src/app/infrastructure/supabase/types/database.types.ts`. Confirmar que o arquivo tem o tipo `Database` exportado.
+[x] 10. Gerar tipos TypeScript do Supabase: `pnpm dlx supabase gen types typescript --local > src/app/infrastructure/supabase/types/database.types.ts`. Confirmar que o arquivo tem o tipo `Database` exportado.
 ```
 
 ### Fase 2 — Domain Shared
