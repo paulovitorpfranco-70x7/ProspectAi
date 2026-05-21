@@ -2472,7 +2472,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 2 — Domain Shared
 
 ```
-[ ] 11. Criar `src/app/domain/shared/errors/domain-error.base.ts` com classe abstrata DomainError conforme Seção 2.1.1. Adicionar spec `domain-error.base.spec.ts` testando que a classe herda corretamente o name e mantém o prototype chain.
+[x] 11. Criar `src/app/domain/shared/errors/domain-error.base.ts` com classe abstrata DomainError conforme Seção 2.1.1. Adicionar spec `domain-error.base.spec.ts` testando que a classe herda corretamente o name e mantém o prototype chain.
 
 [ ] 12. Criar `src/app/domain/shared/events/domain-event.base.ts` com classe abstrata DomainEvent conforme Seção 2.1.1.
 

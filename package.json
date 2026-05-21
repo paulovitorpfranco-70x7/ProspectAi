@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "jest",
-    "test:domain": "jest --testPathPattern=domain",
+    "test:domain": "jest --testPathPatterns=domain",
     "test:application": "jest --testPathPattern=application",
     "test:infrastructure": "jest --testPathPattern=infrastructure --runInBand",
     "test:presentation": "jest --testPathPattern=presentation",
