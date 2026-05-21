@@ -31,6 +31,10 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
+/.env
+/.env.*
+!/.env.example
+/supabase/.env.local
 /.angular/cache
 .sass-cache/
 /connect.lock
