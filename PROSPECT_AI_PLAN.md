@@ -2482,7 +2482,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 3 — Domain Errors do Lead
 
 ```
-[ ] 14. Criar todos os 16 arquivos de erro em `src/app/domain/lead/errors/` (lead-id-invalid, business-name-invalid, sector-invalid, lead-status-invalid, phone-number-invalid, email-invalid, location-invalid, contact-info-empty, lead-rating-invalid, lead-notes-too-long, invalid-status-transition, lead-not-found, duplicate-lead, lead-missing-contact-channel, place-finder-unavailable, dispatch-failed). Cada um conforme Seção 2.5. SEM specs por enquanto — são DTOs de erro, testados indiretamente nas VOs.
+[x] 14. Criar todos os 16 arquivos de erro em `src/app/domain/lead/errors/` (lead-id-invalid, business-name-invalid, sector-invalid, lead-status-invalid, phone-number-invalid, email-invalid, location-invalid, contact-info-empty, lead-rating-invalid, lead-notes-too-long, invalid-status-transition, lead-not-found, duplicate-lead, lead-missing-contact-channel, place-finder-unavailable, dispatch-failed). Cada um conforme Seção 2.5. SEM specs por enquanto — são DTOs de erro, testados indiretamente nas VOs.
 ```
 
 ### Fase 4 — Value Objects (1 item por VO, com spec)
