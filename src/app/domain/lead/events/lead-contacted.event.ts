@@ -1,7 +1,6 @@
 import { DomainEvent } from '../../shared/events/domain-event.base';
+import type { ContactChannel } from '../entities/lead.entity';
 import { LeadId } from '../value-objects/lead-id.vo';
-
-export type ContactChannel = 'whatsapp' | 'email';
 
 export class LeadContactedEvent extends DomainEvent {
   readonly eventName = 'LeadContacted' as const;

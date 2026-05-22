@@ -2514,7 +2514,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 6 — Entity Lead (peça mais densa)
 
 ```
-[ ] 24. Criar `src/app/domain/lead/entities/lead.entity.ts` com construtor privado, factories estáticas create() e reconstitute(), todos os getters readonly, e métodos changeStatus, registerContact, updateNotes, isStale, pullEvents. Conforme Seção 2.1.3, incluindo validação de canal em registerContact e auto-transição novo→contatado. + spec completo com TODOS os casos da Seção 6.4 (~32 casos).
+[x] 24. Criar `src/app/domain/lead/entities/lead.entity.ts` com construtor privado, factories estáticas create() e reconstitute(), todos os getters readonly, e métodos changeStatus, registerContact, updateNotes, isStale, pullEvents. Conforme Seção 2.1.3, incluindo validação de canal em registerContact e auto-transição novo→contatado. + spec completo com TODOS os casos da Seção 6.4 (~32 casos).
 ```
 
 ### Fase 7 — Interfaces de Repository e Services
