@@ -2534,7 +2534,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 8 — Application Shared
 
 ```
-[ ] 30. Criar `src/app/application/shared/use-case.interface.ts` com interface UseCase<TInput, TOutput>. Sem spec (interface pura).
+[x] 30. Criar `src/app/application/shared/use-case.interface.ts` com interface UseCase<TInput, TOutput>. Sem spec (interface pura).
 
 [ ] 31. Criar `src/app/application/shared/result.ts` com tipo Result e helpers Result.ok() e Result.err() conforme Seção 2.4.0. + spec testando os helpers.
 
