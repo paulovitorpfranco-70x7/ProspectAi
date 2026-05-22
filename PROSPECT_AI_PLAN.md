@@ -2522,11 +2522,11 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ```
 [x] 25. Criar `src/app/domain/lead/repositories/lead.repository.ts` com interface LeadRepository + LeadFilter + LeadStatsByStatus conforme Seção 2.2. ZERO implementação — só interfaces.
 
-[ ] 26. Criar `src/app/domain/lead/services/place-finder.service.ts` com interface PlaceFinderService + tipos auxiliares conforme Seção 2.3.
+[x] 26. Criar `src/app/domain/lead/services/place-finder.service.ts` com interface PlaceFinderService + tipos auxiliares conforme Seção 2.3.
 
-[ ] 27. Criar `src/app/domain/lead/services/contact-dispatcher.service.ts` com interface ContactDispatcherService (com DispatchResult retornando URL) conforme Seção 2.3.
+[x] 27. Criar `src/app/domain/lead/services/contact-dispatcher.service.ts` com interface ContactDispatcherService (com DispatchResult retornando URL) conforme Seção 2.3.
 
-[ ] 28. Criar `src/app/domain/lead/services/message-template.service.ts` com interface MessageTemplateService + tipos conforme Seção 2.3.
+[x] 28. Criar `src/app/domain/lead/services/message-template.service.ts` com interface MessageTemplateService + tipos conforme Seção 2.3.
 
 [ ] 29. Criar `src/app/domain/lead/index.ts` reexportando entity, todas as VOs, todos os events, todas as interfaces de repo/services, e todos os errors.
 ```
