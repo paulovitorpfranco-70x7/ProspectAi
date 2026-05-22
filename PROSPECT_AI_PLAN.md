@@ -2520,7 +2520,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 7 — Interfaces de Repository e Services
 
 ```
-[ ] 25. Criar `src/app/domain/lead/repositories/lead.repository.ts` com interface LeadRepository + LeadFilter + LeadStatsByStatus conforme Seção 2.2. ZERO implementação — só interfaces.
+[x] 25. Criar `src/app/domain/lead/repositories/lead.repository.ts` com interface LeadRepository + LeadFilter + LeadStatsByStatus conforme Seção 2.2. ZERO implementação — só interfaces.
 
 [ ] 26. Criar `src/app/domain/lead/services/place-finder.service.ts` com interface PlaceFinderService + tipos auxiliares conforme Seção 2.3.
 
