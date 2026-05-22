@@ -2498,7 +2498,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 19. Criar `src/app/domain/lead/value-objects/phone-number.vo.ts` com normalização BR (10 ou 11 dígitos, com/sem DDI 55) e métodos getValue/getFormatted/toWhatsAppDigits. + spec completo.
 
-[ ] 20. Criar `src/app/domain/lead/value-objects/email.vo.ts` com regex RFC simplificado e lowercase normalizado. + spec.
+[x] 20. Criar `src/app/domain/lead/value-objects/email.vo.ts` com regex RFC simplificado e lowercase normalizado. + spec.
 
 [ ] 21. Criar `src/app/domain/lead/value-objects/location.vo.ts` com city obrigatório e address opcional, expondo getCityNormalized(). + spec.
 
