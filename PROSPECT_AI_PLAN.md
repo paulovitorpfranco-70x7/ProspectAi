@@ -2496,7 +2496,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 18. Criar `src/app/domain/lead/value-objects/lead-status.vo.ts` com 5 status + factories estáticas + canTransitionTo() implementando a tabela VALID_TRANSITIONS do JSX. + spec com os 20 casos de transição da Seção 6.4.
 
-[ ] 19. Criar `src/app/domain/lead/value-objects/phone-number.vo.ts` com normalização BR (10 ou 11 dígitos, com/sem DDI 55) e métodos getValue/getFormatted/toWhatsAppDigits. + spec completo.
+[x] 19. Criar `src/app/domain/lead/value-objects/phone-number.vo.ts` com normalização BR (10 ou 11 dígitos, com/sem DDI 55) e métodos getValue/getFormatted/toWhatsAppDigits. + spec completo.
 
 [ ] 20. Criar `src/app/domain/lead/value-objects/email.vo.ts` com regex RFC simplificado e lowercase normalizado. + spec.
 
