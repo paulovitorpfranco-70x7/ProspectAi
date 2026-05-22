@@ -2500,7 +2500,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 20. Criar `src/app/domain/lead/value-objects/email.vo.ts` com regex RFC simplificado e lowercase normalizado. + spec.
 
-[ ] 21. Criar `src/app/domain/lead/value-objects/location.vo.ts` com city obrigatório e address opcional, expondo getCityNormalized(). + spec.
+[x] 21. Criar `src/app/domain/lead/value-objects/location.vo.ts` com city obrigatório e address opcional, expondo getCityNormalized(). + spec.
 
 [ ] 22. Criar `src/app/domain/lead/value-objects/contact-info.vo.ts` exigindo phone XOR email não-null. + spec.
 ```
