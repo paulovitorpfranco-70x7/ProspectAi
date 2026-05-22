@@ -2508,7 +2508,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 5 — Domain Events do Lead
 
 ```
-[ ] 23. Criar 3 arquivos de eventos: lead-created.event.ts, lead-status-changed.event.ts, lead-contacted.event.ts conforme Seção 2.1.4. + 1 spec mínimo por arquivo (instanciar e verificar payload).
+[x] 23. Criar 3 arquivos de eventos: lead-created.event.ts, lead-status-changed.event.ts, lead-contacted.event.ts conforme Seção 2.1.4. + 1 spec mínimo por arquivo (instanciar e verificar payload).
 ```
 
 ### Fase 6 — Entity Lead (peça mais densa)
