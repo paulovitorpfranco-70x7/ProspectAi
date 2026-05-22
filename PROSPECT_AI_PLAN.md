@@ -2502,7 +2502,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 21. Criar `src/app/domain/lead/value-objects/location.vo.ts` com city obrigatório e address opcional, expondo getCityNormalized(). + spec.
 
-[ ] 22. Criar `src/app/domain/lead/value-objects/contact-info.vo.ts` exigindo phone XOR email não-null. + spec.
+[x] 22. Criar `src/app/domain/lead/value-objects/contact-info.vo.ts` exigindo phone XOR email não-null. + spec.
 ```
 
 ### Fase 5 — Domain Events do Lead
