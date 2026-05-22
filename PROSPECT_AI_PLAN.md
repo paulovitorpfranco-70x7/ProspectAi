@@ -2528,7 +2528,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 28. Criar `src/app/domain/lead/services/message-template.service.ts` com interface MessageTemplateService + tipos conforme Seção 2.3.
 
-[ ] 29. Criar `src/app/domain/lead/index.ts` reexportando entity, todas as VOs, todos os events, todas as interfaces de repo/services, e todos os errors.
+[x] 29. Criar `src/app/domain/lead/index.ts` reexportando entity, todas as VOs, todos os events, todas as interfaces de repo/services, e todos os errors.
 ```
 
 ### Fase 8 — Application Shared
