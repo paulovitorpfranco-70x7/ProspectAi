@@ -2552,7 +2552,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 10 — Tokens de Injeção
 
 ```
-[ ] 35. Criar os 4 tokens em `src/app/application/lead/tokens/`: lead-repository.token.ts, place-finder.token.ts, contact-dispatcher.token.ts, message-template.token.ts. Cada um importa a interface correspondente type-only e cria InjectionToken<T>. Conforme Seção 2.4.8.
+[x] 35. Criar os 4 tokens em `src/app/application/lead/tokens/`: lead-repository.token.ts, place-finder.token.ts, contact-dispatcher.token.ts, message-template.token.ts. Cada um importa a interface correspondente type-only e cria InjectionToken<T>. Conforme Seção 2.4.8.
 ```
 
 ### Fase 11 — Use Cases (1 item por use case com I/O DTOs)
