@@ -9,7 +9,7 @@
     "test": "jest",
     "test:domain": "jest --testPathPatterns=domain",
     "test:application": "jest --testPathPatterns=application",
-    "test:infrastructure": "jest --testPathPattern=infrastructure --runInBand",
+    "test:infrastructure": "jest --testPathPatterns=infrastructure --runInBand",
     "test:presentation": "jest --testPathPattern=presentation",
     "lint": "ng lint"
   },
@@ -41,6 +41,7 @@
     "jest-preset-angular": "^16.1.5",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.59.4",
+    "undici": "^8.3.0"
   }
 }
