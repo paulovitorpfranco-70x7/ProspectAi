@@ -10,7 +10,7 @@
     "test:domain": "jest --testPathPatterns=domain",
     "test:application": "jest --testPathPatterns=application",
     "test:infrastructure": "jest --testPathPatterns=infrastructure --runInBand",
-    "test:presentation": "jest --testPathPattern=presentation",
+    "test:presentation": "jest --testPathPatterns=presentation",
     "lint": "ng lint"
   },
   "private": true,

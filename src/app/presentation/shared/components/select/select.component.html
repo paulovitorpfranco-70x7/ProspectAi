@@ -1,0 +1,11 @@
+<label class="select-field">
+  @if (label) {
+    <span class="select-field__label">{{ label }}</span>
+  }
+
+  <select class="select-field__control" (change)="onChange($event)">
+    @for (option of options; track option.value) {
+      <option [value]="option.value">{{ option.label }}</option>
+    }
+  </select>
+</label>

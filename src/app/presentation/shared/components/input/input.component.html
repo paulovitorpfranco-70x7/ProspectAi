@@ -1,0 +1,18 @@
+<label class="input-field">
+  @if (label) {
+    <span class="input-field__label">{{ label }}</span>
+  }
+
+  <input
+    class="input-field__control"
+    [class.input-field__control--invalid]="error"
+    [placeholder]="placeholder"
+    [type]="type"
+    [value]="value()"
+    (input)="onInput($event)"
+  />
+
+  @if (error) {
+    <span class="input-field__error">{{ error }}</span>
+  }
+</label>

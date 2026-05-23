@@ -1,0 +1,27 @@
+.select-field {
+  display: grid;
+  gap: var(--space-xs);
+  color: var(--color-text);
+}
+
+.select-field__label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.select-field__control {
+  width: 100%;
+  min-height: 42px;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.select-field__control:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

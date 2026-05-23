@@ -1,0 +1,25 @@
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--color-text);
+}
+
+.empty-state__icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.empty-state__title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.empty-state__message {
+  max-width: 42rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}

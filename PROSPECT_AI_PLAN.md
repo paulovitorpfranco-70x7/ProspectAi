@@ -2642,21 +2642,21 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 18 — Presentation: Shared Components
 
 ```
-[ ] 64. Criar componente Button em `src/app/presentation/shared/components/button/` com variants primary/secondary/danger/ghost via @Input. Standalone. SCSS próprio usando tokens. + spec smoke.
+[x] 64. Criar componente Button em `src/app/presentation/shared/components/button/` com variants primary/secondary/danger/ghost via @Input. Standalone. SCSS próprio usando tokens. + spec smoke.
 
-[ ] 65. Criar componente Input em `src/app/presentation/shared/components/input/` com label, error, placeholder, two-way binding via model() signal. + spec smoke.
+[x] 65. Criar componente Input em `src/app/presentation/shared/components/input/` com label, error, placeholder, two-way binding via model() signal. + spec smoke.
 
-[ ] 66. Criar componente Select em `src/app/presentation/shared/components/select/` com options via @Input e change via @Output. + spec smoke.
+[x] 66. Criar componente Select em `src/app/presentation/shared/components/select/` com options via @Input e change via @Output. + spec smoke.
 
-[ ] 67. Criar componente Badge em `src/app/presentation/shared/components/badge/` com color via @Input (mapeia para CSS class). + spec smoke.
+[x] 67. Criar componente Badge em `src/app/presentation/shared/components/badge/` com color via @Input (mapeia para CSS class). + spec smoke.
 
-[ ] 68. Criar componente Card em `src/app/presentation/shared/components/card/` como wrapper com ng-content. + spec smoke.
+[x] 68. Criar componente Card em `src/app/presentation/shared/components/card/` como wrapper com ng-content. + spec smoke.
 
-[ ] 69. Criar componente EmptyState em `src/app/presentation/shared/components/empty-state/` com title, message, icon via @Input.
+[x] 69. Criar componente EmptyState em `src/app/presentation/shared/components/empty-state/` com title, message, icon via @Input.
 
-[ ] 70. Criar componente Spinner em `src/app/presentation/shared/components/spinner/` (overlay de loading).
+[x] 70. Criar componente Spinner em `src/app/presentation/shared/components/spinner/` (overlay de loading).
 
-[ ] 71. Criar `src/app/presentation/shared/pipes/phone-format.pipe.ts` formatando 10 ou 11 dígitos em (XX) XXXXX-XXXX ou (XX) XXXX-XXXX. + spec completo da Seção 6.7.
+[x] 71. Criar `src/app/presentation/shared/pipes/phone-format.pipe.ts` formatando 10 ou 11 dígitos em (XX) XXXXX-XXXX ou (XX) XXXX-XXXX. + spec completo da Seção 6.7.
 ```
 
 ### Fase 19 — Presentation: Layout
