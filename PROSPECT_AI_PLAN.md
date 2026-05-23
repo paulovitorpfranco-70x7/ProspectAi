@@ -2614,15 +2614,15 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 15 — Infrastructure: Templates
 
 ```
-[ ] 56. Criar `src/app/infrastructure/templates/message-template.in-memory-service.ts` como @Injectable que implementa MessageTemplateService. Templates default hardcoded espelhando DEFAULT_WA_TEMPLATE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_BODY do JSX (linhas 36-38). render() faz string.replaceAll dos placeholders {{nome}}, {{setor}}, {{cidade}}. + spec.
+[x] 56. Criar `src/app/infrastructure/templates/message-template.in-memory-service.ts` como @Injectable que implementa MessageTemplateService. Templates default hardcoded espelhando DEFAULT_WA_TEMPLATE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_BODY do JSX (linhas 36-38). render() faz string.replaceAll dos placeholders {{nome}}, {{setor}}, {{cidade}}. + spec.
 ```
 
 ### Fase 16 — Infrastructure: Providers
 
 ```
-[ ] 57. Criar `src/app/infrastructure/providers/infrastructure.providers.ts` que exporta função makeInfrastructureProviders() retornando EnvironmentProviders via makeEnvironmentProviders. Binda os 4 tokens (LEAD_REPOSITORY, PLACE_FINDER, CONTACT_DISPATCHER, MESSAGE_TEMPLATE) às implementações concretas.
+[x] 57. Criar `src/app/infrastructure/providers/infrastructure.providers.ts` que exporta função makeInfrastructureProviders() retornando EnvironmentProviders via makeEnvironmentProviders. Binda os 4 tokens (LEAD_REPOSITORY, PLACE_FINDER, CONTACT_DISPATCHER, MESSAGE_TEMPLATE) às implementações concretas.
 
-[ ] 58. Criar `src/app/infrastructure/index.ts` reexportando apenas makeInfrastructureProviders (única superfície pública).
+[x] 58. Criar `src/app/infrastructure/index.ts` reexportando apenas makeInfrastructureProviders (única superfície pública).
 ```
 
 ### Fase 17 — Presentation: Estilos Globais
