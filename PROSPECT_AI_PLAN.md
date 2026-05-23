@@ -2570,7 +2570,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 41. Criar pasta `src/app/application/lead/use-cases/send-email/` com I/O DTOs e use case conforme Seção 2.4.7. + spec.
 
-[ ] 42. Criar `src/app/application/lead/index.ts` reexportando tokens, todos os use cases, DTOs, mapper.
+[x] 42. Criar `src/app/application/lead/index.ts` reexportando tokens, todos os use cases, DTOs, mapper.
 ```
 
 ### Fase 12 — Infrastructure: Supabase
