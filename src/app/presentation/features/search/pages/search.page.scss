@@ -1,0 +1,25 @@
+.search-page {
+  position: relative;
+  display: grid;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+}
+
+.search-page__error {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.search-page__results {
+  position: relative;
+  min-height: 180px;
+}
+
+.search-page__list {
+  display: grid;
+  gap: var(--space-md);
+}

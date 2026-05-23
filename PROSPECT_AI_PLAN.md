@@ -2670,15 +2670,15 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 20 — Presentation: Feature Search
 
 ```
-[ ] 74. Criar `src/app/presentation/features/search/store/search.store.ts` como signalStore (NgRx Signals) com state: { results: SearchLeadsResultItem[], loading: boolean, error: string | null, selectedSector: string | null, city: string }. Métodos: setSelectedSector, setCity, executeSearch (chama SearchLeadsUseCase via inject). + spec.
+[x] 74. Criar `src/app/presentation/features/search/store/search.store.ts` como signalStore (NgRx Signals) com state: { results: SearchLeadsResultItem[], loading: boolean, error: string | null, selectedSector: string | null, city: string }. Métodos: setSelectedSector, setCity, executeSearch (chama SearchLeadsUseCase via inject). + spec.
 
-[ ] 75. Criar `src/app/presentation/features/search/components/search-form/search-form.component.ts` com grid de 10 sectors (com ícones) + input de city + botão Buscar. Standalone. Usa Input e Button shared. Sector→icon map em constants. + spec smoke.
+[x] 75. Criar `src/app/presentation/features/search/components/search-form/search-form.component.ts` com grid de 10 sectors (com ícones) + input de city + botão Buscar. Standalone. Usa Input e Button shared. Sector→icon map em constants. + spec smoke.
 
-[ ] 76. Criar `src/app/presentation/features/search/components/search-result-card/search-result-card.component.ts` que exibe resultado de uma adição (added/skipped) com cor diferente. + spec smoke.
+[x] 76. Criar `src/app/presentation/features/search/components/search-result-card/search-result-card.component.ts` que exibe resultado de uma adição (added/skipped) com cor diferente. + spec smoke.
 
-[ ] 77. Criar `src/app/presentation/features/search/pages/search.page.ts` que provê SearchStore e renderiza search-form + lista de search-result-card baseada em store.results. + spec smoke.
+[x] 77. Criar `src/app/presentation/features/search/pages/search.page.ts` que provê SearchStore e renderiza search-form + lista de search-result-card baseada em store.results. + spec smoke.
 
-[ ] 78. Criar `src/app/presentation/features/search/search.routes.ts` exportando rotas com path: '' apontando para SearchPage (lazy).
+[x] 78. Criar `src/app/presentation/features/search/search.routes.ts` exportando rotas com path: '' apontando para SearchPage (lazy).
 ```
 
 ### Fase 21 — Presentation: Feature Pipeline

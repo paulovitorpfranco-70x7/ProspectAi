@@ -1,0 +1,26 @@
+<form class="search-form" (submit)="$event.preventDefault(); requestSearch()">
+  <div class="search-form__sectors" aria-label="Setores">
+    @for (sector of sectors; track sector) {
+      <button
+        class="sector-btn"
+        [class.sector-btn--selected]="selectedSector === sector"
+        type="button"
+        (click)="selectSector(sector)"
+      >
+        <span class="sector-btn__icon" aria-hidden="true">{{ sectorIcons[sector] }}</span>
+        <span>{{ sector }}</span>
+      </button>
+    }
+  </div>
+
+  <div class="search-form__controls">
+    <app-input
+      label="Cidade"
+      placeholder="Ex: Niterói"
+      [value]="city"
+      (valueChange)="changeCity($event)"
+    />
+
+    <app-button type="submit" [disabled]="loading">Buscar</app-button>
+  </div>
+</form>

@@ -1,0 +1,17 @@
+<app-card>
+  <article class="result-card" [class]="'result-card result-card--' + item.itemStatus">
+    <div class="result-card__main">
+      <h3 class="result-card__title">{{ item.placeName }}</h3>
+      @if (item.lead) {
+        <p class="result-card__meta">{{ item.lead.city }} · {{ item.lead.sector }}</p>
+      }
+      @if (item.skipReason) {
+        <p class="result-card__meta">{{ item.skipReason }}</p>
+      }
+    </div>
+
+    <app-badge [color]="item.itemStatus === 'added' ? 'success' : item.itemStatus === 'skipped_has_website' ? 'muted' : 'warning'">
+      {{ statusLabel }}
+    </app-badge>
+  </article>
+</app-card>

@@ -1,0 +1,36 @@
+<section class="search-page">
+  <app-search-form
+    [selectedSector]="store.selectedSector()"
+    [city]="store.city()"
+    [loading]="store.loading()"
+    (sectorSelected)="store.setSelectedSector($event)"
+    (cityChanged)="store.setCity($event)"
+    (searchRequested)="store.executeSearch()"
+  />
+
+  @if (store.error()) {
+    <p class="search-page__error">{{ store.error() }}</p>
+  }
+
+  <section class="search-page__results" aria-label="Resultados da busca">
+    @if (store.loading()) {
+      <app-spinner />
+    }
+
+    @if (!store.loading() && !store.hasResults()) {
+      <app-empty-state
+        icon="🔍"
+        title="Nenhuma busca realizada"
+        message="Selecione um setor, informe a cidade e busque leads locais."
+      />
+    }
+
+    @if (store.hasResults()) {
+      <div class="search-page__list">
+        @for (item of store.results(); track item.placeName + item.itemStatus) {
+          <app-search-result-card [item]="item" />
+        }
+      </div>
+    }
+  </section>
+</section>
