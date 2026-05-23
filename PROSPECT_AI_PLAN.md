@@ -2628,15 +2628,15 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 17 — Presentation: Estilos Globais
 
 ```
-[ ] 59. Criar `src/styles/_tokens.scss` com CSS variables para cores (espelhar palette do JSX: #0a0a0f bg, #6366f1 primary, #4ade80 success, #facc15 warning, #f87171 danger, #60a5fa info, #a78bfa accent), espaçamento (--space-xs 4px, sm 8px, md 16px, lg 24px, xl 32px), tipografia (--font-sans 'DM Sans', --font-display 'Syne'), radius (--radius-sm 6px, md 10px, lg 14px).
+[x] 59. Criar `src/styles/_tokens.scss` com CSS variables para cores (espelhar palette do JSX: #0a0a0f bg, #6366f1 primary, #4ade80 success, #facc15 warning, #f87171 danger, #60a5fa info, #a78bfa accent), espaçamento (--space-xs 4px, sm 8px, md 16px, lg 24px, xl 32px), tipografia (--font-sans 'DM Sans', --font-display 'Syne'), radius (--radius-sm 6px, md 10px, lg 14px).
 
-[ ] 60. Criar `src/styles/_reset.scss` com reset minimalista (box-sizing border-box, margin/padding 0, font-family herdada).
+[x] 60. Criar `src/styles/_reset.scss` com reset minimalista (box-sizing border-box, margin/padding 0, font-family herdada).
 
-[ ] 61. Criar `src/styles/_mixins.scss` com mixins úteis (card-base, button-base, focus-ring).
+[x] 61. Criar `src/styles/_mixins.scss` com mixins úteis (card-base, button-base, focus-ring).
 
-[ ] 62. Criar `src/styles/_typography.scss` com escala tipográfica usando os tokens.
+[x] 62. Criar `src/styles/_typography.scss` com escala tipográfica usando os tokens.
 
-[ ] 63. Criar `src/styles/styles.scss` importando todos os parciais na ordem: reset → tokens → typography → mixins. Importar fontes DM Sans e Syne via @import url do Google Fonts no topo.
+[x] 63. Criar `src/styles/styles.scss` importando todos os parciais na ordem: reset → tokens → typography → mixins. Importar fontes DM Sans e Syne via @import url do Google Fonts no topo.
 ```
 
 ### Fase 18 — Presentation: Shared Components
