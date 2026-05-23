@@ -2582,7 +2582,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 45. Criar `src/app/infrastructure/supabase/client/supabase.client.ts` como @Injectable que expõe instância única do SupabaseClient via createClient. Usar configuração do environment.config.
 
-[ ] 46. Criar `src/app/infrastructure/supabase/mappers/lead.mapper.ts` com métodos toDomain(row) e toRow(lead). Mapeia entre row do Supabase e Lead entity. + spec completo da Seção 6.6 incluindo teste roundtrip.
+[x] 46. Criar `src/app/infrastructure/supabase/mappers/lead.mapper.ts` com métodos toDomain(row) e toRow(lead). Mapeia entre row do Supabase e Lead entity. + spec completo da Seção 6.6 incluindo teste roundtrip.
 
 [ ] 47. Criar `src/app/infrastructure/supabase/repositories/lead.supabase-repository.ts` implementando LeadRepository. Usar supabase.client. Capturar erro PostgreSQL 23505 e converter em DuplicateLeadError. + spec contra Supabase local (rodar `supabase start` primeiro).
 ```
