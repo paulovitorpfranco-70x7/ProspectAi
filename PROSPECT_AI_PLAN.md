@@ -2604,11 +2604,11 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 14 — Infrastructure: Messaging
 
 ```
-[ ] 53. Criar `src/app/infrastructure/messaging/whatsapp.dispatcher.ts` que constrói URL wa.me/55<digits>?text=<encoded> e abre via window.open. Retorna { url }. Lança DispatchFailedError se window.open retornar null. + spec.
+[x] 53. Criar `src/app/infrastructure/messaging/whatsapp.dispatcher.ts` que constrói URL wa.me/55<digits>?text=<encoded> e abre via window.open. Retorna { url }. Lança DispatchFailedError se window.open retornar null. + spec.
 
-[ ] 54. Criar `src/app/infrastructure/messaging/email.dispatcher.ts` que constrói mailto:<email>?subject=<encoded>&body=<encoded> e abre via window.open. Trata subject null omitindo do query string. + spec.
+[x] 54. Criar `src/app/infrastructure/messaging/email.dispatcher.ts` que constrói mailto:<email>?subject=<encoded>&body=<encoded> e abre via window.open. Trata subject null omitindo do query string. + spec.
 
-[ ] 55. Criar `src/app/infrastructure/messaging/contact-dispatcher.composite.ts` como @Injectable que implementa ContactDispatcherService, delegando para whatsapp.dispatcher ou email.dispatcher conforme método chamado.
+[x] 55. Criar `src/app/infrastructure/messaging/contact-dispatcher.composite.ts` como @Injectable que implementa ContactDispatcherService, delegando para whatsapp.dispatcher ou email.dispatcher conforme método chamado.
 ```
 
 ### Fase 15 — Infrastructure: Templates
