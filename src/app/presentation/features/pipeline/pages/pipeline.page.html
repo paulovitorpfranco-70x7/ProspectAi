@@ -1,0 +1,50 @@
+<section class="pipeline-page">
+  <div class="pipeline-page__stats" aria-label="Estatísticas do pipeline">
+    <span>Total: {{ store.statsByStatus().total }}</span>
+    <span>Novo: {{ store.statsByStatus().novo }}</span>
+    <span>Contatado: {{ store.statsByStatus().contatado }}</span>
+    <span>Proposta: {{ store.statsByStatus().proposta }}</span>
+    <span>Fechado: {{ store.statsByStatus().fechado }}</span>
+  </div>
+
+  <section class="pipeline-page__filters" aria-label="Filtros do pipeline">
+    <app-input
+      label="Buscar"
+      placeholder="Nome, cidade ou setor"
+      [value]="store.searchQuery()"
+      (valueChange)="store.setSearchQuery($event)"
+    />
+
+    <app-select label="Status" [options]="filterOptions" (changed)="onFilterChanged($event)" />
+    <app-select label="Ordenar por" [options]="sortOptions" (changed)="onSortChanged($event)" />
+  </section>
+
+  @if (store.error()) {
+    <p class="pipeline-page__error">{{ store.error() }}</p>
+  }
+
+  <section class="pipeline-page__content">
+    @if (store.loading()) {
+      <app-spinner />
+    }
+
+    @if (!store.loading() && store.filteredLeads().length === 0) {
+      <app-empty-state
+        icon="📋"
+        title="Nenhum lead no pipeline"
+        message="Os leads encontrados aparecerão aqui para acompanhamento."
+      />
+    }
+
+    @if (store.filteredLeads().length > 0) {
+      <app-pipeline-column
+        status="Leads"
+        [leads]="store.filteredLeads()"
+        (statusChange)="onStatusChange($event)"
+        (whatsapp)="store.sendWhatsApp($event)"
+        (email)="store.sendEmail($event)"
+        (remove)="store.deleteLead($event)"
+      />
+    }
+  </section>
+</section>

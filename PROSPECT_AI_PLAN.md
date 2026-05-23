@@ -2684,15 +2684,15 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 21 — Presentation: Feature Pipeline
 
 ```
-[ ] 79. Criar `src/app/presentation/features/pipeline/store/pipeline.store.ts` como signalStore com state: { leads: LeadDto[], filterStatus, searchQuery, sortBy, loading, error }. Métodos: loadLeads, updateStatus, deleteLead, sendWhatsApp, sendEmail (todos chamam respectivos use cases). Computed signals: filteredLeads, statsByStatus. + spec.
+[x] 79. Criar `src/app/presentation/features/pipeline/store/pipeline.store.ts` como signalStore com state: { leads: LeadDto[], filterStatus, searchQuery, sortBy, loading, error }. Métodos: loadLeads, updateStatus, deleteLead, sendWhatsApp, sendEmail (todos chamam respectivos use cases). Computed signals: filteredLeads, statsByStatus. + spec.
 
-[ ] 80. Criar `src/app/presentation/features/pipeline/components/lead-card/lead-card.component.ts` com avatar (ícone do setor), nome, badge de status, contactCount, indicador stale (3 dias). Botões: WhatsApp, E-mail, Remover, transições de status. + spec da Seção 6.7.
+[x] 80. Criar `src/app/presentation/features/pipeline/components/lead-card/lead-card.component.ts` com avatar (ícone do setor), nome, badge de status, contactCount, indicador stale (3 dias). Botões: WhatsApp, E-mail, Remover, transições de status. + spec da Seção 6.7.
 
-[ ] 81. Criar `src/app/presentation/features/pipeline/components/pipeline-column/pipeline-column.component.ts` que recebe status e leads filtrados, exibe lista de lead-cards. + spec smoke.
+[x] 81. Criar `src/app/presentation/features/pipeline/components/pipeline-column/pipeline-column.component.ts` que recebe status e leads filtrados, exibe lista de lead-cards. + spec smoke.
 
-[ ] 82. Criar `src/app/presentation/features/pipeline/pages/pipeline.page.ts` que provê PipelineStore, renderiza barra de filtros (busca, sort, filter por status) + lista de leads. Carrega leads no ngOnInit via store.loadLeads(). + spec smoke.
+[x] 82. Criar `src/app/presentation/features/pipeline/pages/pipeline.page.ts` que provê PipelineStore, renderiza barra de filtros (busca, sort, filter por status) + lista de leads. Carrega leads no ngOnInit via store.loadLeads(). + spec smoke.
 
-[ ] 83. Criar `src/app/presentation/features/pipeline/pipeline.routes.ts` com rota lazy.
+[x] 83. Criar `src/app/presentation/features/pipeline/pipeline.routes.ts` com rota lazy.
 ```
 
 ### Fase 22 — Presentation: Feature Add Lead

@@ -1,0 +1,37 @@
+.pipeline-column {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.pipeline-column__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pipeline-column__title {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.pipeline-column__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.pipeline-column__list {
+  display: grid;
+  gap: var(--space-md);
+}

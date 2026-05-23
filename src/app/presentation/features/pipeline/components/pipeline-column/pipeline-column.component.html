@@ -1,0 +1,18 @@
+<section class="pipeline-column">
+  <header class="pipeline-column__header">
+    <h2 class="pipeline-column__title">{{ status }}</h2>
+    <span class="pipeline-column__count">{{ leads.length }}</span>
+  </header>
+
+  <div class="pipeline-column__list">
+    @for (lead of leads; track lead.id) {
+      <app-lead-card
+        [lead]="lead"
+        (statusChange)="statusChange.emit($event)"
+        (whatsapp)="whatsapp.emit($event)"
+        (email)="email.emit($event)"
+        (remove)="remove.emit($event)"
+      />
+    }
+  </div>
+</section>

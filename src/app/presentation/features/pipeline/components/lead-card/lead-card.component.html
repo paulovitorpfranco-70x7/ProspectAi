@@ -1,0 +1,42 @@
+<app-card>
+  <article class="lead-card">
+    <div class="lead-card__header">
+      <div class="lead-card__avatar" aria-hidden="true">{{ sectorIcon }}</div>
+
+      <div class="lead-card__identity">
+        <h3 class="lead-card__name">{{ lead.businessName }}</h3>
+        <p class="lead-card__meta">{{ lead.sector }} · {{ lead.city }}</p>
+        @if (lead.phoneDigits) {
+          <p class="lead-card__meta">{{ lead.phoneDigits | phoneFormat }}</p>
+        }
+      </div>
+
+      <div class="lead-card__badges">
+        <app-badge [color]="statusColor">{{ statusLabel }}</app-badge>
+        <app-badge color="muted">{{ lead.contactCount }} contatos</app-badge>
+        @if (isStale) {
+          <app-badge color="warning">Sem retorno</app-badge>
+        }
+      </div>
+    </div>
+
+    <div class="lead-card__actions" aria-label="Ações de contato">
+      <app-button variant="secondary" [disabled]="lead.phoneDigits === null" (click)="whatsapp.emit(lead.id)">WhatsApp</app-button>
+      <app-button variant="secondary" [disabled]="lead.email === null" (click)="email.emit(lead.id)">E-mail</app-button>
+      <app-button variant="danger" (click)="remove.emit(lead.id)">Remover</app-button>
+    </div>
+
+    <div class="lead-card__transitions" aria-label="Transições de status">
+      @for (status of statuses; track status) {
+        <button
+          class="lead-card__transition"
+          type="button"
+          [disabled]="!canTransitionTo(status)"
+          (click)="requestStatusChange(status)"
+        >
+          {{ statusButtonLabel(status) }}
+        </button>
+      }
+    </div>
+  </article>
+</app-card>
