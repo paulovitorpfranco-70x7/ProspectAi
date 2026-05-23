@@ -2576,9 +2576,9 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 12 — Infrastructure: Supabase
 
 ```
-[ ] 43. Criar `src/app/infrastructure/config/environment.config.ts` que lê de src/environments/environment.ts e expõe SUPABASE_URL, SUPABASE_ANON_KEY, EDGE_FUNCTIONS_URL como constantes tipadas.
+[x] 43. Criar `src/app/infrastructure/config/environment.config.ts` que lê de src/environments/environment.ts e expõe SUPABASE_URL, SUPABASE_ANON_KEY, EDGE_FUNCTIONS_URL como constantes tipadas.
 
-[ ] 44. Criar `src/app/environments/environment.ts` e `environment.development.ts` com placeholders. Adicionar `.env.example` na raiz documentando as variáveis necessárias.
+[x] 44. Criar `src/app/environments/environment.ts` e `environment.development.ts` com placeholders. Adicionar `.env.example` na raiz documentando as variáveis necessárias.
 
 [ ] 45. Criar `src/app/infrastructure/supabase/client/supabase.client.ts` como @Injectable que expõe instância única do SupabaseClient via createClient. Usar configuração do environment.config.
 
