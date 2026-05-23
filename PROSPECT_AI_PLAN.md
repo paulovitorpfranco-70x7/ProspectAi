@@ -2558,7 +2558,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 11 — Use Cases (1 item por use case com I/O DTOs)
 
 ```
-[ ] 36. Criar pasta `src/app/application/lead/use-cases/search-leads/` com search-leads.input.dto.ts, search-leads.output.dto.ts, e search-leads.use-case.ts implementando a orquestração da Seção 2.4.2. + spec completo da Seção 6.5.
+[x] 36. Criar pasta `src/app/application/lead/use-cases/search-leads/` com search-leads.input.dto.ts, search-leads.output.dto.ts, e search-leads.use-case.ts implementando a orquestração da Seção 2.4.2. + spec completo da Seção 6.5.
 
 [ ] 37. Criar pasta `src/app/application/lead/use-cases/create-lead/` com I/O DTOs e use case conforme Seção 2.4.3. + spec.
 
