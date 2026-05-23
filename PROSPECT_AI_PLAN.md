@@ -2662,9 +2662,9 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 19 — Presentation: Layout
 
 ```
-[ ] 72. Criar `src/app/presentation/layout/header/header.component.ts` standalone com título ProspectAI e contador de leads (vai receber via @Input). SCSS espelhando estilo do JSX (logo + linha sutil embaixo).
+[x] 72. Criar `src/app/presentation/layout/header/header.component.ts` standalone com título ProspectAI e contador de leads (vai receber via @Input). SCSS espelhando estilo do JSX (logo + linha sutil embaixo).
 
-[ ] 73. Criar `src/app/presentation/layout/nav/nav.component.ts` standalone com 3 botões de navegação (Search, Pipeline, Add Lead) usando RouterLink e RouterLinkActive. Estilo dos nav-btn do JSX linhas 267-269.
+[x] 73. Criar `src/app/presentation/layout/nav/nav.component.ts` standalone com 3 botões de navegação (Search, Pipeline, Add Lead) usando RouterLink e RouterLinkActive. Estilo dos nav-btn do JSX linhas 267-269.
 ```
 
 ### Fase 20 — Presentation: Feature Search
