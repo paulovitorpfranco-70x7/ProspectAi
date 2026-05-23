@@ -2580,7 +2580,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 44. Criar `src/app/environments/environment.ts` e `environment.development.ts` com placeholders. Adicionar `.env.example` na raiz documentando as variáveis necessárias.
 
-[ ] 45. Criar `src/app/infrastructure/supabase/client/supabase.client.ts` como @Injectable que expõe instância única do SupabaseClient via createClient. Usar configuração do environment.config.
+[x] 45. Criar `src/app/infrastructure/supabase/client/supabase.client.ts` como @Injectable que expõe instância única do SupabaseClient via createClient. Usar configuração do environment.config.
 
 [ ] 46. Criar `src/app/infrastructure/supabase/mappers/lead.mapper.ts` com métodos toDomain(row) e toRow(lead). Mapeia entre row do Supabase e Lead entity. + spec completo da Seção 6.6 incluindo teste roundtrip.
 
