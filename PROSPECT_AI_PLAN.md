@@ -2564,11 +2564,11 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 38. Criar pasta `src/app/application/lead/use-cases/update-lead-status/` com I/O DTOs e use case conforme Seção 2.4.4. + spec.
 
-[ ] 39. Criar pasta `src/app/application/lead/use-cases/delete-lead/` com I/O DTOs e use case conforme Seção 2.4.5. + spec.
+[x] 39. Criar pasta `src/app/application/lead/use-cases/delete-lead/` com I/O DTOs e use case conforme Seção 2.4.5. + spec.
 
-[ ] 40. Criar pasta `src/app/application/lead/use-cases/send-whatsapp/` com I/O DTOs e use case conforme Seção 2.4.6. + spec.
+[x] 40. Criar pasta `src/app/application/lead/use-cases/send-whatsapp/` com I/O DTOs e use case conforme Seção 2.4.6. + spec.
 
-[ ] 41. Criar pasta `src/app/application/lead/use-cases/send-email/` com I/O DTOs e use case conforme Seção 2.4.7. + spec.
+[x] 41. Criar pasta `src/app/application/lead/use-cases/send-email/` com I/O DTOs e use case conforme Seção 2.4.7. + spec.
 
 [ ] 42. Criar `src/app/application/lead/index.ts` reexportando tokens, todos os use cases, DTOs, mapper.
 ```
