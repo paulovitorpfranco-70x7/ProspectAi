@@ -2562,7 +2562,7 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 
 [x] 37. Criar pasta `src/app/application/lead/use-cases/create-lead/` com I/O DTOs e use case conforme Seção 2.4.3. + spec.
 
-[ ] 38. Criar pasta `src/app/application/lead/use-cases/update-lead-status/` com I/O DTOs e use case conforme Seção 2.4.4. + spec.
+[x] 38. Criar pasta `src/app/application/lead/use-cases/update-lead-status/` com I/O DTOs e use case conforme Seção 2.4.4. + spec.
 
 [ ] 39. Criar pasta `src/app/application/lead/use-cases/delete-lead/` com I/O DTOs e use case conforme Seção 2.4.5. + spec.
 
