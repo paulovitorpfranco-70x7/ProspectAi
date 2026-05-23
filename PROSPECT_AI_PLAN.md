@@ -2544,9 +2544,9 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 9 — Lead DTO e Mapper
 
 ```
-[ ] 33. Criar `src/app/application/lead/dtos/lead.dto.ts` com interface LeadDto conforme Seção 2.4.1.
+[x] 33. Criar `src/app/application/lead/dtos/lead.dto.ts` com interface LeadDto conforme Seção 2.4.1.
 
-[ ] 34. Criar `src/app/application/lead/dtos/lead.mapper.ts` com classe LeadMapper e método estático toDto(lead: Lead): LeadDto. + spec completo da Seção 6.5.
+[x] 34. Criar `src/app/application/lead/dtos/lead.mapper.ts` com classe LeadMapper e método estático toDto(lead: Lead): LeadDto. + spec completo da Seção 6.5.
 ```
 
 ### Fase 10 — Tokens de Injeção
