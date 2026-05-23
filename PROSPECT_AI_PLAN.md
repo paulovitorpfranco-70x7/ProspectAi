@@ -2590,15 +2590,15 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 13 — Infrastructure: Google Places via Edge Function
 
 ```
-[ ] 48. Criar Edge Function `supabase/functions/places-search/index.ts` em Deno. Recebe POST com { sector, city }, monta query Google Places Text Search, retorna array de resultados normalizados conforme PlaceFinderResponseDto. Variável de ambiente GOOGLE_PLACES_API_KEY. CORS habilitado pro domínio Vercel.
+[x] 48. Criar Edge Function `supabase/functions/places-search/index.ts` em Deno. Recebe POST com { sector, city }, monta query Google Places Text Search, retorna array de resultados normalizados conforme PlaceFinderResponseDto. Variável de ambiente GOOGLE_PLACES_API_KEY. CORS habilitado pro domínio Vercel.
 
-[ ] 49. Configurar secret no Supabase local: `supabase secrets set GOOGLE_PLACES_API_KEY=<key>`. Documentar processo em README.md.
+[x] 49. Configurar secret no Supabase local: `supabase secrets set GOOGLE_PLACES_API_KEY=<key>`. Documentar processo em README.md.
 
-[ ] 50. Criar `src/app/infrastructure/google-places/place-finder.response.dto.ts` com interface do payload retornado pela Edge Function.
+[x] 50. Criar `src/app/infrastructure/google-places/place-finder.response.dto.ts` com interface do payload retornado pela Edge Function.
 
-[ ] 51. Criar `src/app/infrastructure/google-places/place-finder.mapper.ts` que converte response da Edge Function em PlaceFinderResult[]. Tratar rating null, address null, hasWebsite false como defaults. + spec.
+[x] 51. Criar `src/app/infrastructure/google-places/place-finder.mapper.ts` que converte response da Edge Function em PlaceFinderResult[]. Tratar rating null, address null, hasWebsite false como defaults. + spec.
 
-[ ] 52. Criar `src/app/infrastructure/google-places/place-finder.http-service.ts` como @Injectable que implementa PlaceFinderService. Usar Angular HttpClient. POST para Edge Function URL. Capturar erros HTTP e network, converter em PlaceFinderUnavailableError. + spec.
+[x] 52. Criar `src/app/infrastructure/google-places/place-finder.http-service.ts` como @Injectable que implementa PlaceFinderService. Usar Angular HttpClient. POST para Edge Function URL. Capturar erros HTTP e network, converter em PlaceFinderUnavailableError. + spec.
 ```
 
 ### Fase 14 — Infrastructure: Messaging

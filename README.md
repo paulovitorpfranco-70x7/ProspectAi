@@ -57,3 +57,15 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Supabase Edge Function: places-search
+
+A busca do Google Places roda exclusivamente na Edge Function `places-search`. O frontend chama a Edge Function; a chave da Google API nao deve ser exposta no Angular.
+
+Configure o secret local antes de rodar ou testar a function:
+
+```bash
+supabase secrets set GOOGLE_PLACES_API_KEY=<sua-key>
+```
+
+Em producao, configure o mesmo secret no projeto Supabase usado pela Vercel.
