@@ -1,4 +1,5 @@
-import type { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { PlaceFinderUnavailableError } from '@domain/lead/errors/place-finder-unavailable.error';
 import { Sector } from '@domain/lead/value-objects/sector.vo';
@@ -11,11 +12,17 @@ function makeHttpClientMock(): jest.Mocked<Pick<HttpClient, 'post'>> {
   };
 }
 
+function makeService(http: jest.Mocked<Pick<HttpClient, 'post'>>): PlaceFinderHttpService {
+  const injector = Injector.create({ providers: [{ provide: HttpClient, useValue: http }] });
+
+  return runInInjectionContext(injector, () => new PlaceFinderHttpService());
+}
+
 describe('PlaceFinderHttpService', () => {
   it('should POST to Edge Function URL with sector and city', async () => {
     const http = makeHttpClientMock();
     http.post.mockReturnValueOnce(of([]));
-    const service = new PlaceFinderHttpService(http as unknown as HttpClient);
+    const service = makeService(http);
 
     await service.search({ sector: Sector.create('Clínicas & Consultórios'), city: 'Niterói' });
 
@@ -38,7 +45,7 @@ describe('PlaceFinderHttpService', () => {
         },
       ]),
     );
-    const service = new PlaceFinderHttpService(http as unknown as HttpClient);
+    const service = makeService(http);
 
     const result = await service.search({
       sector: Sector.create('Clínicas & Consultórios'),
@@ -60,7 +67,7 @@ describe('PlaceFinderHttpService', () => {
   it('should throw PlaceFinderUnavailableError on HTTP error', async () => {
     const http = makeHttpClientMock();
     http.post.mockReturnValueOnce(throwError(() => new Error('500 Internal Server Error')));
-    const service = new PlaceFinderHttpService(http as unknown as HttpClient);
+    const service = makeService(http);
 
     await expect(
       service.search({ sector: Sector.create('Clínicas & Consultórios'), city: 'Niterói' }),
@@ -70,7 +77,7 @@ describe('PlaceFinderHttpService', () => {
   it('should throw PlaceFinderUnavailableError on network error', async () => {
     const http = makeHttpClientMock();
     http.post.mockReturnValueOnce(throwError(() => new TypeError('Failed to fetch')));
-    const service = new PlaceFinderHttpService(http as unknown as HttpClient);
+    const service = makeService(http);
 
     await expect(
       service.search({ sector: Sector.create('Clínicas & Consultórios'), city: 'Niterói' }),
@@ -80,7 +87,7 @@ describe('PlaceFinderHttpService', () => {
   it('should return empty array when Edge Function returns empty results', async () => {
     const http = makeHttpClientMock();
     http.post.mockReturnValueOnce(of([]));
-    const service = new PlaceFinderHttpService(http as unknown as HttpClient);
+    const service = makeService(http);
 
     const result = await service.search({
       sector: Sector.create('Clínicas & Consultórios'),

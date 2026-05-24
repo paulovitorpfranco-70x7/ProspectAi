@@ -1,6 +1,5 @@
 import { Component, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { CreateLeadUseCase } from '@application/lead';
 import { AddLeadFormComponent } from '../components/add-lead-form/add-lead-form.component';
 import { AddLeadStore, type AddLeadFormState } from '../store/add-lead.store';
 

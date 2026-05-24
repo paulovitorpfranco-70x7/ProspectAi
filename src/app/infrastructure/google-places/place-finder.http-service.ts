@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { PlaceFinderUnavailableError } from '@domain/lead/errors/place-finder-unavailable.error';
 import type {
@@ -13,7 +13,7 @@ import type { PlaceFinderResponseDto } from './place-finder.response.dto';
 
 @Injectable({ providedIn: 'root' })
 export class PlaceFinderHttpService implements PlaceFinderService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   async search(query: PlaceFinderQuery): Promise<readonly PlaceFinderResult[]> {
     try {

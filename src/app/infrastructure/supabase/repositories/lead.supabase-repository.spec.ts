@@ -1,6 +1,7 @@
 /** @jest-environment node */
 import { Blob, File } from 'node:buffer';
 import { ReadableStream, TransformStream } from 'node:stream/web';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 Object.assign(globalThis, { Blob, File, ReadableStream, TransformStream });
@@ -17,7 +18,7 @@ import { LeadStatus } from '@domain/lead/value-objects/lead-status.vo';
 import { Location } from '@domain/lead/value-objects/location.vo';
 import { PhoneNumber } from '@domain/lead/value-objects/phone-number.vo';
 import { Sector } from '@domain/lead/value-objects/sector.vo';
-import type { SupabaseClientService } from '../client/supabase.client';
+import { SupabaseClientService } from '../client/supabase.client';
 import type { Database } from '../types/database.types';
 import { LeadSupabaseRepository } from './lead.supabase-repository';
 
@@ -35,7 +36,11 @@ const IDS = {
 } as const;
 
 function makeRepository(client: SupabaseClient<Database>): LeadSupabaseRepository {
-  return new LeadSupabaseRepository({ client } as SupabaseClientService);
+  const injector = Injector.create({
+    providers: [{ provide: SupabaseClientService, useValue: { client } }],
+  });
+
+  return runInInjectionContext(injector, () => new LeadSupabaseRepository());
 }
 
 function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
@@ -65,10 +70,6 @@ function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
 
 function makePhone(value: string): PhoneNumber {
   return PhoneNumber.create(value);
-}
-
-function makeEmail(value = 'contato@acme.com'): Email {
-  return Email.create(value);
 }
 
 function expectLeadValues(actual: Lead, expected: Lead): void {

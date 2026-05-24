@@ -2722,13 +2722,13 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 24 — Validação End-to-End
 
 ```
-[ ] 92. Rodar `pnpm test` completo. Confirmar que todos os specs passam. Reportar coverage de domain + application.
+[x] 92. Rodar `pnpm test` completo. Confirmar que todos os specs passam. Reportar coverage de domain + application.
 
-[ ] 93. Rodar `pnpm build --configuration=production`. Confirmar build verde sem warnings críticos.
+[x] 93. Rodar `pnpm build --configuration=production`. Confirmar build verde sem warnings críticos.
 
-[ ] 94. Rodar `pnpm lint` e confirmar que regras boundaries não acusam violações.
+[x] 94. Rodar `pnpm lint` e confirmar que regras boundaries não acusam violações.
 
-[ ] 95. Teste manual: (a) buscar Salões em Niterói via Edge Function real, (b) adicionar lead manual, (c) mover lead novo→contatado, (d) clicar WhatsApp em lead com phone, (e) confirmar contactCount incrementado e auto-transição se status era novo.
+[x] 95. Teste manual: (a) buscar Salões em Niterói via Edge Function real, (b) adicionar lead manual, (c) mover lead novo→contatado, (d) clicar WhatsApp em lead com phone, (e) confirmar contactCount incrementado e auto-transição se status era novo.
 ```
 
 ---

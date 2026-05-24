@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { DuplicateLeadError } from '@domain/lead/errors/duplicate-lead.error';
 import { LeadNotFoundError } from '@domain/lead/errors/lead-not-found.error';
@@ -16,6 +16,10 @@ import { SupabaseLeadMapper } from '../mappers/lead.mapper';
 
 type LeadSortColumn = 'created_at' | 'rating' | 'contact_count' | 'last_contact_at';
 type LeadStatusValue = Database['public']['Enums']['lead_status'];
+type FilterableQuery<TSelf> = {
+  eq(column: string, value: unknown): TSelf;
+  or(filters: string): TSelf;
+};
 
 const SORT_COLUMN_BY_FIELD: Record<NonNullable<LeadFilter['sortBy']>, LeadSortColumn> = {
   createdAt: 'created_at',
@@ -26,11 +30,8 @@ const SORT_COLUMN_BY_FIELD: Record<NonNullable<LeadFilter['sortBy']>, LeadSortCo
 
 @Injectable()
 export class LeadSupabaseRepository implements LeadRepository {
-  private readonly supabase: SupabaseClient<Database>;
-
-  constructor(private readonly supabaseClient: SupabaseClientService) {
-    this.supabase = supabaseClient.client;
-  }
+  private readonly supabaseClient = inject(SupabaseClientService);
+  private readonly supabase: SupabaseClient<Database> = this.supabaseClient.client;
 
   async save(lead: Lead): Promise<void> {
     const row = SupabaseLeadMapper.toRow(lead);
@@ -150,7 +151,7 @@ export class LeadSupabaseRepository implements LeadRepository {
     return stats;
   }
 
-  private applyFilters<TQuery extends { eq: Function; or: Function }>(
+  private applyFilters<TQuery extends FilterableQuery<TQuery>>(
     query: TQuery,
     filter: LeadFilter,
   ): TQuery {
