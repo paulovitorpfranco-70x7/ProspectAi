@@ -42,6 +42,11 @@ serve(async (req) => {
     return json({ error: 'Method not allowed' }, 405);
   }
 
+  const authHeader = req.headers.get('Authorization');
+  // Em dev local, o Supabase/Kong já valida a autorização quando verify_jwt=true.
+  // Esta função não revalida o JWT para evitar rejeitar headers válidos do client.
+  void authHeader;
+
   const { sector, city } = (await req.json()) as PlacesSearchRequest;
   const apiKey = Deno.env.get('GOOGLE_PLACES_API_KEY') ?? '';
 
