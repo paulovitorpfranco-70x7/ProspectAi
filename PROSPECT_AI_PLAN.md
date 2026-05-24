@@ -2710,13 +2710,13 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 23 — Bootstrap da App
 
 ```
-[ ] 88. Atualizar `src/app/app.routes.ts` com rotas lazy para search (default ''), pipeline ('pipeline'), add-lead ('add'), e redirect '**' → ''.
+[x] 88. Atualizar `src/app/app.routes.ts` com rotas lazy para search (default ''), pipeline ('pipeline'), add-lead ('add'), e redirect '**' → ''.
 
-[ ] 89. Atualizar `src/app/app.config.ts` adicionando: provideRouter(appRoutes), provideHttpClient(), provideZoneChangeDetection({ eventCoalescing: true }), makeInfrastructureProviders().
+[x] 89. Atualizar `src/app/app.config.ts` adicionando: provideRouter(appRoutes), provideHttpClient(), provideZoneChangeDetection({ eventCoalescing: true }), makeInfrastructureProviders().
 
-[ ] 90. Atualizar `src/app/app.component.ts` para renderizar <app-header />, <app-nav />, <router-outlet /> dentro de container styled. Importar standalone components. Importar styles.scss em src/styles.scss.
+[x] 90. Atualizar `src/app/app.component.ts` para renderizar <app-header />, <app-nav />, <router-outlet /> dentro de container styled. Importar standalone components. Importar styles.scss em src/styles.scss.
 
-[ ] 91. Verificar que `pnpm start` sobe a app sem erros e que a navegação entre as 3 features funciona.
+[x] 91. Verificar que `pnpm start` sobe a app sem erros e que a navegação entre as 3 features funciona.
 ```
 
 ### Fase 24 — Validação End-to-End
