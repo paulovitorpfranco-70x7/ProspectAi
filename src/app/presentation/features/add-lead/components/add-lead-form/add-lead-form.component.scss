@@ -1,0 +1,30 @@
+.add-lead-form {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.add-lead-form__contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.add-lead-form__hint,
+.add-lead-form__warning {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.add-lead-form__hint {
+  color: var(--color-text-muted);
+}
+
+.add-lead-form__warning {
+  color: var(--color-warning);
+}
+
+@media (max-width: 720px) {
+  .add-lead-form__contact-grid {
+    grid-template-columns: 1fr;
+  }
+}

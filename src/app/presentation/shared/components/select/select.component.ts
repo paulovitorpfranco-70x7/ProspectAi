@@ -13,6 +13,7 @@ export interface SelectOption {
 })
 export class SelectComponent {
   @Input() label = '';
+  @Input() value = '';
   @Input() options: readonly SelectOption[] = [];
   @Output() readonly changed = new EventEmitter<string>();
 

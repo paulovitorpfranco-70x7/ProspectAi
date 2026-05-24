@@ -3,7 +3,7 @@
     <span class="select-field__label">{{ label }}</span>
   }
 
-  <select class="select-field__control" (change)="onChange($event)">
+  <select class="select-field__control" [value]="value" (change)="onChange($event)">
     @for (option of options; track option.value) {
       <option [value]="option.value">{{ option.label }}</option>
     }

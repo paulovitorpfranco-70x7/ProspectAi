@@ -1,0 +1,51 @@
+<form class="add-lead-form" (submit)="$event.preventDefault(); submit()">
+  <app-input
+    label="Nome do negócio"
+    placeholder="Ex: Acme Clinic"
+    [value]="form.name"
+    (valueChange)="updateField('name', $event)"
+  />
+
+  <app-select
+    label="Setor"
+    [value]="form.sector"
+    [options]="sectorOptions"
+    (changed)="updateField('sector', $event)"
+  />
+
+  @if (!form.sector) {
+    <p class="add-lead-form__hint">Setor obrigatório.</p>
+  }
+
+  <app-input
+    label="Cidade"
+    placeholder="Ex: Niterói"
+    [value]="form.city"
+    (valueChange)="updateField('city', $event)"
+  />
+
+  <div class="add-lead-form__contact-grid">
+    <app-input
+      label="Telefone"
+      placeholder="(21) 99999-0001"
+      [value]="form.phone"
+      (valueChange)="updateField('phone', $event)"
+    />
+
+    <app-input
+      label="E-mail"
+      placeholder="contato@empresa.com"
+      type="email"
+      [value]="form.email"
+      (valueChange)="updateField('email', $event)"
+    />
+  </div>
+
+  @if (!hasContactChannel) {
+    <p class="add-lead-form__warning">Informe telefone ou e-mail para criar o lead.</p>
+  }
+
+  <app-button type="submit" [disabled]="!canSubmit">
+    {{ loading ? 'Salvando...' : 'Adicionar lead' }}
+  </app-button>
+</form>

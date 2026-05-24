@@ -2698,13 +2698,13 @@ Estimativa total: 95 itens. Executável em 4-6 dias de trabalho focado.
 ### Fase 22 — Presentation: Feature Add Lead
 
 ```
-[ ] 84. Criar `src/app/presentation/features/add-lead/store/add-lead.store.ts` como signalStore com state: { form, loading, error }. Métodos: updateField, submit (chama CreateLeadUseCase). + spec.
+[x] 84. Criar `src/app/presentation/features/add-lead/store/add-lead.store.ts` como signalStore com state: { form, loading, error }. Métodos: updateField, submit (chama CreateLeadUseCase). + spec.
 
-[ ] 85. Criar `src/app/presentation/features/add-lead/components/add-lead-form/add-lead-form.component.ts` com inputs: businessName, sector (dropdown obrigatório!), city, phone (opcional), email (opcional). Validação visual: phone OU email obrigatório, sector obrigatório. + spec smoke.
+[x] 85. Criar `src/app/presentation/features/add-lead/components/add-lead-form/add-lead-form.component.ts` com inputs: businessName, sector (dropdown obrigatório!), city, phone (opcional), email (opcional). Validação visual: phone OU email obrigatório, sector obrigatório. + spec smoke.
 
-[ ] 86. Criar `src/app/presentation/features/add-lead/pages/add-lead.page.ts` que provê AddLeadStore, renderiza add-lead-form e redireciona pra /pipeline após sucesso. + spec smoke.
+[x] 86. Criar `src/app/presentation/features/add-lead/pages/add-lead.page.ts` que provê AddLeadStore, renderiza add-lead-form e redireciona pra /pipeline após sucesso. + spec smoke.
 
-[ ] 87. Criar `src/app/presentation/features/add-lead/add-lead.routes.ts` com rota lazy.
+[x] 87. Criar `src/app/presentation/features/add-lead/add-lead.routes.ts` com rota lazy.
 ```
 
 ### Fase 23 — Bootstrap da App

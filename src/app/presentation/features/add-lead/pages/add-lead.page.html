@@ -1,0 +1,12 @@
+<section class="add-lead-page">
+  <app-add-lead-form
+    [form]="store.form()"
+    [loading]="store.loading()"
+    (fieldChanged)="updateField($event)"
+    (submitted)="store.submit()"
+  />
+
+  @if (store.error()) {
+    <p class="add-lead-page__error">{{ store.error() }}</p>
+  }
+</section>
