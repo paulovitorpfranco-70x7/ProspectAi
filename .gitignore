@@ -44,6 +44,11 @@ testem.log
 /typings
 __screenshots__/
 graphify-out/
+.agents/
+.claude/
+.codex/
+AGENTS.md
+CLAUDE.md
 
 # System files
 .DS_Store
