@@ -43,6 +43,7 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+graphify-out/
 
 # System files
 .DS_Store
