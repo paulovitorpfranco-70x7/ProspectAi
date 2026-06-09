@@ -11,7 +11,7 @@ const WHATSAPP_TEMPLATE: MessageTemplate = {
   channel: 'whatsapp',
   subject: null,
   body:
-    'Oi! Sou Paulo, dev web de {{cidade}}. Hoje quem busca {{setor}} no Google não encontra o {{nome}} — isso significa clientes indo embora sem saber que vocês existem. Monto uma prévia do site de graça para você ver como ficaria. Tem 2 minutinhos pra conversar?',
+    'Oi! Sou Paulo, dev web de {{cidade}}. Vi o {{nome}} no Google e achei que um site profissional poderia trazer ainda mais visibilidade e clientes para vocês. Monto uma prévia de graça para você ver como ficaria. Tem 2 minutinhos pra conversar?',
 };
 
 const EMAIL_TEMPLATE: MessageTemplate = {
