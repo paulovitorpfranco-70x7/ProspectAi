@@ -55,6 +55,7 @@ function makeDispatcherMock(): jest.Mocked<ContactDispatcherService> {
 function makeTemplateServiceMock(): jest.Mocked<MessageTemplateService> {
   return {
     getTemplate: jest.fn().mockReturnValue(WHATSAPP_TEMPLATE),
+    getTemplateForSector: jest.fn().mockReturnValue(WHATSAPP_TEMPLATE),
     render: jest.fn().mockReturnValue(RENDERED_MESSAGE),
   };
 }
@@ -135,14 +136,18 @@ describe('SendWhatsAppUseCase', () => {
     expect(repository.save).not.toHaveBeenCalled();
   });
 
-  it("should call messageTemplateService.getTemplate with 'whatsapp'", async () => {
+  it("should call messageTemplateService.getTemplateForSector with lead's sector and 'whatsapp'", async () => {
     const repository = makeRepositoryMock();
     repository.findById.mockResolvedValueOnce(makeLead());
     const { useCase, templateService } = makeUseCase(repository);
 
     await useCase.execute({ leadId: LEAD_ID });
 
-    expect(templateService.getTemplate).toHaveBeenCalledWith('whatsapp');
+    expect(templateService.getTemplateForSector).toHaveBeenCalledWith(
+      'Clínicas & Consultórios',
+      'whatsapp',
+    );
+    expect(templateService.getTemplate).not.toHaveBeenCalled();
   });
 
   it("should call messageTemplateService.render with lead's name, sector, city", async () => {

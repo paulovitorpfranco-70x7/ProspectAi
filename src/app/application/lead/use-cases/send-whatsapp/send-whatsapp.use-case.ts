@@ -30,7 +30,10 @@ export class SendWhatsAppUseCase implements UseCase<SendWhatsAppInput, SendWhats
       throw new LeadMissingContactChannelError(lead.id.getValue(), 'whatsapp');
     }
 
-    const template = this.messageTemplateService.getTemplate('whatsapp');
+    const template = this.messageTemplateService.getTemplateForSector(
+      lead.sector.getValue(),
+      'whatsapp',
+    );
     const rendered = this.messageTemplateService.render(template, {
       nome: lead.businessName.getValue(),
       setor: lead.sector.getValue(),

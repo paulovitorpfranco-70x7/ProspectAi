@@ -55,6 +55,7 @@ function makeDispatcherMock(): jest.Mocked<ContactDispatcherService> {
 function makeTemplateServiceMock(): jest.Mocked<MessageTemplateService> {
   return {
     getTemplate: jest.fn().mockReturnValue(EMAIL_TEMPLATE),
+    getTemplateForSector: jest.fn().mockReturnValue(EMAIL_TEMPLATE),
     render: jest.fn().mockReturnValue(RENDERED_MESSAGE),
   };
 }

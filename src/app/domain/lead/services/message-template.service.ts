@@ -1,4 +1,5 @@
 import type { ContactChannel } from '../entities/lead.entity';
+import type { SectorValue } from '../value-objects/sector.vo';
 import type { RenderedMessage } from './contact-dispatcher.service';
 
 export interface MessageTemplate {
@@ -18,6 +19,9 @@ export interface MessageTemplateVariables {
 export interface MessageTemplateService {
   /** Retorna o template ativo para o canal. */
   getTemplate(channel: ContactChannel): MessageTemplate;
+
+  /** Retorna o template ativo para o canal considerando o setor quando aplicável. */
+  getTemplateForSector(sector: SectorValue, channel: ContactChannel): MessageTemplate;
 
   /** Substitui placeholders. Placeholders desconhecidos permanecem literais. */
   render(template: MessageTemplate, vars: MessageTemplateVariables): RenderedMessage;
