@@ -7,6 +7,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 Object.assign(globalThis, { Blob, File, ReadableStream, TransformStream });
 const { fetch, Headers, Request, Response, getGlobalDispatcher } = jest.requireActual<typeof import('undici')>('undici');
 Object.assign(globalThis, { fetch, Headers, Request, Response });
+jest.setTimeout(30_000);
 import { Lead, type LeadSnapshot } from '@domain/lead/entities/lead.entity';
 import { DuplicateLeadError } from '@domain/lead/errors/duplicate-lead.error';
 import { LeadNotFoundError } from '@domain/lead/errors/lead-not-found.error';

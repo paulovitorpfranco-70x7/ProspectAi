@@ -33,6 +33,31 @@ interface PlaceFinderResponseDto {
   readonly hasWebsite: boolean;
 }
 
+const SEARCH_QUERY_BY_SECTOR: Readonly<Record<string, string>> = {
+  'Clínicas & Consultórios': 'Clínicas & Consultórios',
+  'Clínicas de Estética': 'clínica de estética',
+  'Clínicas Veterinárias & Pet': 'clínica veterinária pet shop',
+  'Psicólogos & Terapeutas': 'psicólogo consultório',
+  'Fisioterapia & Pilates': 'fisioterapia pilates',
+  Odontologia: 'clínica odontológica dentista',
+  'Salões & Barbearias': 'Salões & Barbearias',
+  'Salões Femininos': 'salão de beleza feminino',
+  'Nail Designers': 'nail designer manicure',
+  'Estúdios de Tatuagem': 'estúdio de tatuagem',
+  Restaurantes: 'Restaurantes',
+  'Lanchonetes & Hamburguerias': 'lanchonete hamburgueria',
+  'Padarias & Confeitarias': 'padaria confeitaria',
+  'Marmitarias & Delivery': 'marmitaria delivery comida',
+  'Oficinas Mecânicas': 'Oficinas Mecânicas',
+  'Academias & Estúdios': 'Academias & Estúdios',
+  'Fotógrafos & Estúdios': 'fotógrafo estúdio fotografia',
+  'Serviços Domésticos': 'Serviços Domésticos',
+  Advocacia: 'Advocacia',
+  Contabilidade: 'Contabilidade',
+  'Escolas & Cursos': 'Escolas & Cursos',
+  'Igrejas & Ministérios': 'Igrejas & Ministérios',
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -69,7 +94,7 @@ serve(async (req) => {
       ].join(','),
     },
     body: JSON.stringify({
-      textQuery: `${sector} ${city}`,
+      textQuery: `${SEARCH_QUERY_BY_SECTOR[sector] ?? sector} ${city}`,
       languageCode: 'pt-BR',
     }),
   });

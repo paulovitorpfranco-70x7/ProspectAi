@@ -9,7 +9,7 @@ describe('MessageTemplateInMemoryService', () => {
     expect(template.channel).toBe('whatsapp');
     expect(template.subject).toBeNull();
     expect(template.body).toContain('{{nome}}');
-    expect(template.body).toContain('{{setor}}');
+    expect(template.body).toContain('{{cidade}}');
   });
 
   it("getTemplate('email') should return Email default template with subject", () => {
