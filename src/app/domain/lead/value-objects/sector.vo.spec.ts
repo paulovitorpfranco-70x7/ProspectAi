@@ -2,7 +2,7 @@ import { SectorInvalidError } from '@domain/lead/errors/sector-invalid.error';
 import { Sector, type SectorValue } from './sector.vo';
 
 describe('Sector', () => {
-  it('should accept each of the 10 canonical sector values', () => {
+  it('should accept each of the 22 canonical sector values', () => {
     for (const value of Sector.ALL) {
       const sector = Sector.create(value);
 
@@ -17,21 +17,33 @@ describe('Sector', () => {
     );
   });
 
-  it('should expose ALL as readonly array with 10 items', () => {
+  it('should expose ALL as readonly array with 22 items', () => {
     const expected: readonly SectorValue[] = [
       'Clínicas & Consultórios',
+      'Clínicas de Estética',
+      'Clínicas Veterinárias & Pet',
+      'Psicólogos & Terapeutas',
+      'Fisioterapia & Pilates',
+      'Odontologia',
       'Salões & Barbearias',
-      'Oficinas Mecânicas',
+      'Salões Femininos',
+      'Nail Designers',
+      'Estúdios de Tatuagem',
       'Restaurantes',
+      'Lanchonetes & Hamburguerias',
+      'Padarias & Confeitarias',
+      'Marmitarias & Delivery',
+      'Oficinas Mecânicas',
+      'Academias & Estúdios',
+      'Fotógrafos & Estúdios',
+      'Serviços Domésticos',
       'Advocacia',
       'Contabilidade',
-      'Academias & Estúdios',
-      'Serviços Domésticos',
-      'Igrejas & Ministérios',
       'Escolas & Cursos',
+      'Igrejas & Ministérios',
     ];
 
-    expect(Sector.ALL).toHaveLength(10);
+    expect(Sector.ALL).toHaveLength(22);
     expect(Sector.ALL).toEqual(expected);
   });
 

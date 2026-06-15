@@ -2,28 +2,52 @@ import { SectorInvalidError } from '@domain/lead/errors/sector-invalid.error';
 
 export type SectorValue =
   | 'Clínicas & Consultórios'
+  | 'Clínicas de Estética'
+  | 'Clínicas Veterinárias & Pet'
+  | 'Psicólogos & Terapeutas'
+  | 'Fisioterapia & Pilates'
+  | 'Odontologia'
   | 'Salões & Barbearias'
-  | 'Oficinas Mecânicas'
+  | 'Salões Femininos'
+  | 'Nail Designers'
+  | 'Estúdios de Tatuagem'
   | 'Restaurantes'
+  | 'Lanchonetes & Hamburguerias'
+  | 'Padarias & Confeitarias'
+  | 'Marmitarias & Delivery'
+  | 'Oficinas Mecânicas'
+  | 'Academias & Estúdios'
+  | 'Fotógrafos & Estúdios'
+  | 'Serviços Domésticos'
   | 'Advocacia'
   | 'Contabilidade'
-  | 'Academias & Estúdios'
-  | 'Serviços Domésticos'
-  | 'Igrejas & Ministérios'
-  | 'Escolas & Cursos';
+  | 'Escolas & Cursos'
+  | 'Igrejas & Ministérios';
 
 export class Sector {
   static readonly ALL: readonly SectorValue[] = [
     'Clínicas & Consultórios',
+    'Clínicas de Estética',
+    'Clínicas Veterinárias & Pet',
+    'Psicólogos & Terapeutas',
+    'Fisioterapia & Pilates',
+    'Odontologia',
     'Salões & Barbearias',
-    'Oficinas Mecânicas',
+    'Salões Femininos',
+    'Nail Designers',
+    'Estúdios de Tatuagem',
     'Restaurantes',
+    'Lanchonetes & Hamburguerias',
+    'Padarias & Confeitarias',
+    'Marmitarias & Delivery',
+    'Oficinas Mecânicas',
+    'Academias & Estúdios',
+    'Fotógrafos & Estúdios',
+    'Serviços Domésticos',
     'Advocacia',
     'Contabilidade',
-    'Academias & Estúdios',
-    'Serviços Domésticos',
-    'Igrejas & Ministérios',
     'Escolas & Cursos',
+    'Igrejas & Ministérios',
   ];
 
   private constructor(private readonly value: SectorValue) {}
