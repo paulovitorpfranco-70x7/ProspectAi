@@ -10,6 +10,7 @@ export class PlaceFinderMapper {
       phone: dto.phone ?? null,
       email: dto.email ?? null,
       rating: dto.rating ?? null,
+      reviewCount: dto.reviewCount ?? 0,
       address: dto.address ?? null,
       hasWebsite: websiteQuality !== 'none',
       instagramHandle: dto.instagramHandle ?? null,

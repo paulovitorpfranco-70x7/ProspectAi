@@ -8,6 +8,7 @@ describe('PlaceFinderMapper', () => {
         phone: '(21) 99999-0001',
         email: 'contato@acme.com',
         rating: 4.5,
+        reviewCount: 30,
         address: 'Rua A, 123',
         hasWebsite: true,
         instagramHandle: 'acmeclinic',
@@ -20,6 +21,7 @@ describe('PlaceFinderMapper', () => {
       phone: '(21) 99999-0001',
       email: 'contato@acme.com',
       rating: 4.5,
+      reviewCount: 30,
       address: 'Rua A, 123',
       hasWebsite: true,
       instagramHandle: 'acmeclinic',
@@ -31,6 +33,12 @@ describe('PlaceFinderMapper', () => {
     const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
 
     expect(result.rating).toBeNull();
+  });
+
+  it('should default reviewCount to zero', () => {
+    const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
+
+    expect(result.reviewCount).toBe(0);
   });
 
   it('should default address to null', () => {

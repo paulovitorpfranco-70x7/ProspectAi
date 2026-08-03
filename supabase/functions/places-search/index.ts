@@ -17,6 +17,7 @@ interface GooglePlace {
   readonly nationalPhoneNumber?: string;
   readonly internationalPhoneNumber?: string;
   readonly rating?: number;
+  readonly userRatingCount?: number;
   readonly formattedAddress?: string;
   readonly websiteUri?: string;
 }
@@ -30,6 +31,7 @@ interface PlaceFinderResponseDto {
   readonly phone: string | null;
   readonly email: string | null;
   readonly rating: number | null;
+  readonly reviewCount: number;
   readonly address: string | null;
   readonly hasWebsite: boolean;
   readonly instagramHandle: string | null;
@@ -92,6 +94,7 @@ serve(async (req) => {
         'places.nationalPhoneNumber',
         'places.internationalPhoneNumber',
         'places.rating',
+        'places.userRatingCount',
         'places.formattedAddress',
         'places.websiteUri',
       ].join(','),
@@ -117,6 +120,7 @@ serve(async (req) => {
         phone: place.nationalPhoneNumber ?? place.internationalPhoneNumber ?? null,
         email: null,
         rating: place.rating ?? null,
+        reviewCount: place.userRatingCount ?? 0,
         address: place.formattedAddress ?? null,
         hasWebsite: website.hasWebsite,
         instagramHandle: website.instagramHandle,

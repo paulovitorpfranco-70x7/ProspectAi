@@ -13,6 +13,7 @@ function makePlace(overrides: Partial<PlaceFinderResult> = {}): PlaceFinderResul
     phone: '(21) 99999-0001',
     email: 'contato@acme.com',
     rating: 4.5,
+    reviewCount: 30,
     address: 'Rua A, 123',
     hasWebsite: false,
     instagramHandle: null,
@@ -98,8 +99,8 @@ describe('SearchLeadsUseCase', () => {
   });
 
   it.each([
-    { websiteQuality: 'weak' as const, hasWebsite: true },
-    { websiteQuality: 'none' as const, hasWebsite: false },
+    { websiteQuality: 'weak' as const, hasWebsite: true, expectedScore: 85 },
+    { websiteQuality: 'none' as const, hasWebsite: false, expectedScore: 100 },
   ])('should keep leads with websiteQuality=$websiteQuality', async (website) => {
     const repository = makeRepositoryMock();
     const placeFinder = makePlaceFinderMock([
@@ -117,6 +118,7 @@ describe('SearchLeadsUseCase', () => {
     expect(savedLead?.instagramHandle).toBe('barbearia_marica');
     expect(savedLead?.websiteQuality).toBe(website.websiteQuality);
     expect(savedLead?.hasWebsite).toBe(website.hasWebsite);
+    expect(savedLead?.leadScore).toBe(website.expectedScore);
   });
 
   it("should skip places that match existsByPhoneAndCity and return itemStatus='skipped_duplicate'", async () => {

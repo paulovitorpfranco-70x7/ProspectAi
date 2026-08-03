@@ -5,6 +5,7 @@ import { LeadRatingInvalidError } from '../errors/lead-rating-invalid.error';
 import { LeadContactedEvent } from '../events/lead-contacted.event';
 import { LeadCreatedEvent } from '../events/lead-created.event';
 import { LeadStatusChangedEvent } from '../events/lead-status-changed.event';
+import { calculateLeadScore } from '../services/calculate-lead-score';
 import { BusinessName } from '../value-objects/business-name.vo';
 import { ContactInfo } from '../value-objects/contact-info.vo';
 import { LeadId } from '../value-objects/lead-id.vo';
@@ -25,7 +26,7 @@ export interface LeadCreateInput {
   readonly hasWebsite?: boolean;
   readonly instagramHandle?: string | null;
   readonly websiteQuality?: WebsiteQuality | null;
-  readonly leadScore?: number;
+  readonly reviewCount?: number;
   readonly openingHours?: unknown | null;
   readonly topReviews?: unknown | null;
   readonly previewUrl?: string | null;
@@ -92,6 +93,15 @@ export class Lead {
 
     const id = LeadId.generate();
     const createdAt = new Date();
+    const instagramHandle = input.instagramHandle ?? null;
+    const websiteQuality = input.websiteQuality ?? null;
+    const leadScore = calculateLeadScore({
+      websiteQuality,
+      instagramHandle,
+      hasPhone: input.contactInfo.hasPhone(),
+      rating,
+      reviewCount: input.reviewCount ?? 0,
+    });
     const lead = new Lead(
       id,
       input.businessName,
@@ -104,9 +114,9 @@ export class Lead {
       0,
       null,
       input.hasWebsite ?? false,
-      input.instagramHandle ?? null,
-      input.websiteQuality ?? null,
-      input.leadScore ?? 0,
+      instagramHandle,
+      websiteQuality,
+      leadScore,
       input.openingHours ?? null,
       input.topReviews ?? null,
       input.previewUrl ?? null,

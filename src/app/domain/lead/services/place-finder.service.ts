@@ -15,6 +15,7 @@ export interface PlaceFinderResult {
   readonly phone: string | null;
   readonly email: string | null;
   readonly rating: number | null;
+  readonly reviewCount: number;
   readonly address: string | null;
   readonly hasWebsite: boolean;
   readonly instagramHandle: string | null;

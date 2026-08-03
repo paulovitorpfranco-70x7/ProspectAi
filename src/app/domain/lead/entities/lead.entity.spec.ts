@@ -40,6 +40,19 @@ describe('Lead', () => {
     expect(lead.hasWebsite).toBe(false);
   });
 
+  it('create: should derive leadScore from enrichment data', () => {
+    const lead = Lead.create(
+      makeCreateInput({
+        websiteQuality: 'none',
+        instagramHandle: 'barbearia_marica',
+        rating: 4.5,
+        reviewCount: 30,
+      }),
+    );
+
+    expect(lead.leadScore).toBe(100);
+  });
+
   it('create: should accept rating between 0 and 5', () => {
     expect(Lead.create(makeCreateInput({ rating: 0 })).rating).toBe(0);
     expect(Lead.create(makeCreateInput({ rating: 5 })).rating).toBe(5);

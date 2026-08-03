@@ -5,6 +5,7 @@ export interface PlaceFinderResponseDto {
   readonly phone?: string | null;
   readonly email?: string | null;
   readonly rating?: number | null;
+  readonly reviewCount?: number | null;
   readonly address?: string | null;
   readonly hasWebsite?: boolean | null;
   readonly instagramHandle?: string | null;

@@ -95,6 +95,7 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
         location,
         contactInfo,
         rating: place.rating,
+        reviewCount: place.reviewCount,
         hasWebsite: place.hasWebsite,
         instagramHandle: place.instagramHandle,
         websiteQuality: place.websiteQuality,

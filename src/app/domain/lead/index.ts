@@ -19,6 +19,7 @@ export * from './repositories/lead.repository';
 export * from './services/place-finder.service';
 export * from './services/contact-dispatcher.service';
 export * from './services/message-template.service';
+export * from './services/calculate-lead-score';
 
 export * from './errors/lead-id-invalid.error';
 export * from './errors/business-name-invalid.error';
