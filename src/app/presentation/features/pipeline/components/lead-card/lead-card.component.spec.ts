@@ -56,6 +56,52 @@ describe('LeadCardComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Proposta');
   });
 
+  it.each([
+    { score: 90, colorClass: 'badge--accent' },
+    { score: 70, colorClass: 'badge--warning' },
+    { score: 69, colorClass: 'badge--muted' },
+  ])('should render score $score with the expected color range', async ({ score, colorClass }) => {
+    const fixture = await render({ ...BASE_LEAD, leadScore: score });
+    const scoreBadge = fixture.nativeElement.querySelector('.lead-card__score .badge');
+
+    expect(scoreBadge.textContent).toContain(`Score ${score}`);
+    expect(scoreBadge.classList).toContain(colorClass);
+  });
+
+  it('should render Instagram handle as a safe external link', async () => {
+    const fixture = await render({ ...BASE_LEAD, instagramHandle: '@acmeclinic' });
+    const link = fixture.nativeElement.querySelector('.lead-card__instagram') as HTMLAnchorElement;
+
+    expect(link.textContent).toContain('@acmeclinic');
+    expect(link.href).toBe('https://instagram.com/acmeclinic');
+    expect(link.target).toBe('_blank');
+    expect(link.rel).toContain('noopener');
+  });
+
+  it('should omit Instagram badge when handle is absent', async () => {
+    const fixture = await render({ ...BASE_LEAD, instagramHandle: null });
+
+    expect(fixture.nativeElement.querySelector('.lead-card__instagram')).toBeNull();
+  });
+
+  it.each([
+    { quality: 'none' as const, label: 'Sem site', colorClass: 'badge--muted' },
+    { quality: 'weak' as const, label: 'Site fraco', colorClass: 'badge--warning' },
+    { quality: 'proper' as const, label: 'Tem site próprio', colorClass: 'badge--info' },
+  ])('should render website quality $quality', async ({ quality, label, colorClass }) => {
+    const fixture = await render({ ...BASE_LEAD, websiteQuality: quality });
+    const qualityBadge = fixture.nativeElement.querySelector('.lead-card__website-quality .badge');
+
+    expect(qualityBadge.textContent).toContain(label);
+    expect(qualityBadge.classList).toContain(colorClass);
+  });
+
+  it('should omit website quality badge when quality is unknown', async () => {
+    const fixture = await render({ ...BASE_LEAD, websiteQuality: null });
+
+    expect(fixture.nativeElement.querySelector('.lead-card__website-quality')).toBeNull();
+  });
+
   it('should emit statusChange event when transition button clicked', async () => {
     const fixture = await render();
     const emitSpy = jest.spyOn(fixture.componentInstance.statusChange, 'emit');

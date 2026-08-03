@@ -20,9 +20,40 @@
       </div>
     </div>
 
+    <div class="lead-card__intelligence" aria-label="Inteligência do lead">
+      <app-badge class="lead-card__score" [color]="scoreColor">
+        Score {{ lead.leadScore }}
+      </app-badge>
+
+      @if (instagramHandle; as handle) {
+        <a
+          class="lead-card__instagram"
+          [href]="instagramUrl"
+          target="_blank"
+          rel="noopener"
+          [attr.aria-label]="'Abrir Instagram de @' + handle"
+        >
+          <app-badge color="info">@{{ handle }}</app-badge>
+        </a>
+      }
+
+      @if (websiteQualityLabel; as label) {
+        <app-badge class="lead-card__website-quality" [color]="websiteQualityColor">
+          {{ label }}
+        </app-badge>
+      }
+    </div>
+
     <div class="lead-card__actions" aria-label="Ações de contato">
-      <app-button variant="secondary" [disabled]="lead.phoneDigits === null" (click)="whatsapp.emit(lead.id)">WhatsApp</app-button>
-      <app-button variant="secondary" [disabled]="lead.email === null" (click)="email.emit(lead.id)">E-mail</app-button>
+      <app-button
+        variant="secondary"
+        [disabled]="lead.phoneDigits === null"
+        (click)="whatsapp.emit(lead.id)"
+        >WhatsApp</app-button
+      >
+      <app-button variant="secondary" [disabled]="lead.email === null" (click)="email.emit(lead.id)"
+        >E-mail</app-button
+      >
       <app-button variant="danger" (click)="remove.emit(lead.id)">Remover</app-button>
     </div>
 

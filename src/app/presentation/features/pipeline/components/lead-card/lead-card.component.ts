@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import type { LeadDto } from '@application/lead';
 import { LeadStatus, type LeadStatusValue } from '@domain/lead/value-objects/lead-status.vo';
-import { BadgeComponent, type BadgeColor } from '@presentation/shared/components/badge/badge.component';
+import {
+  BadgeComponent,
+  type BadgeColor,
+} from '@presentation/shared/components/badge/badge.component';
 import { ButtonComponent } from '@presentation/shared/components/button/button.component';
 import { CardComponent } from '@presentation/shared/components/card/card.component';
 import { STALE_THRESHOLD_DAYS } from '@presentation/shared/constants';
@@ -37,6 +40,20 @@ const STATUS_COLORS: Readonly<Record<LeadStatusValue, BadgeColor>> = {
   perdido: 'muted',
 };
 
+type WebsiteQuality = NonNullable<LeadDto['websiteQuality']>;
+
+const WEBSITE_QUALITY_LABELS: Readonly<Record<WebsiteQuality, string>> = {
+  none: 'Sem site',
+  weak: 'Site fraco',
+  proper: 'Tem site próprio',
+};
+
+const WEBSITE_QUALITY_COLORS: Readonly<Record<WebsiteQuality, BadgeColor>> = {
+  none: 'muted',
+  weak: 'warning',
+  proper: 'info',
+};
+
 const SECTOR_ICONS: Readonly<Record<string, string>> = {
   'Clínicas & Consultórios': '🏥',
   'Salões & Barbearias': '✂️',
@@ -60,7 +77,10 @@ const SECTOR_ICONS: Readonly<Record<string, string>> = {
 export class LeadCardComponent {
   @Input({ required: true }) lead!: LeadDto;
 
-  @Output() readonly statusChange = new EventEmitter<{ leadId: string; newStatus: LeadStatusValue }>();
+  @Output() readonly statusChange = new EventEmitter<{
+    leadId: string;
+    newStatus: LeadStatusValue;
+  }>();
   @Output() readonly whatsapp = new EventEmitter<string>();
   @Output() readonly email = new EventEmitter<string>();
   @Output() readonly remove = new EventEmitter<string>();
@@ -77,6 +97,42 @@ export class LeadCardComponent {
 
   get statusColor(): BadgeColor {
     return STATUS_COLORS[this.lead.status];
+  }
+
+  get scoreColor(): BadgeColor {
+    if (this.lead.leadScore >= 90) {
+      return 'accent';
+    }
+
+    if (this.lead.leadScore >= 70) {
+      return 'warning';
+    }
+
+    return 'muted';
+  }
+
+  get instagramHandle(): string | null {
+    const handle = this.lead.instagramHandle?.trim().replace(/^@+/, '') ?? '';
+
+    return handle.length > 0 ? handle : null;
+  }
+
+  get instagramUrl(): string | null {
+    return this.instagramHandle === null
+      ? null
+      : `https://instagram.com/${encodeURIComponent(this.instagramHandle)}`;
+  }
+
+  get websiteQualityLabel(): string | null {
+    return this.lead.websiteQuality === null
+      ? null
+      : WEBSITE_QUALITY_LABELS[this.lead.websiteQuality];
+  }
+
+  get websiteQualityColor(): BadgeColor {
+    return this.lead.websiteQuality === null
+      ? 'muted'
+      : WEBSITE_QUALITY_COLORS[this.lead.websiteQuality];
   }
 
   get isStale(): boolean {

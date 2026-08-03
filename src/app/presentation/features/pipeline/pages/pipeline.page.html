@@ -16,7 +16,12 @@
     />
 
     <app-select label="Status" [options]="filterOptions" (changed)="onFilterChanged($event)" />
-    <app-select label="Ordenar por" [options]="sortOptions" (changed)="onSortChanged($event)" />
+    <app-select
+      label="Ordenar por"
+      [value]="store.sortBy()"
+      [options]="sortOptions"
+      (changed)="onSortChanged($event)"
+    />
   </section>
 
   @if (store.error()) {

@@ -8,7 +8,7 @@ import {
   type LeadDto,
 } from '@application/lead';
 import { InvalidStatusTransitionError } from '@domain/lead/errors/invalid-status-transition.error';
-import { Lead } from '@domain/lead/entities/lead.entity';
+import { Lead, type LeadSnapshot } from '@domain/lead/entities/lead.entity';
 import type { LeadRepository } from '@domain/lead/repositories/lead.repository';
 import { BusinessName } from '@domain/lead/value-objects/business-name.vo';
 import { ContactInfo } from '@domain/lead/value-objects/contact-info.vo';
@@ -21,14 +21,14 @@ import { PipelineStore } from './pipeline.store';
 
 const LEAD_ID = '123e4567-e89b-42d3-a456-426614174000';
 
-function makeLead(overrides: Partial<{ status: ReturnType<typeof LeadStatus.create> }> = {}): Lead {
+function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
   return Lead.reconstitute({
     id: LeadId.fromString(LEAD_ID),
     businessName: BusinessName.create('Acme Clinic'),
     sector: Sector.create('Clínicas & Consultórios'),
     location: Location.create({ city: 'Niterói', address: 'Rua A, 123' }),
     contactInfo: ContactInfo.create({ phone: PhoneNumber.create('(21) 99999-0001') }),
-    status: overrides.status ?? LeadStatus.novo(),
+    status: LeadStatus.novo(),
     notes: '',
     rating: 4.5,
     contactCount: 0,
@@ -43,6 +43,7 @@ function makeLead(overrides: Partial<{ status: ReturnType<typeof LeadStatus.crea
     previewViews: 0,
     previewLastViewedAt: null,
     createdAt: new Date('2026-05-18T12:00:00Z'),
+    ...overrides,
   });
 }
 
@@ -130,6 +131,36 @@ describe('PipelineStore', () => {
     expect(store.loading()).toBe(false);
   });
 
+  it('should sort by leadScore descending and break ties by newest creation', async () => {
+    const { store, repository } = setup();
+    repository.findAll.mockResolvedValueOnce([
+      makeLead({
+        businessName: BusinessName.create('Score 60'),
+        leadScore: 60,
+        createdAt: new Date('2026-05-20T12:00:00Z'),
+      }),
+      makeLead({
+        businessName: BusinessName.create('Score 90 antigo'),
+        leadScore: 90,
+        createdAt: new Date('2026-05-18T12:00:00Z'),
+      }),
+      makeLead({
+        businessName: BusinessName.create('Score 90 recente'),
+        leadScore: 90,
+        createdAt: new Date('2026-05-19T12:00:00Z'),
+      }),
+    ]);
+
+    await store.loadLeads();
+
+    expect(store.sortBy()).toBe('leadScore');
+    expect(store.filteredLeads().map((lead) => lead.businessName)).toEqual([
+      'Score 90 recente',
+      'Score 90 antigo',
+      'Score 60',
+    ]);
+  });
+
   it('should update lead in state after updateStatus succeeds', async () => {
     const { store, repository, updateStatus } = setup();
     repository.findAll.mockResolvedValueOnce([makeLead()]);
@@ -145,7 +176,10 @@ describe('PipelineStore', () => {
   it('should remove lead from state after delete succeeds', async () => {
     const { store, repository, deleteLead } = setup();
     repository.findAll.mockResolvedValueOnce([makeLead()]);
-    deleteLead.execute.mockResolvedValueOnce({ leadId: LEAD_ID, deletedAtIso: '2026-05-18T12:00:00.000Z' });
+    deleteLead.execute.mockResolvedValueOnce({
+      leadId: LEAD_ID,
+      deletedAtIso: '2026-05-18T12:00:00.000Z',
+    });
     await store.loadLeads();
 
     await store.deleteLead(LEAD_ID);

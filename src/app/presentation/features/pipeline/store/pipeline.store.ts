@@ -13,7 +13,12 @@ import type { LeadRepository } from '@domain/lead/repositories/lead.repository';
 import type { LeadStatusValue } from '@domain/lead/value-objects/lead-status.vo';
 
 export type PipelineFilterStatus = LeadStatusValue | 'all';
-export type PipelineSortBy = 'createdAt' | 'rating' | 'contactCount' | 'lastContactAt';
+export type PipelineSortBy =
+  | 'leadScore'
+  | 'createdAt'
+  | 'rating'
+  | 'contactCount'
+  | 'lastContactAt';
 
 export interface PipelineState {
   readonly leads: LeadDto[];
@@ -39,7 +44,7 @@ const initialState: PipelineState = {
   leads: [],
   filterStatus: 'all',
   searchQuery: '',
-  sortBy: 'createdAt',
+  sortBy: 'leadScore',
   loading: false,
   error: null,
 };
@@ -107,7 +112,7 @@ export const PipelineStore = signalStore(
         patchState(store, { loading: true, error: null });
 
         try {
-          const leads = await leadRepository.findAll({ sortBy: store.sortBy(), sortOrder: 'desc' });
+          const leads = await leadRepository.findAll({ sortBy: 'createdAt', sortOrder: 'desc' });
           patchState(store, {
             leads: leads.map((lead) => LeadMapper.toDto(lead)),
             loading: false,
@@ -188,6 +193,13 @@ function replaceLead(leads: readonly LeadDto[], updatedLead: LeadDto): LeadDto[]
 
 function compareLeads(left: LeadDto, right: LeadDto, sortBy: PipelineSortBy): number {
   switch (sortBy) {
+    case 'leadScore': {
+      const scoreDifference = right.leadScore - left.leadScore;
+
+      return scoreDifference !== 0
+        ? scoreDifference
+        : dateValue(right.createdAtIso) - dateValue(left.createdAtIso);
+    }
     case 'rating':
       return (right.rating ?? -1) - (left.rating ?? -1);
     case 'contactCount':
@@ -204,7 +216,7 @@ function dateValue(value: string | null): number {
 }
 
 function isPipelineSortBy(field: string): field is PipelineSortBy {
-  return ['createdAt', 'rating', 'contactCount', 'lastContactAt'].includes(field);
+  return ['leadScore', 'createdAt', 'rating', 'contactCount', 'lastContactAt'].includes(field);
 }
 
 function getErrorMessage(error: unknown): string {

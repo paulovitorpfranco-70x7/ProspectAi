@@ -40,11 +40,27 @@
 }
 
 .lead-card__badges,
+.lead-card__intelligence,
 .lead-card__actions,
 .lead-card__transitions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
+}
+
+.lead-card__instagram {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lead-card__instagram:hover,
+.lead-card__instagram:focus-visible {
+  outline: none;
+  filter: brightness(1.2);
+}
+
+.lead-card__instagram:focus-visible {
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .lead-card__badges {
