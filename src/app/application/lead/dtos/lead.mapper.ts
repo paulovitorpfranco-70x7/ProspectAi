@@ -21,6 +21,14 @@ export class LeadMapper {
       contactCount: lead.contactCount,
       lastContactAtIso: lead.lastContactAt?.toISOString() ?? null,
       hasWebsite: lead.hasWebsite,
+      instagramHandle: lead.instagramHandle,
+      websiteQuality: lead.websiteQuality,
+      leadScore: lead.leadScore,
+      openingHours: lead.openingHours,
+      topReviews: lead.topReviews,
+      previewUrl: lead.previewUrl,
+      previewViews: lead.previewViews,
+      previewLastViewedAtIso: lead.previewLastViewedAt?.toISOString() ?? null,
       createdAtIso: lead.createdAt.toISOString(),
     };
   }

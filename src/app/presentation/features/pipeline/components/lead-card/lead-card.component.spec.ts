@@ -17,6 +17,14 @@ const BASE_LEAD: LeadDto = {
   contactCount: 2,
   lastContactAtIso: null,
   hasWebsite: false,
+  instagramHandle: null,
+  websiteQuality: null,
+  leadScore: 0,
+  openingHours: null,
+  topReviews: null,
+  previewUrl: null,
+  previewViews: 0,
+  previewLastViewedAtIso: null,
   createdAtIso: '2026-05-18T12:00:00.000Z',
 };
 

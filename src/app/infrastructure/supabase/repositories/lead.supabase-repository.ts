@@ -9,13 +9,13 @@ import type {
 } from '@domain/lead/repositories/lead.repository';
 import type { Lead } from '@domain/lead/entities/lead.entity';
 import type { LeadId } from '@domain/lead/value-objects/lead-id.vo';
+import { LeadStatus } from '@domain/lead/value-objects/lead-status.vo';
 import type { PhoneNumber } from '@domain/lead/value-objects/phone-number.vo';
 import type { Database } from '../types/database.types';
 import { SupabaseClientService } from '../client/supabase.client';
 import { SupabaseLeadMapper } from '../mappers/lead.mapper';
 
 type LeadSortColumn = 'created_at' | 'rating' | 'contact_count' | 'last_contact_at';
-type LeadStatusValue = Database['public']['Enums']['lead_status'];
 type FilterableQuery<TSelf> = {
   eq(column: string, value: unknown): TSelf;
   or(filters: string): TSelf;
@@ -139,13 +139,16 @@ export class LeadSupabaseRepository implements LeadRepository {
       total: data.length,
       novo: 0,
       contatado: 0,
+      respondeu: 0,
+      preview_enviado: 0,
       proposta: 0,
       fechado: 0,
-      descartado: 0,
+      perdido: 0,
     };
 
     for (const row of data) {
-      stats[row.status] += 1;
+      const status = LeadStatus.create(row.status).getValue();
+      stats[status] += 1;
     }
 
     return stats;
@@ -158,7 +161,7 @@ export class LeadSupabaseRepository implements LeadRepository {
     let filtered = query;
 
     if (filter.status !== undefined) {
-      filtered = filtered.eq('status', filter.status.getValue() as LeadStatusValue);
+      filtered = filtered.eq('status', filter.status.getValue());
     }
 
     if (filter.sector !== undefined) {

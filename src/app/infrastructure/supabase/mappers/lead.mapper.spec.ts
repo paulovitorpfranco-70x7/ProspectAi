@@ -33,6 +33,14 @@ function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
     contact_count: 2,
     last_contact_at: LAST_CONTACT_AT_ISO,
     has_website: false,
+    instagram_handle: '@acme',
+    website_quality: 'proper',
+    lead_score: 80,
+    opening_hours: { monday: '09:00-18:00' },
+    top_reviews: [{ rating: 5, text: 'Excelente' }],
+    preview_url: 'https://preview.example/acme',
+    preview_views: 3,
+    preview_last_viewed_at: LAST_CONTACT_AT_ISO,
     created_at: CREATED_AT_ISO,
     updated_at: UPDATED_AT_ISO,
     created_by: null,
@@ -57,6 +65,14 @@ function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
     contactCount: 2,
     lastContactAt: new Date(LAST_CONTACT_AT_ISO),
     hasWebsite: false,
+    instagramHandle: '@acme',
+    websiteQuality: 'proper',
+    leadScore: 80,
+    openingHours: { monday: '09:00-18:00' },
+    topReviews: [{ rating: 5, text: 'Excelente' }],
+    previewUrl: 'https://preview.example/acme',
+    previewViews: 3,
+    previewLastViewedAt: new Date(LAST_CONTACT_AT_ISO),
     createdAt: new Date(CREATED_AT_ISO),
     ...overrides,
   };
@@ -86,6 +102,16 @@ function expectSameLeadValues(actual: Lead, expected: Lead): void {
     expected.lastContactAt?.toISOString() ?? null,
   );
   expect(actual.hasWebsite).toBe(expected.hasWebsite);
+  expect(actual.instagramHandle).toBe(expected.instagramHandle);
+  expect(actual.websiteQuality).toBe(expected.websiteQuality);
+  expect(actual.leadScore).toBe(expected.leadScore);
+  expect(actual.openingHours).toEqual(expected.openingHours);
+  expect(actual.topReviews).toEqual(expected.topReviews);
+  expect(actual.previewUrl).toBe(expected.previewUrl);
+  expect(actual.previewViews).toBe(expected.previewViews);
+  expect(actual.previewLastViewedAt?.toISOString() ?? null).toBe(
+    expected.previewLastViewedAt?.toISOString() ?? null,
+  );
   expect(actual.createdAt.toISOString()).toBe(expected.createdAt.toISOString());
 }
 
@@ -104,6 +130,14 @@ describe('SupabaseLeadMapper', () => {
     expect(lead.contactCount).toBe(2);
     expect(lead.lastContactAt?.toISOString()).toBe(LAST_CONTACT_AT_ISO);
     expect(lead.hasWebsite).toBe(false);
+    expect(lead.instagramHandle).toBe('@acme');
+    expect(lead.websiteQuality).toBe('proper');
+    expect(lead.leadScore).toBe(80);
+    expect(lead.openingHours).toEqual({ monday: '09:00-18:00' });
+    expect(lead.topReviews).toEqual([{ rating: 5, text: 'Excelente' }]);
+    expect(lead.previewUrl).toBe('https://preview.example/acme');
+    expect(lead.previewViews).toBe(3);
+    expect(lead.previewLastViewedAt?.toISOString()).toBe(LAST_CONTACT_AT_ISO);
     expect(lead.createdAt.toISOString()).toBe(CREATED_AT_ISO);
     expect(lead.pullEvents()).toEqual([]);
   });
@@ -139,6 +173,14 @@ describe('SupabaseLeadMapper', () => {
       contact_count: 2,
       last_contact_at: LAST_CONTACT_AT_ISO,
       has_website: false,
+      instagram_handle: '@acme',
+      website_quality: 'proper',
+      lead_score: 80,
+      opening_hours: { monday: '09:00-18:00' },
+      top_reviews: [{ rating: 5, text: 'Excelente' }],
+      preview_url: 'https://preview.example/acme',
+      preview_views: 3,
+      preview_last_viewed_at: LAST_CONTACT_AT_ISO,
       created_at: CREATED_AT_ISO,
     });
   });

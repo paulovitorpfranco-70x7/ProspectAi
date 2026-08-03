@@ -11,6 +11,7 @@ import { LeadId } from '../value-objects/lead-id.vo';
 import { LeadStatus } from '../value-objects/lead-status.vo';
 import { Location } from '../value-objects/location.vo';
 import { Sector } from '../value-objects/sector.vo';
+import type { WebsiteQuality } from '../value-objects/website-quality.type';
 import { DomainEvent } from '../../shared/events/domain-event.base';
 
 export type ContactChannel = 'whatsapp' | 'email';
@@ -22,6 +23,14 @@ export interface LeadCreateInput {
   readonly contactInfo: ContactInfo;
   readonly rating?: number | null;
   readonly hasWebsite?: boolean;
+  readonly instagramHandle?: string | null;
+  readonly websiteQuality?: WebsiteQuality | null;
+  readonly leadScore?: number;
+  readonly openingHours?: unknown | null;
+  readonly topReviews?: unknown | null;
+  readonly previewUrl?: string | null;
+  readonly previewViews?: number;
+  readonly previewLastViewedAt?: Date | null;
 }
 
 export interface LeadSnapshot {
@@ -36,6 +45,14 @@ export interface LeadSnapshot {
   readonly contactCount: number;
   readonly lastContactAt: Date | null;
   readonly hasWebsite: boolean;
+  readonly instagramHandle: string | null;
+  readonly websiteQuality: WebsiteQuality | null;
+  readonly leadScore: number;
+  readonly openingHours: unknown | null;
+  readonly topReviews: unknown | null;
+  readonly previewUrl: string | null;
+  readonly previewViews: number;
+  readonly previewLastViewedAt: Date | null;
   readonly createdAt: Date;
 }
 
@@ -57,6 +74,14 @@ export class Lead {
     private _contactCount: number,
     private _lastContactAt: Date | null,
     private readonly _hasWebsite: boolean,
+    private readonly _instagramHandle: string | null,
+    private readonly _websiteQuality: WebsiteQuality | null,
+    private readonly _leadScore: number,
+    private readonly _openingHours: unknown | null,
+    private readonly _topReviews: unknown | null,
+    private readonly _previewUrl: string | null,
+    private readonly _previewViews: number,
+    private readonly _previewLastViewedAt: Date | null,
     private readonly _createdAt: Date,
     private readonly _events: DomainEvent[],
   ) {}
@@ -79,6 +104,14 @@ export class Lead {
       0,
       null,
       input.hasWebsite ?? false,
+      input.instagramHandle ?? null,
+      input.websiteQuality ?? null,
+      input.leadScore ?? 0,
+      input.openingHours ?? null,
+      input.topReviews ?? null,
+      input.previewUrl ?? null,
+      input.previewViews ?? 0,
+      input.previewLastViewedAt ?? null,
       createdAt,
       [],
     );
@@ -103,6 +136,14 @@ export class Lead {
       snapshot.contactCount,
       snapshot.lastContactAt,
       snapshot.hasWebsite,
+      snapshot.instagramHandle,
+      snapshot.websiteQuality,
+      snapshot.leadScore,
+      snapshot.openingHours,
+      snapshot.topReviews,
+      snapshot.previewUrl,
+      snapshot.previewViews,
+      snapshot.previewLastViewedAt,
       snapshot.createdAt,
       [],
     );
@@ -150,6 +191,38 @@ export class Lead {
 
   get hasWebsite(): boolean {
     return this._hasWebsite;
+  }
+
+  get instagramHandle(): string | null {
+    return this._instagramHandle;
+  }
+
+  get websiteQuality(): WebsiteQuality | null {
+    return this._websiteQuality;
+  }
+
+  get leadScore(): number {
+    return this._leadScore;
+  }
+
+  get openingHours(): unknown | null {
+    return this._openingHours;
+  }
+
+  get topReviews(): unknown | null {
+    return this._topReviews;
+  }
+
+  get previewUrl(): string | null {
+    return this._previewUrl;
+  }
+
+  get previewViews(): number {
+    return this._previewViews;
+  }
+
+  get previewLastViewedAt(): Date | null {
+    return this._previewLastViewedAt;
   }
 
   get createdAt(): Date {

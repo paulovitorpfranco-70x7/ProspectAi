@@ -28,9 +28,11 @@ export interface PipelineStatsByStatus {
   readonly total: number;
   readonly novo: number;
   readonly contatado: number;
+  readonly respondeu: number;
+  readonly preview_enviado: number;
   readonly proposta: number;
   readonly fechado: number;
-  readonly descartado: number;
+  readonly perdido: number;
 }
 
 const initialState: PipelineState = {
@@ -45,9 +47,11 @@ const initialState: PipelineState = {
 const STATUS_VALUES: readonly LeadStatusValue[] = [
   'novo',
   'contatado',
+  'respondeu',
+  'preview_enviado',
   'proposta',
   'fechado',
-  'descartado',
+  'perdido',
 ];
 
 export const PipelineStore = signalStore(
@@ -74,9 +78,11 @@ export const PipelineStore = signalStore(
         total: leads().length,
         novo: 0,
         contatado: 0,
+        respondeu: 0,
+        preview_enviado: 0,
         proposta: 0,
         fechado: 0,
-        descartado: 0,
+        perdido: 0,
       };
 
       return leads().reduce(

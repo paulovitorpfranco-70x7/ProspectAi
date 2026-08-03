@@ -1,21 +1,32 @@
 import { LeadStatusInvalidError } from '@domain/lead/errors/lead-status-invalid.error';
 
-export type LeadStatusValue = 'novo' | 'contatado' | 'proposta' | 'fechado' | 'descartado';
+export type LeadStatusValue =
+  | 'novo'
+  | 'contatado'
+  | 'respondeu'
+  | 'preview_enviado'
+  | 'proposta'
+  | 'fechado'
+  | 'perdido';
 
 const VALID_TRANSITIONS: Readonly<Record<LeadStatusValue, readonly LeadStatusValue[]>> = {
-  novo: ['contatado', 'descartado'],
-  contatado: ['proposta', 'novo', 'descartado'],
-  proposta: ['fechado', 'contatado', 'descartado'],
+  novo: ['contatado', 'perdido'],
+  contatado: ['respondeu', 'novo', 'perdido'],
+  respondeu: ['preview_enviado', 'contatado', 'perdido'],
+  preview_enviado: ['proposta', 'respondeu', 'perdido'],
+  proposta: ['fechado', 'preview_enviado', 'perdido'],
   fechado: ['proposta'],
-  descartado: ['novo'],
+  perdido: ['novo'],
 };
 
 const LEAD_STATUS_VALUES: readonly LeadStatusValue[] = [
   'novo',
   'contatado',
+  'respondeu',
+  'preview_enviado',
   'proposta',
   'fechado',
-  'descartado',
+  'perdido',
 ];
 
 export class LeadStatus {
@@ -37,6 +48,14 @@ export class LeadStatus {
     return new LeadStatus('contatado');
   }
 
+  static respondeu(): LeadStatus {
+    return new LeadStatus('respondeu');
+  }
+
+  static previewEnviado(): LeadStatus {
+    return new LeadStatus('preview_enviado');
+  }
+
   static proposta(): LeadStatus {
     return new LeadStatus('proposta');
   }
@@ -45,8 +64,8 @@ export class LeadStatus {
     return new LeadStatus('fechado');
   }
 
-  static descartado(): LeadStatus {
-    return new LeadStatus('descartado');
+  static perdido(): LeadStatus {
+    return new LeadStatus('perdido');
   }
 
   getValue(): LeadStatusValue {

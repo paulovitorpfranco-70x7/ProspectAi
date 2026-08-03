@@ -2,12 +2,14 @@ import { LeadStatusInvalidError } from '@domain/lead/errors/lead-status-invalid.
 import { LeadStatus } from './lead-status.vo';
 
 describe('LeadStatus', () => {
-  it('factory novo/contatado/proposta/fechado/descartado should produce respective status', () => {
+  it('factories should produce every supported status', () => {
     expect(LeadStatus.novo().getValue()).toBe('novo');
     expect(LeadStatus.contatado().getValue()).toBe('contatado');
+    expect(LeadStatus.respondeu().getValue()).toBe('respondeu');
+    expect(LeadStatus.previewEnviado().getValue()).toBe('preview_enviado');
     expect(LeadStatus.proposta().getValue()).toBe('proposta');
     expect(LeadStatus.fechado().getValue()).toBe('fechado');
-    expect(LeadStatus.descartado().getValue()).toBe('descartado');
+    expect(LeadStatus.perdido().getValue()).toBe('perdido');
   });
 
   it('create should throw for unknown status string', () => {
@@ -21,8 +23,8 @@ describe('LeadStatus', () => {
     expect(LeadStatus.novo().canTransitionTo(LeadStatus.contatado())).toBe(true);
   });
 
-  it('canTransitionTo: novo → descartado is allowed', () => {
-    expect(LeadStatus.novo().canTransitionTo(LeadStatus.descartado())).toBe(true);
+  it('canTransitionTo: novo → perdido is allowed', () => {
+    expect(LeadStatus.novo().canTransitionTo(LeadStatus.perdido())).toBe(true);
   });
 
   it('canTransitionTo: novo → proposta is FORBIDDEN', () => {
@@ -33,16 +35,16 @@ describe('LeadStatus', () => {
     expect(LeadStatus.novo().canTransitionTo(LeadStatus.fechado())).toBe(false);
   });
 
-  it('canTransitionTo: contatado → proposta is allowed', () => {
-    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.proposta())).toBe(true);
+  it('canTransitionTo: contatado → respondeu is allowed', () => {
+    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.respondeu())).toBe(true);
   });
 
   it('canTransitionTo: contatado → novo is allowed (reabertura)', () => {
     expect(LeadStatus.contatado().canTransitionTo(LeadStatus.novo())).toBe(true);
   });
 
-  it('canTransitionTo: contatado → descartado is allowed', () => {
-    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.descartado())).toBe(true);
+  it('canTransitionTo: contatado → perdido is allowed', () => {
+    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.perdido())).toBe(true);
   });
 
   it('canTransitionTo: contatado → fechado is FORBIDDEN', () => {
@@ -53,12 +55,20 @@ describe('LeadStatus', () => {
     expect(LeadStatus.proposta().canTransitionTo(LeadStatus.fechado())).toBe(true);
   });
 
-  it('canTransitionTo: proposta → contatado is allowed (recuo)', () => {
-    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.contatado())).toBe(true);
+  it('canTransitionTo: respondeu → preview_enviado is allowed', () => {
+    expect(LeadStatus.respondeu().canTransitionTo(LeadStatus.previewEnviado())).toBe(true);
   });
 
-  it('canTransitionTo: proposta → descartado is allowed', () => {
-    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.descartado())).toBe(true);
+  it('canTransitionTo: preview_enviado → proposta is allowed', () => {
+    expect(LeadStatus.previewEnviado().canTransitionTo(LeadStatus.proposta())).toBe(true);
+  });
+
+  it('canTransitionTo: proposta → preview_enviado is allowed (recuo)', () => {
+    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.previewEnviado())).toBe(true);
+  });
+
+  it('canTransitionTo: proposta → perdido is allowed', () => {
+    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.perdido())).toBe(true);
   });
 
   it('canTransitionTo: proposta → novo is FORBIDDEN', () => {
@@ -77,24 +87,26 @@ describe('LeadStatus', () => {
     expect(LeadStatus.fechado().canTransitionTo(LeadStatus.contatado())).toBe(false);
   });
 
-  it('canTransitionTo: fechado → descartado is FORBIDDEN', () => {
-    expect(LeadStatus.fechado().canTransitionTo(LeadStatus.descartado())).toBe(false);
+  it('canTransitionTo: fechado → perdido is FORBIDDEN', () => {
+    expect(LeadStatus.fechado().canTransitionTo(LeadStatus.perdido())).toBe(false);
   });
 
-  it('canTransitionTo: descartado → novo is allowed (reativação)', () => {
-    expect(LeadStatus.descartado().canTransitionTo(LeadStatus.novo())).toBe(true);
+  it('canTransitionTo: perdido → novo is allowed (reativação)', () => {
+    expect(LeadStatus.perdido().canTransitionTo(LeadStatus.novo())).toBe(true);
   });
 
-  it('canTransitionTo: descartado → contatado is FORBIDDEN', () => {
-    expect(LeadStatus.descartado().canTransitionTo(LeadStatus.contatado())).toBe(false);
+  it('canTransitionTo: perdido → contatado is FORBIDDEN', () => {
+    expect(LeadStatus.perdido().canTransitionTo(LeadStatus.contatado())).toBe(false);
   });
 
   it('canTransitionTo: same status should return false', () => {
     expect(LeadStatus.novo().canTransitionTo(LeadStatus.novo())).toBe(false);
     expect(LeadStatus.contatado().canTransitionTo(LeadStatus.contatado())).toBe(false);
+    expect(LeadStatus.respondeu().canTransitionTo(LeadStatus.respondeu())).toBe(false);
+    expect(LeadStatus.previewEnviado().canTransitionTo(LeadStatus.previewEnviado())).toBe(false);
     expect(LeadStatus.proposta().canTransitionTo(LeadStatus.proposta())).toBe(false);
     expect(LeadStatus.fechado().canTransitionTo(LeadStatus.fechado())).toBe(false);
-    expect(LeadStatus.descartado().canTransitionTo(LeadStatus.descartado())).toBe(false);
+    expect(LeadStatus.perdido().canTransitionTo(LeadStatus.perdido())).toBe(false);
   });
 
   it('equals should compare by value', () => {

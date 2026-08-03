@@ -11,9 +11,11 @@ const FILTER_OPTIONS: readonly SelectOption[] = [
   { value: 'all', label: 'Todos' },
   { value: 'novo', label: 'Novo' },
   { value: 'contatado', label: 'Contatado' },
+  { value: 'respondeu', label: 'Respondeu' },
+  { value: 'preview_enviado', label: 'Preview enviado' },
   { value: 'proposta', label: 'Proposta' },
   { value: 'fechado', label: 'Fechado' },
-  { value: 'descartado', label: 'Descartado' },
+  { value: 'perdido', label: 'Perdido' },
 ];
 
 const SORT_OPTIONS: readonly SelectOption[] = [

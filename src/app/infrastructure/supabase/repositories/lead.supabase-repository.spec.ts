@@ -60,6 +60,14 @@ function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
     contactCount: 0,
     lastContactAt: null,
     hasWebsite: false,
+    instagramHandle: null,
+    websiteQuality: null,
+    leadScore: 0,
+    openingHours: null,
+    topReviews: null,
+    previewUrl: null,
+    previewViews: 0,
+    previewLastViewedAt: null,
     createdAt: BASE_CREATED_AT,
     ...overrides,
   };
@@ -427,9 +435,11 @@ describe('LeadSupabaseRepository', () => {
       total: 3,
       novo: 1,
       contatado: 1,
+      respondeu: 0,
+      preview_enviado: 0,
       proposta: 1,
       fechado: 0,
-      descartado: 0,
+      perdido: 0,
     });
   });
 });

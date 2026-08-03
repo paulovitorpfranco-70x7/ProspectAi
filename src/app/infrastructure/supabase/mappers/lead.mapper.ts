@@ -7,7 +7,7 @@ import { LeadStatus } from '@domain/lead/value-objects/lead-status.vo';
 import { Location } from '@domain/lead/value-objects/location.vo';
 import { PhoneNumber } from '@domain/lead/value-objects/phone-number.vo';
 import { Sector } from '@domain/lead/value-objects/sector.vo';
-import type { Database } from '../types/database.types';
+import type { Database, Json } from '../types/database.types';
 
 type LeadRow = Database['public']['Tables']['leads']['Row'];
 
@@ -32,6 +32,16 @@ export class SupabaseLeadMapper {
       contactCount: row.contact_count,
       lastContactAt: row.last_contact_at ? new Date(row.last_contact_at) : null,
       hasWebsite: row.has_website,
+      instagramHandle: row.instagram_handle,
+      websiteQuality: row.website_quality,
+      leadScore: row.lead_score,
+      openingHours: row.opening_hours,
+      topReviews: row.top_reviews,
+      previewUrl: row.preview_url,
+      previewViews: row.preview_views,
+      previewLastViewedAt: row.preview_last_viewed_at
+        ? new Date(row.preview_last_viewed_at)
+        : null,
       createdAt: new Date(row.created_at),
     };
 
@@ -47,12 +57,20 @@ export class SupabaseLeadMapper {
       address: lead.location.getAddress(),
       phone_digits: lead.contactInfo.getPhone()?.getValue() ?? null,
       email: lead.contactInfo.getEmail()?.getValue() ?? null,
-      status: lead.status.getValue() as Database['public']['Enums']['lead_status'],
+      status: lead.status.getValue(),
       notes: lead.notes,
       rating: lead.rating,
       contact_count: lead.contactCount,
       last_contact_at: lead.lastContactAt?.toISOString() ?? null,
       has_website: lead.hasWebsite,
+      instagram_handle: lead.instagramHandle,
+      website_quality: lead.websiteQuality,
+      lead_score: lead.leadScore,
+      opening_hours: lead.openingHours as Json | null,
+      top_reviews: lead.topReviews as Json | null,
+      preview_url: lead.previewUrl,
+      preview_views: lead.previewViews,
+      preview_last_viewed_at: lead.previewLastViewedAt?.toISOString() ?? null,
       created_at: lead.createdAt.toISOString(),
     };
   }

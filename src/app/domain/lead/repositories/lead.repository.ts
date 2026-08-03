@@ -27,9 +27,11 @@ export interface LeadStatsByStatus {
   readonly total: number;
   readonly novo: number;
   readonly contatado: number;
+  readonly respondeu: number;
+  readonly preview_enviado: number;
   readonly proposta: number;
   readonly fechado: number;
-  readonly descartado: number;
+  readonly perdido: number;
 }
 
 export interface LeadRepository {

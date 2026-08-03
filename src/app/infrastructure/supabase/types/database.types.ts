@@ -46,14 +46,22 @@ export type Database = {
           email: string | null
           has_website: boolean
           id: string
+          instagram_handle: string | null
           last_contact_at: string | null
+          lead_score: number
           notes: string
+          opening_hours: Json | null
           phone_digits: string | null
+          preview_last_viewed_at: string | null
+          preview_url: string | null
+          preview_views: number
           rating: number | null
           sector: string
-          status: Database["public"]["Enums"]["lead_status"]
+          status: string
+          top_reviews: Json | null
           updated_at: string
           updated_by: string | null
+          website_quality: "proper" | "weak" | "none" | null
         }
         Insert: {
           address?: string | null
@@ -66,14 +74,22 @@ export type Database = {
           email?: string | null
           has_website?: boolean
           id: string
+          instagram_handle?: string | null
           last_contact_at?: string | null
+          lead_score?: number
           notes?: string
+          opening_hours?: Json | null
           phone_digits?: string | null
+          preview_last_viewed_at?: string | null
+          preview_url?: string | null
+          preview_views?: number
           rating?: number | null
           sector: string
-          status?: Database["public"]["Enums"]["lead_status"]
+          status?: string
+          top_reviews?: Json | null
           updated_at?: string
           updated_by?: string | null
+          website_quality?: "proper" | "weak" | "none" | null
         }
         Update: {
           address?: string | null
@@ -86,14 +102,22 @@ export type Database = {
           email?: string | null
           has_website?: boolean
           id?: string
+          instagram_handle?: string | null
           last_contact_at?: string | null
+          lead_score?: number
           notes?: string
+          opening_hours?: Json | null
           phone_digits?: string | null
+          preview_last_viewed_at?: string | null
+          preview_url?: string | null
+          preview_views?: number
           rating?: number | null
           sector?: string
-          status?: Database["public"]["Enums"]["lead_status"]
+          status?: string
+          top_reviews?: Json | null
           updated_at?: string
           updated_by?: string | null
+          website_quality?: "proper" | "weak" | "none" | null
         }
         Relationships: []
       }
@@ -106,7 +130,7 @@ export type Database = {
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
-      lead_status: "novo" | "contatado" | "proposta" | "fechado" | "descartado"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -236,9 +260,6 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {
-      lead_status: ["novo", "contatado", "proposta", "fechado", "descartado"],
-    },
+    Enums: {},
   },
 } as const
-

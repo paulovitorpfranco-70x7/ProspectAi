@@ -4,6 +4,7 @@ export * from './value-objects/lead-id.vo';
 export * from './value-objects/business-name.vo';
 export * from './value-objects/sector.vo';
 export * from './value-objects/lead-status.vo';
+export * from './value-objects/website-quality.type';
 export * from './value-objects/phone-number.vo';
 export * from './value-objects/email.vo';
 export * from './value-objects/location.vo';

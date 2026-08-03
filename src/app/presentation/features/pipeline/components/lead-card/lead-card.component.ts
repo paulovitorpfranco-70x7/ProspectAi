@@ -10,25 +10,31 @@ import { PhoneFormatPipe } from '@presentation/shared/pipes/phone-format.pipe';
 const STATUS_VALUES: readonly LeadStatusValue[] = [
   'novo',
   'contatado',
+  'respondeu',
+  'preview_enviado',
   'proposta',
   'fechado',
-  'descartado',
+  'perdido',
 ];
 
 const STATUS_LABELS: Readonly<Record<LeadStatusValue, string>> = {
   novo: 'Novo',
   contatado: 'Contatado',
+  respondeu: 'Respondeu',
+  preview_enviado: 'Preview enviado',
   proposta: 'Proposta',
   fechado: 'Fechado',
-  descartado: 'Descartado',
+  perdido: 'Perdido',
 };
 
 const STATUS_COLORS: Readonly<Record<LeadStatusValue, BadgeColor>> = {
   novo: 'info',
   contatado: 'accent',
+  respondeu: 'accent',
+  preview_enviado: 'warning',
   proposta: 'warning',
   fechado: 'success',
-  descartado: 'muted',
+  perdido: 'muted',
 };
 
 const SECTOR_ICONS: Readonly<Record<string, string>> = {
