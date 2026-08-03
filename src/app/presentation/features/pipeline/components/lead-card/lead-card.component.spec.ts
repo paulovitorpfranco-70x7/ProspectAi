@@ -67,12 +67,14 @@ describe('LeadCardComponent', () => {
     expect(emitSpy).toHaveBeenCalledWith({ leadId: BASE_LEAD.id, newStatus: 'contatado' });
   });
 
-  it('should disable forbidden transition buttons', async () => {
+  it('should enable every transition except the current status', async () => {
     const fixture = await render();
-    const buttons = fixture.nativeElement.querySelectorAll('.lead-card__transition');
+    const buttons = Array.from<HTMLButtonElement>(
+      fixture.nativeElement.querySelectorAll('.lead-card__transition'),
+    );
 
-    expect((buttons[2] as HTMLButtonElement).disabled).toBe(true);
-    expect((buttons[3] as HTMLButtonElement).disabled).toBe(true);
+    expect(buttons[0].disabled).toBe(true);
+    expect(buttons.slice(1).every((button) => !button.disabled)).toBe(true);
   });
 
   it('should show stale indicator when lead.isStale visual marker is on', async () => {

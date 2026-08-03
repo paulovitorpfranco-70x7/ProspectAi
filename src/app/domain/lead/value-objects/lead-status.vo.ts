@@ -9,16 +9,6 @@ export type LeadStatusValue =
   | 'fechado'
   | 'perdido';
 
-const VALID_TRANSITIONS: Readonly<Record<LeadStatusValue, readonly LeadStatusValue[]>> = {
-  novo: ['contatado', 'perdido'],
-  contatado: ['respondeu', 'novo', 'perdido'],
-  respondeu: ['preview_enviado', 'contatado', 'perdido'],
-  preview_enviado: ['proposta', 'respondeu', 'perdido'],
-  proposta: ['fechado', 'preview_enviado', 'perdido'],
-  fechado: ['proposta'],
-  perdido: ['novo'],
-};
-
 const LEAD_STATUS_VALUES: readonly LeadStatusValue[] = [
   'novo',
   'contatado',
@@ -73,11 +63,7 @@ export class LeadStatus {
   }
 
   canTransitionTo(target: LeadStatus): boolean {
-    if (this.equals(target)) {
-      return false;
-    }
-
-    return VALID_TRANSITIONS[this.value].includes(target.value);
+    return !this.equals(target);
   }
 
   equals(other: LeadStatus): boolean {

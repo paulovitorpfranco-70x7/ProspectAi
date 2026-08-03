@@ -19,84 +19,34 @@ describe('LeadStatus', () => {
     );
   });
 
-  it('canTransitionTo: novo → contatado is allowed', () => {
-    expect(LeadStatus.novo().canTransitionTo(LeadStatus.contatado())).toBe(true);
-  });
-
   it('canTransitionTo: novo → perdido is allowed', () => {
     expect(LeadStatus.novo().canTransitionTo(LeadStatus.perdido())).toBe(true);
   });
 
-  it('canTransitionTo: novo → proposta is FORBIDDEN', () => {
-    expect(LeadStatus.novo().canTransitionTo(LeadStatus.proposta())).toBe(false);
+  it('canTransitionTo: contatado → fechado is allowed', () => {
+    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.fechado())).toBe(true);
   });
 
-  it('canTransitionTo: novo → fechado is FORBIDDEN', () => {
-    expect(LeadStatus.novo().canTransitionTo(LeadStatus.fechado())).toBe(false);
+  it('canTransitionTo: proposta → respondeu is allowed as a rollback', () => {
+    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.respondeu())).toBe(true);
   });
 
-  it('canTransitionTo: contatado → respondeu is allowed', () => {
-    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.respondeu())).toBe(true);
-  });
+  it('canTransitionTo: every pair of distinct valid statuses is allowed', () => {
+    const statuses = [
+      LeadStatus.novo(),
+      LeadStatus.contatado(),
+      LeadStatus.respondeu(),
+      LeadStatus.previewEnviado(),
+      LeadStatus.proposta(),
+      LeadStatus.fechado(),
+      LeadStatus.perdido(),
+    ];
 
-  it('canTransitionTo: contatado → novo is allowed (reabertura)', () => {
-    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.novo())).toBe(true);
-  });
-
-  it('canTransitionTo: contatado → perdido is allowed', () => {
-    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.perdido())).toBe(true);
-  });
-
-  it('canTransitionTo: contatado → fechado is FORBIDDEN', () => {
-    expect(LeadStatus.contatado().canTransitionTo(LeadStatus.fechado())).toBe(false);
-  });
-
-  it('canTransitionTo: proposta → fechado is allowed', () => {
-    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.fechado())).toBe(true);
-  });
-
-  it('canTransitionTo: respondeu → preview_enviado is allowed', () => {
-    expect(LeadStatus.respondeu().canTransitionTo(LeadStatus.previewEnviado())).toBe(true);
-  });
-
-  it('canTransitionTo: preview_enviado → proposta is allowed', () => {
-    expect(LeadStatus.previewEnviado().canTransitionTo(LeadStatus.proposta())).toBe(true);
-  });
-
-  it('canTransitionTo: proposta → preview_enviado is allowed (recuo)', () => {
-    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.previewEnviado())).toBe(true);
-  });
-
-  it('canTransitionTo: proposta → perdido is allowed', () => {
-    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.perdido())).toBe(true);
-  });
-
-  it('canTransitionTo: proposta → novo is FORBIDDEN', () => {
-    expect(LeadStatus.proposta().canTransitionTo(LeadStatus.novo())).toBe(false);
-  });
-
-  it('canTransitionTo: fechado → proposta is allowed (reabertura)', () => {
-    expect(LeadStatus.fechado().canTransitionTo(LeadStatus.proposta())).toBe(true);
-  });
-
-  it('canTransitionTo: fechado → novo is FORBIDDEN', () => {
-    expect(LeadStatus.fechado().canTransitionTo(LeadStatus.novo())).toBe(false);
-  });
-
-  it('canTransitionTo: fechado → contatado is FORBIDDEN', () => {
-    expect(LeadStatus.fechado().canTransitionTo(LeadStatus.contatado())).toBe(false);
-  });
-
-  it('canTransitionTo: fechado → perdido is FORBIDDEN', () => {
-    expect(LeadStatus.fechado().canTransitionTo(LeadStatus.perdido())).toBe(false);
-  });
-
-  it('canTransitionTo: perdido → novo is allowed (reativação)', () => {
-    expect(LeadStatus.perdido().canTransitionTo(LeadStatus.novo())).toBe(true);
-  });
-
-  it('canTransitionTo: perdido → contatado is FORBIDDEN', () => {
-    expect(LeadStatus.perdido().canTransitionTo(LeadStatus.contatado())).toBe(false);
+    for (const source of statuses) {
+      for (const target of statuses) {
+        expect(source.canTransitionTo(target)).toBe(!source.equals(target));
+      }
+    }
   });
 
   it('canTransitionTo: same status should return false', () => {

@@ -107,10 +107,18 @@ describe('Lead', () => {
     expect(lead.status.getValue()).toBe('contatado');
   });
 
-  it('changeStatus: should throw InvalidStatusTransitionError for invalid transition', () => {
+  it('changeStatus: should allow a direct transition to fechado', () => {
     const lead = Lead.reconstitute(makeSnapshot({ status: LeadStatus.novo() }));
 
-    expect(() => lead.changeStatus(LeadStatus.fechado())).toThrow(InvalidStatusTransitionError);
+    lead.changeStatus(LeadStatus.fechado());
+
+    expect(lead.status.getValue()).toBe('fechado');
+  });
+
+  it('changeStatus: should throw InvalidStatusTransitionError for a no-op transition', () => {
+    const lead = Lead.reconstitute(makeSnapshot({ status: LeadStatus.novo() }));
+
+    expect(() => lead.changeStatus(LeadStatus.novo())).toThrow(InvalidStatusTransitionError);
   });
 
   it('changeStatus: should emit LeadStatusChangedEvent with from and to', () => {

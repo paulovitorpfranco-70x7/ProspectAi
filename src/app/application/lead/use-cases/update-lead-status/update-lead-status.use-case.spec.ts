@@ -96,12 +96,12 @@ describe('UpdateLeadStatusUseCase', () => {
     expect(repository.save).not.toHaveBeenCalled();
   });
 
-  it('should throw InvalidStatusTransitionError for forbidden transition', async () => {
+  it('should throw InvalidStatusTransitionError for a no-op transition', async () => {
     const repository = makeRepositoryMock();
     repository.findById.mockResolvedValueOnce(makeLead({ status: LeadStatus.novo() }));
     const useCase = new UpdateLeadStatusUseCase(repository);
 
-    await expect(useCase.execute({ leadId: LEAD_ID, newStatus: 'fechado' })).rejects.toBeInstanceOf(
+    await expect(useCase.execute({ leadId: LEAD_ID, newStatus: 'novo' })).rejects.toBeInstanceOf(
       InvalidStatusTransitionError,
     );
     expect(repository.save).not.toHaveBeenCalled();
