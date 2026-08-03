@@ -3,13 +3,17 @@ import type { PlaceFinderResponseDto } from './place-finder.response.dto';
 
 export class PlaceFinderMapper {
   static toResult(dto: PlaceFinderResponseDto): PlaceFinderResult {
+    const websiteQuality = dto.websiteQuality ?? (dto.hasWebsite ? 'proper' : 'none');
+
     return {
       name: dto.name,
       phone: dto.phone ?? null,
       email: dto.email ?? null,
       rating: dto.rating ?? null,
       address: dto.address ?? null,
-      hasWebsite: dto.hasWebsite ?? false,
+      hasWebsite: websiteQuality !== 'none',
+      instagramHandle: dto.instagramHandle ?? null,
+      websiteQuality,
     };
   }
 

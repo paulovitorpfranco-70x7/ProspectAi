@@ -1,6 +1,6 @@
 import { PlaceFinderMapper } from './place-finder.mapper';
 
- describe('PlaceFinderMapper', () => {
+describe('PlaceFinderMapper', () => {
   it('should map Edge Function response to PlaceFinderResult', () => {
     const [result] = PlaceFinderMapper.toResults([
       {
@@ -10,6 +10,8 @@ import { PlaceFinderMapper } from './place-finder.mapper';
         rating: 4.5,
         address: 'Rua A, 123',
         hasWebsite: true,
+        instagramHandle: 'acmeclinic',
+        websiteQuality: 'proper',
       },
     ]);
 
@@ -20,6 +22,8 @@ import { PlaceFinderMapper } from './place-finder.mapper';
       rating: 4.5,
       address: 'Rua A, 123',
       hasWebsite: true,
+      instagramHandle: 'acmeclinic',
+      websiteQuality: 'proper',
     });
   });
 
@@ -39,5 +43,26 @@ import { PlaceFinderMapper } from './place-finder.mapper';
     const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
 
     expect(result.hasWebsite).toBe(false);
+  });
+
+  it('should preserve legacy behavior when websiteQuality is absent', () => {
+    const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic', hasWebsite: true });
+
+    expect(result.hasWebsite).toBe(true);
+    expect(result.websiteQuality).toBe('proper');
+    expect(result.instagramHandle).toBeNull();
+  });
+
+  it('should derive hasWebsite from websiteQuality when enrichment is present', () => {
+    const result = PlaceFinderMapper.toResult({
+      name: 'Acme Clinic',
+      hasWebsite: true,
+      websiteQuality: 'none',
+      instagramHandle: 'acmeclinic',
+    });
+
+    expect(result.hasWebsite).toBe(false);
+    expect(result.websiteQuality).toBe('none');
+    expect(result.instagramHandle).toBe('acmeclinic');
   });
 });

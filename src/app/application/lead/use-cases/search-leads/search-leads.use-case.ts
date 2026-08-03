@@ -33,7 +33,7 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
     let skippedWithWebsite = 0;
 
     for (const place of places) {
-      if (place.hasWebsite) {
+      if (place.websiteQuality === 'proper') {
         skippedWithWebsite += 1;
         items.push(this.skipped(place, 'skipped_has_website', 'HAS_WEBSITE'));
         continue;
@@ -96,6 +96,8 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
         contactInfo,
         rating: place.rating,
         hasWebsite: place.hasWebsite,
+        instagramHandle: place.instagramHandle,
+        websiteQuality: place.websiteQuality,
       });
 
       return { kind: 'valid', lead, phone };

@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { enrichWebsite, type WebsiteQuality } from './website-enrichment.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,6 +32,8 @@ interface PlaceFinderResponseDto {
   readonly rating: number | null;
   readonly address: string | null;
   readonly hasWebsite: boolean;
+  readonly instagramHandle: string | null;
+  readonly websiteQuality: WebsiteQuality;
 }
 
 const SEARCH_QUERY_BY_SECTOR: Readonly<Record<string, string>> = {
@@ -105,14 +108,22 @@ serve(async (req) => {
   }
 
   const payload = (await googleResponse.json()) as GooglePlacesResponse;
-  const results: PlaceFinderResponseDto[] = (payload.places ?? []).map((place) => ({
-    name: place.displayName?.text ?? '',
-    phone: place.nationalPhoneNumber ?? place.internationalPhoneNumber ?? null,
-    email: null,
-    rating: place.rating ?? null,
-    address: place.formattedAddress ?? null,
-    hasWebsite: place.websiteUri !== undefined,
-  }));
+  const results: PlaceFinderResponseDto[] = await Promise.all(
+    (payload.places ?? []).map(async (place) => {
+      const website = await enrichWebsite(place.websiteUri);
+
+      return {
+        name: place.displayName?.text ?? '',
+        phone: place.nationalPhoneNumber ?? place.internationalPhoneNumber ?? null,
+        email: null,
+        rating: place.rating ?? null,
+        address: place.formattedAddress ?? null,
+        hasWebsite: website.hasWebsite,
+        instagramHandle: website.instagramHandle,
+        websiteQuality: website.websiteQuality,
+      };
+    }),
+  );
 
   return json(results, 200);
 });

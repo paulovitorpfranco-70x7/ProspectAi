@@ -1,4 +1,5 @@
 import type { Sector } from '../value-objects/sector.vo';
+import type { WebsiteQuality } from '../value-objects/website-quality.type';
 
 export interface PlaceFinderQuery {
   readonly sector: Sector;
@@ -16,6 +17,8 @@ export interface PlaceFinderResult {
   readonly rating: number | null;
   readonly address: string | null;
   readonly hasWebsite: boolean;
+  readonly instagramHandle: string | null;
+  readonly websiteQuality: WebsiteQuality;
 }
 
 export interface PlaceFinderService {

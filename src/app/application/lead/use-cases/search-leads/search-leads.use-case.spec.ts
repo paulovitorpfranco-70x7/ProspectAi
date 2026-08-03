@@ -15,6 +15,8 @@ function makePlace(overrides: Partial<PlaceFinderResult> = {}): PlaceFinderResul
     rating: 4.5,
     address: 'Rua A, 123',
     hasWebsite: false,
+    instagramHandle: null,
+    websiteQuality: 'none',
     ...overrides,
   };
 }
@@ -51,9 +53,7 @@ describe('SearchLeadsUseCase', () => {
       sector: expect.objectContaining({}),
       city: 'Niterói',
     });
-    expect(placeFinder.search.mock.calls[0]?.[0].sector.getValue()).toBe(
-      'Clínicas & Consultórios',
-    );
+    expect(placeFinder.search.mock.calls[0]?.[0].sector.getValue()).toBe('Clínicas & Consultórios');
   });
 
   it('should throw SectorInvalidError when input.sector is not canonical', async () => {
@@ -79,9 +79,11 @@ describe('SearchLeadsUseCase', () => {
     ).rejects.toBe(error);
   });
 
-  it("should skip places with hasWebsite=true and return itemStatus='skipped_has_website'", async () => {
+  it("should skip places with websiteQuality='proper'", async () => {
     const repository = makeRepositoryMock();
-    const placeFinder = makePlaceFinderMock([makePlace({ hasWebsite: true })]);
+    const placeFinder = makePlaceFinderMock([
+      makePlace({ hasWebsite: true, websiteQuality: 'proper' }),
+    ]);
     const useCase = new SearchLeadsUseCase(repository, placeFinder);
 
     const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
@@ -93,6 +95,28 @@ describe('SearchLeadsUseCase', () => {
       skipReason: 'HAS_WEBSITE',
     });
     expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { websiteQuality: 'weak' as const, hasWebsite: true },
+    { websiteQuality: 'none' as const, hasWebsite: false },
+  ])('should keep leads with websiteQuality=$websiteQuality', async (website) => {
+    const repository = makeRepositoryMock();
+    const placeFinder = makePlaceFinderMock([
+      makePlace({
+        ...website,
+        instagramHandle: 'barbearia_marica',
+      }),
+    ]);
+    const useCase = new SearchLeadsUseCase(repository, placeFinder);
+
+    await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
+
+    expect(repository.save).toHaveBeenCalledTimes(1);
+    const savedLead = repository.save.mock.calls[0]?.[0];
+    expect(savedLead?.instagramHandle).toBe('barbearia_marica');
+    expect(savedLead?.websiteQuality).toBe(website.websiteQuality);
+    expect(savedLead?.hasWebsite).toBe(website.hasWebsite);
   });
 
   it("should skip places that match existsByPhoneAndCity and return itemStatus='skipped_duplicate'", async () => {
@@ -147,7 +171,7 @@ describe('SearchLeadsUseCase', () => {
     repository.existsByPhoneAndCity.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
     const placeFinder = makePlaceFinderMock([
       makePlace({ name: 'Added', phone: '(21) 99999-0001' }),
-      makePlace({ name: 'Website', hasWebsite: true }),
+      makePlace({ name: 'Website', hasWebsite: true, websiteQuality: 'proper' }),
       makePlace({ name: 'Duplicate', phone: '(21) 99999-0002' }),
       makePlace({ name: 'Invalid', phone: 'abc' }),
     ]);
@@ -181,7 +205,7 @@ describe('SearchLeadsUseCase', () => {
     const repository = makeRepositoryMock();
     repository.existsByPhoneAndCity.mockResolvedValueOnce(true);
     const placeFinder = makePlaceFinderMock([
-      makePlace({ name: 'Website', hasWebsite: true }),
+      makePlace({ name: 'Website', hasWebsite: true, websiteQuality: 'proper' }),
       makePlace({ name: 'Duplicate' }),
       makePlace({ name: 'Invalid', phone: 'abc' }),
     ]);

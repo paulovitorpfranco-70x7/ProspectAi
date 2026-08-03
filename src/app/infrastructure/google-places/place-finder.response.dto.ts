@@ -1,3 +1,5 @@
+import type { WebsiteQuality } from '@domain/lead/value-objects/website-quality.type';
+
 export interface PlaceFinderResponseDto {
   readonly name: string;
   readonly phone?: string | null;
@@ -5,4 +7,6 @@ export interface PlaceFinderResponseDto {
   readonly rating?: number | null;
   readonly address?: string | null;
   readonly hasWebsite?: boolean | null;
+  readonly instagramHandle?: string | null;
+  readonly websiteQuality?: WebsiteQuality;
 }

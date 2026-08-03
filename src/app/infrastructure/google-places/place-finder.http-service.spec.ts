@@ -42,6 +42,8 @@ describe('PlaceFinderHttpService', () => {
           rating: null,
           address: null,
           hasWebsite: false,
+          instagramHandle: 'acmeclinic',
+          websiteQuality: 'none',
         },
       ]),
     );
@@ -60,6 +62,8 @@ describe('PlaceFinderHttpService', () => {
         rating: null,
         address: null,
         hasWebsite: false,
+        instagramHandle: 'acmeclinic',
+        websiteQuality: 'none',
       },
     ]);
   });
