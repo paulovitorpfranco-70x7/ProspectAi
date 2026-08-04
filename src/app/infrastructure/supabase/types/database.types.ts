@@ -160,9 +160,9 @@ export type Database = {
         Args: {
           p_lead_id: string
           p_mensagem: string
-          p_next_followup: string
+          p_next_followup: string | null
           p_stage: string
-          p_variant: string
+          p_variant: string | null
         }
         Returns: {
           id: string

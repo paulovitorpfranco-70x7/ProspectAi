@@ -25,7 +25,7 @@ export type OutreachEvent = {
   readonly id: string;
   readonly leadId: string;
   readonly stage: OutreachStage;
-  readonly variant: AbVariant;
+  readonly variant: AbVariant | null;
   readonly renderedMessage: string;
   readonly sentAt: Date;
 };
