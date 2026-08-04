@@ -5,7 +5,8 @@ import { Injector, runInInjectionContext } from '@angular/core';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 Object.assign(globalThis, { Blob, File, ReadableStream, TransformStream });
-const { fetch, Headers, Request, Response, getGlobalDispatcher } = jest.requireActual<typeof import('undici')>('undici');
+const { fetch, Headers, Request, Response, getGlobalDispatcher } =
+  jest.requireActual<typeof import('undici')>('undici');
 Object.assign(globalThis, { fetch, Headers, Request, Response });
 jest.setTimeout(30_000);
 import { Lead, type LeadSnapshot } from '@domain/lead/entities/lead.entity';
@@ -149,13 +150,23 @@ describe('LeadSupabaseRepository', () => {
     expect(found?.status.getValue()).toBe('contatado');
   });
 
-  it('save: should persist all fields including notes, rating, contactCount', async () => {
+  it('save: should persist primitive and nested JSONB fields', async () => {
+    const openingHours = {
+      periods: [{ open: { day: 1, hour: 9, minute: 0 }, close: { day: 1, hour: 18, minute: 0 } }],
+      weekdayDescriptions: ['segunda-feira: 09:00–18:00'],
+    };
+    const topReviews = [
+      { rating: 5, text: 'Atendimento excelente', authorName: 'Ana' },
+      { rating: 4, text: 'Equipe muito atenciosa', authorName: 'Bruno' },
+    ];
     const lead = makeLead({
       notes: 'Notas internas',
       rating: 4.5,
       contactCount: 3,
       lastContactAt: BASE_LAST_CONTACT_AT,
       hasWebsite: true,
+      openingHours,
+      topReviews,
     });
 
     await repository.save(lead);
@@ -166,6 +177,8 @@ describe('LeadSupabaseRepository', () => {
     expect(found?.contactCount).toBe(3);
     expect(found?.lastContactAt?.toISOString()).toBe(BASE_LAST_CONTACT_AT.toISOString());
     expect(found?.hasWebsite).toBe(true);
+    expect(found?.openingHours).toEqual(openingHours);
+    expect(found?.topReviews).toEqual(topReviews);
   });
 
   it('save: should convert PostgreSQL 23505 duplicate phone/city into DuplicateLeadError', async () => {
@@ -222,7 +235,9 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('findAll: should filter by sector', async () => {
-    await repository.save(makeLead({ id: LeadId.fromString(IDS.one), sector: Sector.create('Restaurantes') }));
+    await repository.save(
+      makeLead({ id: LeadId.fromString(IDS.one), sector: Sector.create('Restaurantes') }),
+    );
     await repository.save(
       makeLead({
         id: LeadId.fromString(IDS.two),
@@ -238,7 +253,12 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('findAll: should filter by textQuery matching businessName', async () => {
-    await repository.save(makeLead({ id: LeadId.fromString(IDS.one), businessName: BusinessName.create('Alpha Clinic') }));
+    await repository.save(
+      makeLead({
+        id: LeadId.fromString(IDS.one),
+        businessName: BusinessName.create('Alpha Clinic'),
+      }),
+    );
     await repository.save(
       makeLead({
         id: LeadId.fromString(IDS.two),
@@ -254,7 +274,9 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('findAll: should filter by textQuery matching city', async () => {
-    await repository.save(makeLead({ id: LeadId.fromString(IDS.one), location: Location.create({ city: 'Niterói' }) }));
+    await repository.save(
+      makeLead({ id: LeadId.fromString(IDS.one), location: Location.create({ city: 'Niterói' }) }),
+    );
     await repository.save(
       makeLead({
         id: LeadId.fromString(IDS.two),
@@ -270,7 +292,9 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('findAll: should filter by textQuery matching sector', async () => {
-    await repository.save(makeLead({ id: LeadId.fromString(IDS.one), sector: Sector.create('Restaurantes') }));
+    await repository.save(
+      makeLead({ id: LeadId.fromString(IDS.one), sector: Sector.create('Restaurantes') }),
+    );
     await repository.save(
       makeLead({
         id: LeadId.fromString(IDS.two),
@@ -286,7 +310,9 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('findAll: should sort by createdAt DESC by default', async () => {
-    await repository.save(makeLead({ id: LeadId.fromString(IDS.one), createdAt: new Date('2026-05-18T12:00:00.000Z') }));
+    await repository.save(
+      makeLead({ id: LeadId.fromString(IDS.one), createdAt: new Date('2026-05-18T12:00:00.000Z') }),
+    );
     await repository.save(
       makeLead({
         id: LeadId.fromString(IDS.two),
@@ -350,7 +376,9 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('findAll: should respect limit and offset', async () => {
-    await repository.save(makeLead({ id: LeadId.fromString(IDS.one), createdAt: new Date('2026-05-21T12:00:00.000Z') }));
+    await repository.save(
+      makeLead({ id: LeadId.fromString(IDS.one), createdAt: new Date('2026-05-21T12:00:00.000Z') }),
+    );
     await repository.save(
       makeLead({
         id: LeadId.fromString(IDS.two),
@@ -375,19 +403,25 @@ describe('LeadSupabaseRepository', () => {
   it('existsByPhoneAndCity: should return true for normalized phone match in same city', async () => {
     await repository.save(makeLead());
 
-    await expect(repository.existsByPhoneAndCity(makePhone('+55 21 99999-0001'), 'Niterói')).resolves.toBe(true);
+    await expect(
+      repository.existsByPhoneAndCity(makePhone('+55 21 99999-0001'), 'Niterói'),
+    ).resolves.toBe(true);
   });
 
   it('existsByPhoneAndCity: should return true regardless of city case', async () => {
     await repository.save(makeLead({ location: Location.create({ city: 'Niterói' }) }));
 
-    await expect(repository.existsByPhoneAndCity(makePhone('(21) 99999-0001'), 'NITERÓI')).resolves.toBe(true);
+    await expect(
+      repository.existsByPhoneAndCity(makePhone('(21) 99999-0001'), 'NITERÓI'),
+    ).resolves.toBe(true);
   });
 
   it('existsByPhoneAndCity: should return false when phone matches but city differs', async () => {
     await repository.save(makeLead({ location: Location.create({ city: 'Niterói' }) }));
 
-    await expect(repository.existsByPhoneAndCity(makePhone('(21) 99999-0001'), 'São Gonçalo')).resolves.toBe(false);
+    await expect(
+      repository.existsByPhoneAndCity(makePhone('(21) 99999-0001'), 'São Gonçalo'),
+    ).resolves.toBe(false);
   });
 
   it('existsByGooglePlaceId: should return true when google place id exists', async () => {
@@ -402,6 +436,26 @@ describe('LeadSupabaseRepository', () => {
     await expect(repository.existsByGooglePlaceId('ChIJOthers456')).resolves.toBe(false);
   });
 
+  it('updatePlaceDetailsByGooglePlaceId: should persist nested JSONB without stringifying', async () => {
+    const lead = makeLead({ googlePlaceId: 'ChIJAcme123' });
+    const openingHours = {
+      periods: [{ open: { day: 1, hour: 9, minute: 0 }, close: { day: 1, hour: 18, minute: 0 } }],
+    };
+    const topReviews = [{ rating: 5, text: 'Excelente', authorName: 'Ana' }];
+    await repository.save(lead);
+
+    await repository.updatePlaceDetailsByGooglePlaceId('ChIJAcme123', {
+      openingHours,
+      topReviews,
+    });
+
+    const found = await repository.findById(lead.id);
+    expect(found?.openingHours).toEqual(openingHours);
+    expect(found?.topReviews).toEqual(topReviews);
+    expect(typeof found?.openingHours).toBe('object');
+    expect(Array.isArray(found?.topReviews)).toBe(true);
+  });
+
   it('delete: should remove lead from database', async () => {
     const lead = makeLead();
     await repository.save(lead);
@@ -412,7 +466,9 @@ describe('LeadSupabaseRepository', () => {
   });
 
   it('delete: should throw LeadNotFoundError when lead does not exist', async () => {
-    await expect(repository.delete(LeadId.fromString(IDS.missing))).rejects.toBeInstanceOf(LeadNotFoundError);
+    await expect(repository.delete(LeadId.fromString(IDS.missing))).rejects.toBeInstanceOf(
+      LeadNotFoundError,
+    );
   });
 
   it('count: should return correct count for filter', async () => {

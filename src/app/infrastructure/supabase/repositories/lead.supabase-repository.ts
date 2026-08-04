@@ -4,6 +4,7 @@ import { DuplicateLeadError } from '@domain/lead/errors/duplicate-lead.error';
 import { LeadNotFoundError } from '@domain/lead/errors/lead-not-found.error';
 import type {
   LeadFilter,
+  LeadPlaceDetails,
   LeadRepository,
   LeadStatsByStatus,
 } from '@domain/lead/repositories/lead.repository';
@@ -11,7 +12,7 @@ import type { Lead } from '@domain/lead/entities/lead.entity';
 import type { LeadId } from '@domain/lead/value-objects/lead-id.vo';
 import { LeadStatus } from '@domain/lead/value-objects/lead-status.vo';
 import type { PhoneNumber } from '@domain/lead/value-objects/phone-number.vo';
-import type { Database } from '../types/database.types';
+import type { Database, Json } from '../types/database.types';
 import { SupabaseClientService } from '../client/supabase.client';
 import { SupabaseLeadMapper } from '../mappers/lead.mapper';
 
@@ -111,6 +112,34 @@ export class LeadSupabaseRepository implements LeadRepository {
     }
 
     return (count ?? 0) > 0;
+  }
+
+  async updatePlaceDetailsByGooglePlaceId(
+    googlePlaceId: string,
+    details: LeadPlaceDetails,
+  ): Promise<void> {
+    const update: Database['public']['Tables']['leads']['Update'] = {};
+
+    if (details.openingHours !== null && details.openingHours !== undefined) {
+      update.opening_hours = details.openingHours as Json;
+    }
+
+    if (details.topReviews !== null && details.topReviews !== undefined) {
+      update.top_reviews = details.topReviews as Json;
+    }
+
+    if (update.opening_hours === undefined && update.top_reviews === undefined) {
+      return;
+    }
+
+    const { error } = await this.supabase
+      .from('leads')
+      .update(update)
+      .eq('google_place_id', googlePlaceId);
+
+    if (error !== null) {
+      throw error;
+    }
   }
 
   async delete(id: LeadId): Promise<void> {

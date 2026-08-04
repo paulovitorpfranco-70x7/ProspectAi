@@ -54,7 +54,17 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
           ? false
           : await this.leadRepository.existsByGooglePlaceId(place.googlePlaceId);
 
-        if (isDuplicateInBatch || alreadyExists) {
+        if (isDuplicateInBatch) {
+          skippedDuplicates += 1;
+          items.push(this.skipped(place, 'skipped_duplicate', 'DUPLICATE'));
+          continue;
+        }
+
+        if (alreadyExists) {
+          await this.leadRepository.updatePlaceDetailsByGooglePlaceId(place.googlePlaceId, {
+            openingHours: place.openingHours,
+            topReviews: place.topReviews,
+          });
           skippedDuplicates += 1;
           items.push(this.skipped(place, 'skipped_duplicate', 'DUPLICATE'));
           continue;

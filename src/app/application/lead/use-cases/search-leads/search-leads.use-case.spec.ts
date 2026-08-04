@@ -32,6 +32,7 @@ function makeRepositoryMock(): jest.Mocked<LeadRepository> {
     findAll: jest.fn(),
     existsByPhoneAndCity: jest.fn().mockResolvedValue(false),
     existsByGooglePlaceId: jest.fn().mockResolvedValue(false),
+    updatePlaceDetailsByGooglePlaceId: jest.fn().mockResolvedValue(undefined),
     delete: jest.fn(),
     count: jest.fn(),
     statsByStatus: jest.fn(),
@@ -155,12 +156,36 @@ describe('SearchLeadsUseCase', () => {
     const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
 
     expect(repository.existsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123');
+    expect(repository.updatePlaceDetailsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123', {
+      openingHours: null,
+      topReviews: null,
+    });
     expect(output.items[0]).toMatchObject({
       itemStatus: 'skipped_duplicate',
       lead: null,
       skipReason: 'DUPLICATE',
     });
     expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('should refresh JSONB place details when googlePlaceId already exists', async () => {
+    const repository = makeRepositoryMock();
+    repository.existsByGooglePlaceId.mockResolvedValueOnce(true);
+    const openingHours = { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] };
+    const topReviews = [{ rating: 5, text: 'Excelente', authorName: 'Ana' }];
+    const placeFinder = makePlaceFinderMock([
+      makePlace({ googlePlaceId: 'ChIJAcme123', openingHours, topReviews }),
+    ]);
+    const useCase = new SearchLeadsUseCase(repository, placeFinder);
+
+    const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
+
+    expect(repository.updatePlaceDetailsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123', {
+      openingHours,
+      topReviews,
+    });
+    expect(repository.save).not.toHaveBeenCalled();
+    expect(output.skippedDuplicates).toBe(1);
   });
 
   it('should insert a place when googlePlaceId is new', async () => {
@@ -208,6 +233,7 @@ describe('SearchLeadsUseCase', () => {
     const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
 
     expect(repository.existsByGooglePlaceId).toHaveBeenCalledTimes(1);
+    expect(repository.updatePlaceDetailsByGooglePlaceId).not.toHaveBeenCalled();
     expect(repository.save).toHaveBeenCalledTimes(1);
     expect(output.addedCount).toBe(1);
     expect(output.skippedDuplicates).toBe(1);

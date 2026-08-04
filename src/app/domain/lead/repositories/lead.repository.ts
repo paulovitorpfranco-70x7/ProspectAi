@@ -34,6 +34,11 @@ export interface LeadStatsByStatus {
   readonly perdido: number;
 }
 
+export interface LeadPlaceDetails {
+  readonly openingHours: unknown | null;
+  readonly topReviews: unknown | null;
+}
+
 export interface LeadRepository {
   /** Insert ou update (upsert por id). Persiste estado e despacha eventos pendentes. */
   save(lead: Lead): Promise<void>;
@@ -52,6 +57,12 @@ export interface LeadRepository {
 
   /** Retorna true quando o identificador estável do Google Places já foi persistido. */
   existsByGooglePlaceId(googlePlaceId: string): Promise<boolean>;
+
+  /** Atualiza somente os detalhes disponíveis, sem recriar o lead duplicado. */
+  updatePlaceDetailsByGooglePlaceId(
+    googlePlaceId: string,
+    details: LeadPlaceDetails,
+  ): Promise<void>;
 
   /** Lança LeadNotFoundError se não existir. */
   delete(id: LeadId): Promise<void>;

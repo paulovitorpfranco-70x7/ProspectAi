@@ -40,6 +40,7 @@ function makeRepositoryMock(): jest.Mocked<LeadRepository> {
     findAll: jest.fn(),
     existsByPhoneAndCity: jest.fn(),
     existsByGooglePlaceId: jest.fn(),
+    updatePlaceDetailsByGooglePlaceId: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
     statsByStatus: jest.fn(),
@@ -135,7 +136,9 @@ describe('SendEmailUseCase', () => {
   it('should throw LeadMissingContactChannelError when lead has no email', async () => {
     const repository = makeRepositoryMock();
     repository.findById.mockResolvedValueOnce(
-      makeLead({ contactInfo: ContactInfo.create({ phone: PhoneNumber.create('(21) 99999-0001') }) }),
+      makeLead({
+        contactInfo: ContactInfo.create({ phone: PhoneNumber.create('(21) 99999-0001') }),
+      }),
     );
     const { useCase, dispatcher } = makeUseCase(repository);
 

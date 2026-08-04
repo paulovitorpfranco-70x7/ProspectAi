@@ -16,6 +16,7 @@ function makeRepositoryMock(): jest.Mocked<LeadRepository> {
     findAll: jest.fn().mockResolvedValue([]),
     existsByPhoneAndCity: jest.fn(),
     existsByGooglePlaceId: jest.fn(),
+    updatePlaceDetailsByGooglePlaceId: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
     statsByStatus: jest.fn(),
