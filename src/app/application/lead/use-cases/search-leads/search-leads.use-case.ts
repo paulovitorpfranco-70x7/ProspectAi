@@ -26,6 +26,7 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
     const sector = Sector.create(input.sector);
     const places = await this.placeFinder.search({ sector, city: input.city });
     const items: SearchLeadsResultItem[] = [];
+    const googlePlaceIdsInBatch = new Set<string>();
 
     let addedCount = 0;
     let skippedDuplicates = 0;
@@ -47,6 +48,19 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
         continue;
       }
 
+      if (place.googlePlaceId !== null) {
+        const isDuplicateInBatch = googlePlaceIdsInBatch.has(place.googlePlaceId);
+        const alreadyExists = isDuplicateInBatch
+          ? false
+          : await this.leadRepository.existsByGooglePlaceId(place.googlePlaceId);
+
+        if (isDuplicateInBatch || alreadyExists) {
+          skippedDuplicates += 1;
+          items.push(this.skipped(place, 'skipped_duplicate', 'DUPLICATE'));
+          continue;
+        }
+      }
+
       if (
         parsed.phone !== null &&
         (await this.leadRepository.existsByPhoneAndCity(parsed.phone, input.city))
@@ -54,6 +68,10 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
         skippedDuplicates += 1;
         items.push(this.skipped(place, 'skipped_duplicate', 'DUPLICATE'));
         continue;
+      }
+
+      if (place.googlePlaceId !== null) {
+        googlePlaceIdsInBatch.add(place.googlePlaceId);
       }
 
       await this.leadRepository.save(parsed.lead);
@@ -90,6 +108,7 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
       const email = place.email === null ? null : Email.create(place.email);
       const contactInfo = ContactInfo.create({ phone, email });
       const lead = Lead.create({
+        googlePlaceId: place.googlePlaceId,
         businessName,
         sector,
         location,

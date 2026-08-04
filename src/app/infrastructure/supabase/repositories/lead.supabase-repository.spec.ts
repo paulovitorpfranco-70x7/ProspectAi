@@ -47,6 +47,7 @@ function makeRepository(client: SupabaseClient<Database>): LeadSupabaseRepositor
 function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
   return {
     id: LeadId.fromString(IDS.one),
+    googlePlaceId: null,
     businessName: BusinessName.create('Acme Clinic'),
     sector: Sector.create('Clínicas & Consultórios'),
     location: Location.create({ city: 'Niterói', address: 'Rua A, 123' }),
@@ -83,6 +84,7 @@ function makePhone(value: string): PhoneNumber {
 
 function expectLeadValues(actual: Lead, expected: Lead): void {
   expect(actual.id.getValue()).toBe(expected.id.getValue());
+  expect(actual.googlePlaceId).toBe(expected.googlePlaceId);
   expect(actual.businessName.getValue()).toBe(expected.businessName.getValue());
   expect(actual.sector.getValue()).toBe(expected.sector.getValue());
   expect(actual.location.getCity()).toBe(expected.location.getCity());
@@ -386,6 +388,18 @@ describe('LeadSupabaseRepository', () => {
     await repository.save(makeLead({ location: Location.create({ city: 'Niterói' }) }));
 
     await expect(repository.existsByPhoneAndCity(makePhone('(21) 99999-0001'), 'São Gonçalo')).resolves.toBe(false);
+  });
+
+  it('existsByGooglePlaceId: should return true when google place id exists', async () => {
+    await repository.save(makeLead({ googlePlaceId: 'ChIJAcme123' }));
+
+    await expect(repository.existsByGooglePlaceId('ChIJAcme123')).resolves.toBe(true);
+  });
+
+  it('existsByGooglePlaceId: should return false when google place id does not exist', async () => {
+    await repository.save(makeLead({ googlePlaceId: 'ChIJAcme123' }));
+
+    await expect(repository.existsByGooglePlaceId('ChIJOthers456')).resolves.toBe(false);
   });
 
   it('delete: should remove lead from database', async () => {

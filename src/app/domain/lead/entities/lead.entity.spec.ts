@@ -40,6 +40,12 @@ describe('Lead', () => {
     expect(lead.hasWebsite).toBe(false);
   });
 
+  it('create: should preserve googlePlaceId', () => {
+    const lead = Lead.create(makeCreateInput({ googlePlaceId: 'ChIJAcme123' }));
+
+    expect(lead.googlePlaceId).toBe('ChIJAcme123');
+  });
+
   it('create: should derive leadScore from enrichment data', () => {
     const lead = Lead.create(
       makeCreateInput({
@@ -335,6 +341,7 @@ function makeCreateInput(overrides: Partial<LeadCreateInput> = {}): LeadCreateIn
 function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
   return {
     id: makeLeadId(),
+    googlePlaceId: null,
     businessName: makeBusinessName(),
     sector: makeSector(),
     location: makeLocation(),

@@ -11,6 +11,7 @@ export interface PlaceFinderQuery {
  * Ainda NAO sao uma Lead: o use case valida, converte para VOs e checa duplicatas.
  */
 export interface PlaceFinderResult {
+  readonly googlePlaceId: string | null;
   readonly name: string;
   readonly phone: string | null;
   readonly email: string | null;

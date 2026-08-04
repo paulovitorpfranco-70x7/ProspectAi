@@ -1,6 +1,7 @@
 import type { WebsiteQuality } from '@domain/lead/value-objects/website-quality.type';
 
 export interface PlaceFinderResponseDto {
+  readonly googlePlaceId?: string | null;
   readonly name: string;
   readonly phone?: string | null;
   readonly email?: string | null;

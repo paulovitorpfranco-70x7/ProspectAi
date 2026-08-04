@@ -18,6 +18,7 @@ import { DomainEvent } from '../../shared/events/domain-event.base';
 export type ContactChannel = 'whatsapp' | 'email';
 
 export interface LeadCreateInput {
+  readonly googlePlaceId?: string | null;
   readonly businessName: BusinessName;
   readonly sector: Sector;
   readonly location: Location;
@@ -36,6 +37,7 @@ export interface LeadCreateInput {
 
 export interface LeadSnapshot {
   readonly id: LeadId;
+  readonly googlePlaceId: string | null;
   readonly businessName: BusinessName;
   readonly sector: Sector;
   readonly location: Location;
@@ -65,6 +67,7 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 export class Lead {
   private constructor(
     private readonly _id: LeadId,
+    private readonly _googlePlaceId: string | null,
     private readonly _businessName: BusinessName,
     private readonly _sector: Sector,
     private readonly _location: Location,
@@ -104,6 +107,7 @@ export class Lead {
     });
     const lead = new Lead(
       id,
+      input.googlePlaceId ?? null,
       input.businessName,
       input.sector,
       input.location,
@@ -136,6 +140,7 @@ export class Lead {
 
     return new Lead(
       snapshot.id,
+      snapshot.googlePlaceId,
       snapshot.businessName,
       snapshot.sector,
       snapshot.location,
@@ -161,6 +166,10 @@ export class Lead {
 
   get id(): LeadId {
     return this._id;
+  }
+
+  get googlePlaceId(): string | null {
+    return this._googlePlaceId;
   }
 
   get businessName(): BusinessName {

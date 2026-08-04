@@ -39,6 +39,7 @@ function makeRepositoryMock(): jest.Mocked<LeadRepository> {
     findById: jest.fn(),
     findAll: jest.fn(),
     existsByPhoneAndCity: jest.fn(),
+    existsByGooglePlaceId: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
     statsByStatus: jest.fn(),
@@ -63,6 +64,7 @@ function makeTemplateServiceMock(): jest.Mocked<MessageTemplateService> {
 function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
   return {
     id: LeadId.fromString(LEAD_ID),
+    googlePlaceId: null,
     businessName: BusinessName.create('Acme Clinic'),
     sector: Sector.create('Clínicas & Consultórios'),
     location: Location.create({ city: 'Niterói', address: 'Rua A, 123' }),

@@ -9,6 +9,7 @@ import { SearchLeadsUseCase } from './search-leads.use-case';
 
 function makePlace(overrides: Partial<PlaceFinderResult> = {}): PlaceFinderResult {
   return {
+    googlePlaceId: null,
     name: 'Acme Clinic',
     phone: '(21) 99999-0001',
     email: 'contato@acme.com',
@@ -28,6 +29,7 @@ function makeRepositoryMock(): jest.Mocked<LeadRepository> {
     findById: jest.fn(),
     findAll: jest.fn(),
     existsByPhoneAndCity: jest.fn().mockResolvedValue(false),
+    existsByGooglePlaceId: jest.fn().mockResolvedValue(false),
     delete: jest.fn(),
     count: jest.fn(),
     statsByStatus: jest.fn(),
@@ -140,6 +142,60 @@ describe('SearchLeadsUseCase', () => {
       skipReason: 'DUPLICATE',
     });
     expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('should skip a place when googlePlaceId already exists', async () => {
+    const repository = makeRepositoryMock();
+    repository.existsByGooglePlaceId.mockResolvedValueOnce(true);
+    const placeFinder = makePlaceFinderMock([makePlace({ googlePlaceId: 'ChIJAcme123' })]);
+    const useCase = new SearchLeadsUseCase(repository, placeFinder);
+
+    const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
+
+    expect(repository.existsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123');
+    expect(output.items[0]).toMatchObject({
+      itemStatus: 'skipped_duplicate',
+      lead: null,
+      skipReason: 'DUPLICATE',
+    });
+    expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('should insert a place when googlePlaceId is new', async () => {
+    const repository = makeRepositoryMock();
+    const placeFinder = makePlaceFinderMock([makePlace({ googlePlaceId: 'ChIJAcme123' })]);
+    const useCase = new SearchLeadsUseCase(repository, placeFinder);
+
+    await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
+
+    expect(repository.existsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123');
+    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(repository.save.mock.calls[0]?.[0].googlePlaceId).toBe('ChIJAcme123');
+  });
+
+  it('should skip duplicate googlePlaceId values within the same search batch', async () => {
+    const repository = makeRepositoryMock();
+    const placeFinder = makePlaceFinderMock([
+      makePlace({
+        googlePlaceId: 'ChIJAcme123',
+        name: 'Acme Clinic',
+        phone: '(21) 99999-0001',
+      }),
+      makePlace({
+        googlePlaceId: 'ChIJAcme123',
+        name: 'Acme Clinic duplicate',
+        phone: '(21) 99999-0002',
+      }),
+    ]);
+    const useCase = new SearchLeadsUseCase(repository, placeFinder);
+
+    const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
+
+    expect(repository.existsByGooglePlaceId).toHaveBeenCalledTimes(1);
+    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(output.addedCount).toBe(1);
+    expect(output.skippedDuplicates).toBe(1);
+    expect(output.items[1]?.itemStatus).toBe('skipped_duplicate');
   });
 
   it("should skip places with invalid phone and return itemStatus='skipped_invalid' with reason", async () => {

@@ -100,6 +100,19 @@ export class LeadSupabaseRepository implements LeadRepository {
     return (count ?? 0) > 0;
   }
 
+  async existsByGooglePlaceId(googlePlaceId: string): Promise<boolean> {
+    const { count, error } = await this.supabase
+      .from('leads')
+      .select('id', { count: 'exact', head: true })
+      .eq('google_place_id', googlePlaceId);
+
+    if (error !== null) {
+      throw error;
+    }
+
+    return (count ?? 0) > 0;
+  }
+
   async delete(id: LeadId): Promise<void> {
     const { count, error } = await this.supabase
       .from('leads')

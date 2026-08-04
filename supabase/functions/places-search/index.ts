@@ -13,6 +13,7 @@ interface PlacesSearchRequest {
 }
 
 interface GooglePlace {
+  readonly id?: string;
   readonly displayName?: { readonly text?: string };
   readonly nationalPhoneNumber?: string;
   readonly internationalPhoneNumber?: string;
@@ -27,6 +28,7 @@ interface GooglePlacesResponse {
 }
 
 interface PlaceFinderResponseDto {
+  readonly googlePlaceId?: string;
   readonly name: string;
   readonly phone: string | null;
   readonly email: string | null;
@@ -90,6 +92,7 @@ serve(async (req) => {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       'X-Goog-FieldMask': [
+        'places.id',
         'places.displayName',
         'places.nationalPhoneNumber',
         'places.internationalPhoneNumber',
@@ -116,6 +119,7 @@ serve(async (req) => {
       const website = await enrichWebsite(place.websiteUri);
 
       return {
+        ...(place.id ? { googlePlaceId: place.id } : {}),
         name: place.displayName?.text ?? '',
         phone: place.nationalPhoneNumber ?? place.internationalPhoneNumber ?? null,
         email: null,

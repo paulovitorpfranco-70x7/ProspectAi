@@ -44,6 +44,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           email: string | null
+          google_place_id: string | null
           has_website: boolean
           id: string
           instagram_handle: string | null
@@ -72,6 +73,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           email?: string | null
+          google_place_id?: string | null
           has_website?: boolean
           id: string
           instagram_handle?: string | null
@@ -100,6 +102,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           email?: string | null
+          google_place_id?: string | null
           has_website?: boolean
           id?: string
           instagram_handle?: string | null

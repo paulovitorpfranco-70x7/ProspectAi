@@ -37,6 +37,7 @@ describe('PlaceFinderHttpService', () => {
     http.post.mockReturnValueOnce(
       of([
         {
+          googlePlaceId: 'ChIJAcme123',
           name: 'Acme Clinic',
           phone: '(21) 99999-0001',
           rating: null,
@@ -57,6 +58,7 @@ describe('PlaceFinderHttpService', () => {
 
     expect(result).toEqual([
       {
+        googlePlaceId: 'ChIJAcme123',
         name: 'Acme Clinic',
         phone: '(21) 99999-0001',
         email: null,

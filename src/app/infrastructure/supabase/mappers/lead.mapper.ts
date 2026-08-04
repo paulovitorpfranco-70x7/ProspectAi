@@ -22,6 +22,7 @@ export class SupabaseLeadMapper {
     const email = row.email ? Email.create(row.email) : null;
     const snapshot: LeadSnapshot = {
       id: LeadId.fromString(row.id),
+      googlePlaceId: row.google_place_id,
       businessName: BusinessName.create(row.business_name),
       sector: Sector.create(row.sector),
       location: Location.create({ city: row.city, address: row.address }),
@@ -51,6 +52,7 @@ export class SupabaseLeadMapper {
   static toRow(lead: Lead): LeadPersistenceRow {
     return {
       id: lead.id.getValue(),
+      google_place_id: lead.googlePlaceId,
       business_name: lead.businessName.getValue(),
       sector: lead.sector.getValue(),
       city: lead.location.getCity(),

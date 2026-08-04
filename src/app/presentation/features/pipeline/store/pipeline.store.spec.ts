@@ -24,6 +24,7 @@ const LEAD_ID = '123e4567-e89b-42d3-a456-426614174000';
 function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
   return Lead.reconstitute({
     id: LeadId.fromString(LEAD_ID),
+    googlePlaceId: null,
     businessName: BusinessName.create('Acme Clinic'),
     sector: Sector.create('Clínicas & Consultórios'),
     location: Location.create({ city: 'Niterói', address: 'Rua A, 123' }),
@@ -82,6 +83,7 @@ function makeRepositoryMock(): jest.Mocked<LeadRepository> {
     findById: jest.fn(),
     findAll: jest.fn().mockResolvedValue([]),
     existsByPhoneAndCity: jest.fn(),
+    existsByGooglePlaceId: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
     statsByStatus: jest.fn(),

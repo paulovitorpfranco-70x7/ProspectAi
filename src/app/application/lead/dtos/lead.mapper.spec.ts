@@ -19,6 +19,7 @@ function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
 
   return {
     id: LeadId.fromString(LEAD_ID),
+    googlePlaceId: null,
     businessName: BusinessName.create('Acme Clinic'),
     sector: Sector.create('Clínicas & Consultórios'),
     location: Location.create({ city: 'Niterói', address: 'Rua A, 123' }),

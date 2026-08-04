@@ -6,6 +6,7 @@ export class PlaceFinderMapper {
     const websiteQuality = dto.websiteQuality ?? (dto.hasWebsite ? 'proper' : 'none');
 
     return {
+      googlePlaceId: dto.googlePlaceId?.trim() || null,
       name: dto.name,
       phone: dto.phone ?? null,
       email: dto.email ?? null,

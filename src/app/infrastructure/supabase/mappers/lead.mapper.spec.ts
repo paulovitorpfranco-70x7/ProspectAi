@@ -20,6 +20,7 @@ const LAST_CONTACT_AT_ISO = '2026-05-20T15:30:00.000Z';
 function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
   return {
     id: LEAD_ID,
+    google_place_id: 'ChIJAcme123',
     business_name: 'Acme Clinic',
     sector: 'Clínicas & Consultórios',
     city: 'Niterói',
@@ -52,6 +53,7 @@ function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
 function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
   return {
     id: LeadId.fromString(LEAD_ID),
+    googlePlaceId: 'ChIJAcme123',
     businessName: BusinessName.create('Acme Clinic'),
     sector: Sector.create('Clínicas & Consultórios'),
     location: Location.create({ city: 'Niterói', address: 'Rua A, 123' }),
@@ -84,6 +86,7 @@ function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
 
 function expectSameLeadValues(actual: Lead, expected: Lead): void {
   expect(actual.id.getValue()).toBe(expected.id.getValue());
+  expect(actual.googlePlaceId).toBe(expected.googlePlaceId);
   expect(actual.businessName.getValue()).toBe(expected.businessName.getValue());
   expect(actual.sector.getValue()).toBe(expected.sector.getValue());
   expect(actual.location.getCity()).toBe(expected.location.getCity());
@@ -120,6 +123,7 @@ describe('SupabaseLeadMapper', () => {
     const lead = SupabaseLeadMapper.toDomain(makeRow());
 
     expect(lead.id.getValue()).toBe(LEAD_ID);
+    expect(lead.googlePlaceId).toBe('ChIJAcme123');
     expect(lead.businessName.getValue()).toBe('Acme Clinic');
     expect(lead.sector.getValue()).toBe('Clínicas & Consultórios');
     expect(lead.location.getCity()).toBe('Niterói');
@@ -161,6 +165,7 @@ describe('SupabaseLeadMapper', () => {
 
     expect(row).toEqual({
       id: LEAD_ID,
+      google_place_id: 'ChIJAcme123',
       business_name: 'Acme Clinic',
       sector: 'Clínicas & Consultórios',
       city: 'Niterói',

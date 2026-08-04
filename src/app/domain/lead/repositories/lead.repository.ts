@@ -50,6 +50,9 @@ export interface LeadRepository {
    */
   existsByPhoneAndCity(phone: PhoneNumber, city: string): Promise<boolean>;
 
+  /** Retorna true quando o identificador estável do Google Places já foi persistido. */
+  existsByGooglePlaceId(googlePlaceId: string): Promise<boolean>;
+
   /** Lança LeadNotFoundError se não existir. */
   delete(id: LeadId): Promise<void>;
 

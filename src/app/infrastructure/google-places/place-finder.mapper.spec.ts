@@ -4,6 +4,7 @@ describe('PlaceFinderMapper', () => {
   it('should map Edge Function response to PlaceFinderResult', () => {
     const [result] = PlaceFinderMapper.toResults([
       {
+        googlePlaceId: 'ChIJAcme123',
         name: 'Acme Clinic',
         phone: '(21) 99999-0001',
         email: 'contato@acme.com',
@@ -17,6 +18,7 @@ describe('PlaceFinderMapper', () => {
     ]);
 
     expect(result).toEqual({
+      googlePlaceId: 'ChIJAcme123',
       name: 'Acme Clinic',
       phone: '(21) 99999-0001',
       email: 'contato@acme.com',
@@ -33,6 +35,12 @@ describe('PlaceFinderMapper', () => {
     const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
 
     expect(result.rating).toBeNull();
+  });
+
+  it('should default googlePlaceId to null for legacy responses', () => {
+    const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
+
+    expect(result.googlePlaceId).toBeNull();
   });
 
   it('should default reviewCount to zero', () => {
