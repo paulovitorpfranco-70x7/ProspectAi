@@ -32,6 +32,8 @@ function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
     status: 'contatado',
     notes: 'Lead interessado',
     rating: 4.5,
+    review_count: 210,
+    bairro: 'Icaraí',
     contact_count: 2,
     last_contact_at: LAST_CONTACT_AT_ISO,
     has_website: false,
@@ -69,6 +71,8 @@ function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
     status: LeadStatus.contatado(),
     notes: 'Lead interessado',
     rating: 4.5,
+    reviewCount: 210,
+    bairro: 'Icaraí',
     contactCount: 2,
     lastContactAt: new Date(LAST_CONTACT_AT_ISO),
     hasWebsite: false,
@@ -109,6 +113,8 @@ function expectSameLeadValues(actual: Lead, expected: Lead): void {
   expect(actual.status.getValue()).toBe(expected.status.getValue());
   expect(actual.notes).toBe(expected.notes);
   expect(actual.rating).toBe(expected.rating);
+  expect(actual.reviewCount).toBe(expected.reviewCount);
+  expect(actual.bairro).toBe(expected.bairro);
   expect(actual.contactCount).toBe(expected.contactCount);
   expect(actual.lastContactAt?.toISOString() ?? null).toBe(
     expected.lastContactAt?.toISOString() ?? null,
@@ -148,6 +154,8 @@ describe('SupabaseLeadMapper', () => {
     expect(lead.status.getValue()).toBe('contatado');
     expect(lead.notes).toBe('Lead interessado');
     expect(lead.rating).toBe(4.5);
+    expect(lead.reviewCount).toBe(210);
+    expect(lead.bairro).toBe('Icaraí');
     expect(lead.contactCount).toBe(2);
     expect(lead.lastContactAt?.toISOString()).toBe(LAST_CONTACT_AT_ISO);
     expect(lead.hasWebsite).toBe(false);
@@ -198,6 +206,8 @@ describe('SupabaseLeadMapper', () => {
       status: 'contatado',
       notes: 'Lead interessado',
       rating: 4.5,
+      review_count: 210,
+      bairro: 'Icaraí',
       contact_count: 2,
       last_contact_at: LAST_CONTACT_AT_ISO,
       has_website: false,

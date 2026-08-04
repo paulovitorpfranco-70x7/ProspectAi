@@ -36,6 +36,8 @@ function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
     status: LeadStatus.novo(),
     notes: '',
     rating: 4.5,
+    reviewCount: null,
+    bairro: null,
     contactCount: 0,
     lastContactAt: null,
     hasWebsite: false,
@@ -266,7 +268,7 @@ function makeQueueItem(overrides: Partial<OutreachQueueItem> = {}): OutreachQueu
     mensagemRenderizada: 'Mensagem pronta',
     whatsappUrl: 'https://wa.me/5521999990001?text=Mensagem%20pronta',
     telefoneInvalido: false,
-    bairro: 'Rua A, 123',
+    bairro: null,
     avaliacoes: null,
     ...overrides,
   };

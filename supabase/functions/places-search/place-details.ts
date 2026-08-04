@@ -10,6 +10,18 @@ export interface TopReview {
   readonly authorName: string | null;
 }
 
+export interface GoogleAddressComponent {
+  readonly longText?: string;
+  readonly types?: readonly string[];
+}
+
+const BAIRRO_TYPE_PRIORITY = [
+  'sublocality_level_1',
+  'sublocality',
+  'neighborhood',
+  'administrative_area_level_2',
+] as const;
+
 export const MAX_TOP_REVIEWS = 2;
 export const MAX_REVIEW_TEXT_LENGTH = 200;
 
@@ -36,6 +48,21 @@ export function extractTopReviews(
     .slice(0, MAX_TOP_REVIEWS);
 
   return topReviews.length > 0 ? topReviews : null;
+}
+
+export function extractBairro(
+  addressComponents: readonly GoogleAddressComponent[] | undefined,
+): string | null {
+  for (const type of BAIRRO_TYPE_PRIORITY) {
+    const component = addressComponents?.find((candidate) => candidate.types?.includes(type));
+    const longText = component?.longText?.trim();
+
+    if (longText) {
+      return longText;
+    }
+  }
+
+  return null;
 }
 
 export function truncateWithoutBreakingWord(text: string, maxLength: number): string {

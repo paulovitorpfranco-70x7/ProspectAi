@@ -13,6 +13,8 @@ export interface LeadDto {
   readonly status: LeadStatusValue;
   readonly notes: string;
   readonly rating: number | null;
+  readonly reviewCount: number | null;
+  readonly bairro: string | null;
   readonly contactCount: number;
   readonly lastContactAtIso: string | null;
   readonly hasWebsite: boolean;

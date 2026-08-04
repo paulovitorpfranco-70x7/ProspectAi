@@ -18,6 +18,8 @@ export class LeadMapper {
       status: lead.status.getValue(),
       notes: lead.notes,
       rating: lead.rating,
+      reviewCount: lead.reviewCount,
+      bairro: lead.bairro,
       contactCount: lead.contactCount,
       lastContactAtIso: lead.lastContactAt?.toISOString() ?? null,
       hasWebsite: lead.hasWebsite,

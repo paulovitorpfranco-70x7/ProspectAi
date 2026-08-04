@@ -16,6 +16,7 @@ function makePlace(overrides: Partial<PlaceFinderResult> = {}): PlaceFinderResul
     rating: 4.5,
     reviewCount: 30,
     address: 'Rua A, 123',
+    bairro: 'Icaraí',
     hasWebsite: false,
     instagramHandle: null,
     websiteQuality: 'none',
@@ -157,6 +158,8 @@ describe('SearchLeadsUseCase', () => {
 
     expect(repository.existsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123');
     expect(repository.updatePlaceDetailsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123', {
+      reviewCount: 30,
+      bairro: 'Icaraí',
       openingHours: null,
       topReviews: null,
     });
@@ -181,6 +184,8 @@ describe('SearchLeadsUseCase', () => {
     const output = await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
 
     expect(repository.updatePlaceDetailsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123', {
+      reviewCount: 30,
+      bairro: 'Icaraí',
       openingHours,
       topReviews,
     });
@@ -200,11 +205,13 @@ describe('SearchLeadsUseCase', () => {
     expect(repository.save.mock.calls[0]?.[0].googlePlaceId).toBe('ChIJAcme123');
   });
 
-  it('should propagate opening hours and top reviews to Lead.create', async () => {
+  it('should propagate place enrichment fields to Lead.create', async () => {
     const repository = makeRepositoryMock();
     const openingHours = { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] };
     const topReviews = [{ rating: 5, text: 'Excelente', authorName: 'Ana' }];
-    const placeFinder = makePlaceFinderMock([makePlace({ openingHours, topReviews })]);
+    const placeFinder = makePlaceFinderMock([
+      makePlace({ reviewCount: 210, bairro: 'Santa Rosa', openingHours, topReviews }),
+    ]);
     const useCase = new SearchLeadsUseCase(repository, placeFinder);
 
     await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
@@ -212,6 +219,8 @@ describe('SearchLeadsUseCase', () => {
     const savedLead = repository.save.mock.calls[0]?.[0];
     expect(savedLead?.openingHours).toBe(openingHours);
     expect(savedLead?.topReviews).toBe(topReviews);
+    expect(savedLead?.reviewCount).toBe(210);
+    expect(savedLead?.bairro).toBe('Santa Rosa');
   });
 
   it('should skip duplicate googlePlaceId values within the same search batch', async () => {

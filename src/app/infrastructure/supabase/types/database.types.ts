@@ -7,10 +7,30 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -53,6 +73,7 @@ export type Database = {
         Row: {
           ab_variant: string | null
           address: string | null
+          bairro: string | null
           business_name: string
           city: string
           city_normalized: string
@@ -75,6 +96,7 @@ export type Database = {
           preview_url: string | null
           preview_views: number
           rating: number | null
+          review_count: number | null
           sector: string
           stage_sent_at: string | null
           status: string
@@ -86,6 +108,7 @@ export type Database = {
         Insert: {
           ab_variant?: string | null
           address?: string | null
+          bairro?: string | null
           business_name: string
           city: string
           city_normalized?: string
@@ -108,6 +131,7 @@ export type Database = {
           preview_url?: string | null
           preview_views?: number
           rating?: number | null
+          review_count?: number | null
           sector: string
           stage_sent_at?: string | null
           status?: string
@@ -119,6 +143,7 @@ export type Database = {
         Update: {
           ab_variant?: string | null
           address?: string | null
+          bairro?: string | null
           business_name?: string
           city?: string
           city_normalized?: string
@@ -141,6 +166,7 @@ export type Database = {
           preview_url?: string | null
           preview_views?: number
           rating?: number | null
+          review_count?: number | null
           sector?: string
           stage_sent_at?: string | null
           status?: string
@@ -160,9 +186,9 @@ export type Database = {
         Args: {
           p_lead_id: string
           p_mensagem: string
-          p_next_followup: string | null
+          p_next_followup: string
           p_stage: string
-          p_variant: string | null
+          p_variant: string
         }
         Returns: {
           id: string
@@ -309,6 +335,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       lead_status: ["novo", "contatado", "proposta", "fechado", "descartado"],

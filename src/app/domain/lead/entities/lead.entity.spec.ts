@@ -46,6 +46,13 @@ describe('Lead', () => {
     expect(lead.googlePlaceId).toBe('ChIJAcme123');
   });
 
+  it('create: should preserve reviewCount and bairro', () => {
+    const lead = Lead.create(makeCreateInput({ reviewCount: 210, bairro: ' Icaraí ' }));
+
+    expect(lead.reviewCount).toBe(210);
+    expect(lead.bairro).toBe('Icaraí');
+  });
+
   it('create: should derive leadScore from enrichment data', () => {
     const lead = Lead.create(
       makeCreateInput({
@@ -100,6 +107,8 @@ describe('Lead', () => {
       lastContactAt: new Date('2026-05-17T12:00:00Z'),
       hasWebsite: true,
       rating: 4.5,
+      reviewCount: 210,
+      bairro: 'Icaraí',
     });
 
     const lead = Lead.reconstitute(snapshot);
@@ -115,6 +124,8 @@ describe('Lead', () => {
     expect(lead.lastContactAt).toEqual(snapshot.lastContactAt);
     expect(lead.hasWebsite).toBe(true);
     expect(lead.rating).toBe(4.5);
+    expect(lead.reviewCount).toBe(210);
+    expect(lead.bairro).toBe('Icaraí');
     expect(lead.createdAt).toBe(snapshot.createdAt);
   });
 

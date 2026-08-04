@@ -35,6 +35,8 @@ export interface LeadStatsByStatus {
 }
 
 export interface LeadPlaceDetails {
+  readonly reviewCount: number | null;
+  readonly bairro: string | null;
   readonly openingHours: unknown | null;
   readonly topReviews: unknown | null;
 }

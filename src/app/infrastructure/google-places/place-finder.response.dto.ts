@@ -8,6 +8,7 @@ export interface PlaceFinderResponseDto {
   readonly rating?: number | null;
   readonly reviewCount?: number | null;
   readonly address?: string | null;
+  readonly bairro?: string | null;
   readonly hasWebsite?: boolean | null;
   readonly instagramHandle?: string | null;
   readonly websiteQuality?: WebsiteQuality;

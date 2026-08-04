@@ -120,6 +120,14 @@ export class LeadSupabaseRepository implements LeadRepository {
   ): Promise<void> {
     const update: Database['public']['Tables']['leads']['Update'] = {};
 
+    if (details.reviewCount !== null && details.reviewCount !== undefined) {
+      update.review_count = details.reviewCount;
+    }
+
+    if (details.bairro !== null && details.bairro !== undefined) {
+      update.bairro = details.bairro;
+    }
+
     if (details.openingHours !== null && details.openingHours !== undefined) {
       update.opening_hours = details.openingHours as Json;
     }
@@ -128,7 +136,12 @@ export class LeadSupabaseRepository implements LeadRepository {
       update.top_reviews = details.topReviews as Json;
     }
 
-    if (update.opening_hours === undefined && update.top_reviews === undefined) {
+    if (
+      update.review_count === undefined &&
+      update.bairro === undefined &&
+      update.opening_hours === undefined &&
+      update.top_reviews === undefined
+    ) {
       return;
     }
 

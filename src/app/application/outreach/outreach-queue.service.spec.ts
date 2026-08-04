@@ -31,6 +31,8 @@ function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
     status: LeadStatus.novo(),
     notes: '',
     rating: 4.8,
+    reviewCount: 30,
+    bairro: 'Icaraí',
     contactCount: 0,
     lastContactAt: null,
     hasWebsite: false,
@@ -173,6 +175,47 @@ describe('OutreachQueueService', () => {
 
     expect(queue.novos[0]?.telefoneInvalido).toBe(true);
     expect(queue.novos[0]?.whatsappUrl).toBeNull();
+  });
+
+  it('should render the real Google review count when reputation threshold is met', async () => {
+    const { service, leadRepository } = setup();
+    leadRepository.findAll.mockResolvedValue([makeLead({ rating: 4.8, reviewCount: 210 })]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+    expect(queue.novos[0]?.mensagemRenderizada).toContain('4,8 com 210 avaliações');
+    expect(queue.novos[0]?.avaliacoes).toBe(210);
+  });
+
+  it('should omit reputation copy when review count is below 20', async () => {
+    const { service, leadRepository } = setup();
+    leadRepository.findAll.mockResolvedValue([makeLead({ rating: 4.8, reviewCount: 4 })]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+    expect(queue.novos[0]?.mensagemRenderizada).not.toContain('avaliações');
+    expect(queue.novos[0]?.avaliacoes).toBe(4);
+  });
+
+  it('should omit reputation copy when review count is null', async () => {
+    const { service, leadRepository } = setup();
+    leadRepository.findAll.mockResolvedValue([makeLead({ rating: 4.8, reviewCount: null })]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+    expect(queue.novos[0]?.mensagemRenderizada).not.toContain('avaliações');
+    expect(queue.novos[0]?.avaliacoes).toBeNull();
+  });
+
+  it('should use persisted bairro and never derive it from the full address', async () => {
+    const { service, leadRepository } = setup();
+    const lead = makeLead({ bairro: null });
+    leadRepository.findAll.mockResolvedValue([lead]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+    expect(lead.location.getAddress()).toBe('Icaraí');
+    expect(queue.novos[0]?.bairro).toBeNull();
   });
 
   it('should pass the correctly calculated next follow-up when confirming a send', async () => {

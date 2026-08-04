@@ -28,7 +28,8 @@ export interface LeadCreateInput {
   readonly hasWebsite?: boolean;
   readonly instagramHandle?: string | null;
   readonly websiteQuality?: WebsiteQuality | null;
-  readonly reviewCount?: number;
+  readonly reviewCount?: number | null;
+  readonly bairro?: string | null;
   readonly openingHours?: unknown | null;
   readonly topReviews?: unknown | null;
   readonly previewUrl?: string | null;
@@ -46,6 +47,8 @@ export interface LeadSnapshot {
   readonly status: LeadStatus;
   readonly notes: string;
   readonly rating: number | null;
+  readonly reviewCount?: number | null;
+  readonly bairro?: string | null;
   readonly contactCount: number;
   readonly lastContactAt: Date | null;
   readonly hasWebsite: boolean;
@@ -80,6 +83,8 @@ export class Lead {
     private _status: LeadStatus,
     private _notes: string,
     private readonly _rating: number | null,
+    private readonly _reviewCount: number | null,
+    private readonly _bairro: string | null,
     private _contactCount: number,
     private _lastContactAt: Date | null,
     private readonly _hasWebsite: boolean,
@@ -124,6 +129,8 @@ export class Lead {
       LeadStatus.novo(),
       '',
       rating,
+      input.reviewCount ?? null,
+      input.bairro?.trim() || null,
       0,
       null,
       input.hasWebsite ?? false,
@@ -161,6 +168,8 @@ export class Lead {
       snapshot.status,
       snapshot.notes,
       snapshot.rating,
+      snapshot.reviewCount ?? null,
+      snapshot.bairro?.trim() || null,
       snapshot.contactCount,
       snapshot.lastContactAt,
       snapshot.hasWebsite,
@@ -215,6 +224,14 @@ export class Lead {
 
   get rating(): number | null {
     return this._rating;
+  }
+
+  get reviewCount(): number | null {
+    return this._reviewCount;
+  }
+
+  get bairro(): string | null {
+    return this._bairro;
   }
 
   get contactCount(): number {

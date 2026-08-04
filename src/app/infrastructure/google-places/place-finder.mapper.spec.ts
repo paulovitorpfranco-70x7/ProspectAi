@@ -11,6 +11,7 @@ describe('PlaceFinderMapper', () => {
         rating: 4.5,
         reviewCount: 30,
         address: 'Rua A, 123',
+        bairro: 'Icaraí',
         hasWebsite: true,
         instagramHandle: 'acmeclinic',
         websiteQuality: 'proper',
@@ -27,6 +28,7 @@ describe('PlaceFinderMapper', () => {
       rating: 4.5,
       reviewCount: 30,
       address: 'Rua A, 123',
+      bairro: 'Icaraí',
       hasWebsite: true,
       instagramHandle: 'acmeclinic',
       websiteQuality: 'proper',
@@ -47,10 +49,10 @@ describe('PlaceFinderMapper', () => {
     expect(result.googlePlaceId).toBeNull();
   });
 
-  it('should default reviewCount to zero', () => {
+  it('should default reviewCount to null', () => {
     const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
 
-    expect(result.reviewCount).toBe(0);
+    expect(result.reviewCount).toBeNull();
   });
 
   it('should default openingHours and topReviews to null', () => {
@@ -64,6 +66,7 @@ describe('PlaceFinderMapper', () => {
     const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
 
     expect(result.address).toBeNull();
+    expect(result.bairro).toBeNull();
   });
 
   it('should default hasWebsite to false', () => {

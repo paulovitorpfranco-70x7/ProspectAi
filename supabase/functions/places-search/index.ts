@@ -1,5 +1,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { extractTopReviews, type GoogleReview, type TopReview } from './place-details.ts';
+import {
+  extractBairro,
+  extractTopReviews,
+  type GoogleAddressComponent,
+  type GoogleReview,
+  type TopReview,
+} from './place-details.ts';
 import { enrichWebsite, type WebsiteQuality } from './website-enrichment.ts';
 
 const corsHeaders = {
@@ -21,6 +27,7 @@ interface GooglePlace {
   readonly rating?: number;
   readonly userRatingCount?: number;
   readonly formattedAddress?: string;
+  readonly addressComponents?: readonly GoogleAddressComponent[];
   readonly websiteUri?: string;
   readonly regularOpeningHours?: unknown;
   readonly reviews?: readonly GoogleReview[];
@@ -36,8 +43,9 @@ interface PlaceFinderResponseDto {
   readonly phone: string | null;
   readonly email: string | null;
   readonly rating: number | null;
-  readonly reviewCount: number;
+  readonly reviewCount: number | null;
   readonly address: string | null;
+  readonly bairro: string | null;
   readonly hasWebsite: boolean;
   readonly instagramHandle: string | null;
   readonly websiteQuality: WebsiteQuality;
@@ -53,6 +61,7 @@ const BASE_PLACE_FIELD_MASK = [
   'places.rating',
   'places.userRatingCount',
   'places.formattedAddress',
+  'places.addressComponents',
   'places.websiteUri',
 ] as const;
 
@@ -134,8 +143,9 @@ serve(async (req) => {
         phone: place.nationalPhoneNumber ?? place.internationalPhoneNumber ?? null,
         email: null,
         rating: place.rating ?? null,
-        reviewCount: place.userRatingCount ?? 0,
+        reviewCount: place.userRatingCount ?? null,
         address: place.formattedAddress ?? null,
+        bairro: extractBairro(place.addressComponents),
         hasWebsite: website.hasWebsite,
         instagramHandle: website.instagramHandle,
         websiteQuality: website.websiteQuality,

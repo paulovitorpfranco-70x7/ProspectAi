@@ -62,6 +62,8 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
 
         if (alreadyExists) {
           await this.leadRepository.updatePlaceDetailsByGooglePlaceId(place.googlePlaceId, {
+            reviewCount: place.reviewCount,
+            bairro: place.bairro,
             openingHours: place.openingHours,
             topReviews: place.topReviews,
           });
@@ -125,6 +127,7 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
         contactInfo,
         rating: place.rating,
         reviewCount: place.reviewCount,
+        bairro: place.bairro,
         hasWebsite: place.hasWebsite,
         instagramHandle: place.instagramHandle,
         websiteQuality: place.websiteQuality,

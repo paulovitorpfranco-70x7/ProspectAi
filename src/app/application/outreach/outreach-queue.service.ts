@@ -126,8 +126,8 @@ export class OutreachQueueService {
     variant: AbVariant,
     renderedMessage?: string,
   ): OutreachQueueItem {
-    const bairro = lead.location.getAddress();
-    const avaliacoes = Array.isArray(lead.topReviews) ? lead.topReviews.length : null;
+    const bairro = lead.bairro;
+    const avaliacoes = lead.reviewCount;
     const context: LeadOutreachContext = {
       nome: lead.businessName.getValue(),
       cidade: lead.location.getCity(),

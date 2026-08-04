@@ -436,7 +436,7 @@ describe('LeadSupabaseRepository', () => {
     await expect(repository.existsByGooglePlaceId('ChIJOthers456')).resolves.toBe(false);
   });
 
-  it('updatePlaceDetailsByGooglePlaceId: should persist nested JSONB without stringifying', async () => {
+  it('updatePlaceDetailsByGooglePlaceId: should persist place enrichment fields', async () => {
     const lead = makeLead({ googlePlaceId: 'ChIJAcme123' });
     const openingHours = {
       periods: [{ open: { day: 1, hour: 9, minute: 0 }, close: { day: 1, hour: 18, minute: 0 } }],
@@ -445,6 +445,8 @@ describe('LeadSupabaseRepository', () => {
     await repository.save(lead);
 
     await repository.updatePlaceDetailsByGooglePlaceId('ChIJAcme123', {
+      reviewCount: 210,
+      bairro: 'Icaraí',
       openingHours,
       topReviews,
     });
@@ -452,6 +454,8 @@ describe('LeadSupabaseRepository', () => {
     const found = await repository.findById(lead.id);
     expect(found?.openingHours).toEqual(openingHours);
     expect(found?.topReviews).toEqual(topReviews);
+    expect(found?.reviewCount).toBe(210);
+    expect(found?.bairro).toBe('Icaraí');
     expect(typeof found?.openingHours).toBe('object');
     expect(Array.isArray(found?.topReviews)).toBe(true);
   });

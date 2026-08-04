@@ -1,4 +1,5 @@
 import {
+  extractBairro,
   extractTopReviews,
   MAX_REVIEW_TEXT_LENGTH,
   MAX_TOP_REVIEWS,
@@ -66,4 +67,31 @@ Deno.test('keeps only public author name and defaults it to null', () => {
   assertEquals(extractTopReviews([{ rating: 5, text: { text: 'Ótimo' } }]), [
     { rating: 5, text: 'Ótimo', authorName: null },
   ]);
+});
+
+for (const type of [
+  'sublocality_level_1',
+  'sublocality',
+  'neighborhood',
+  'administrative_area_level_2',
+]) {
+  Deno.test(`extracts bairro from ${type}`, () => {
+    assertEquals(extractBairro([{ longText: 'Icaraí', types: [type] }]), 'Icaraí');
+  });
+}
+
+Deno.test('extracts bairro according to type priority, regardless of component order', () => {
+  assertEquals(
+    extractBairro([
+      { longText: 'Niterói', types: ['administrative_area_level_2'] },
+      { longText: 'Santa Rosa', types: ['neighborhood'] },
+      { longText: 'Icaraí', types: ['sublocality_level_1'] },
+    ]),
+    'Icaraí',
+  );
+});
+
+Deno.test('returns null when address components are absent or have no bairro type', () => {
+  assertEquals(extractBairro(undefined), null);
+  assertEquals(extractBairro([{ longText: 'Brasil', types: ['country'] }]), null);
 });
