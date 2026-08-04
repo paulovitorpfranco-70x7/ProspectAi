@@ -118,6 +118,8 @@ export class SearchLeadsUseCase implements UseCase<SearchLeadsInput, SearchLeads
         hasWebsite: place.hasWebsite,
         instagramHandle: place.instagramHandle,
         websiteQuality: place.websiteQuality,
+        openingHours: place.openingHours,
+        topReviews: place.topReviews,
       });
 
       return { kind: 'valid', lead, phone };

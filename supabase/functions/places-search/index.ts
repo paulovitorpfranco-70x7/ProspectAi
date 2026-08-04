@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { extractTopReviews, type GoogleReview, type TopReview } from './place-details.ts';
 import { enrichWebsite, type WebsiteQuality } from './website-enrichment.ts';
 
 const corsHeaders = {
@@ -21,6 +22,8 @@ interface GooglePlace {
   readonly userRatingCount?: number;
   readonly formattedAddress?: string;
   readonly websiteUri?: string;
+  readonly regularOpeningHours?: unknown;
+  readonly reviews?: readonly GoogleReview[];
 }
 
 interface GooglePlacesResponse {
@@ -38,7 +41,23 @@ interface PlaceFinderResponseDto {
   readonly hasWebsite: boolean;
   readonly instagramHandle: string | null;
   readonly websiteQuality: WebsiteQuality;
+  readonly openingHours: unknown | null;
+  readonly topReviews: readonly TopReview[] | null;
 }
+
+const BASE_PLACE_FIELD_MASK = [
+  'places.id',
+  'places.displayName',
+  'places.nationalPhoneNumber',
+  'places.internationalPhoneNumber',
+  'places.rating',
+  'places.userRatingCount',
+  'places.formattedAddress',
+  'places.websiteUri',
+] as const;
+
+// Campos de maior custo, isolados para permitir enriquecimento sob demanda no futuro.
+const EXPENSIVE_ENRICHMENT_FIELD_MASK = ['places.regularOpeningHours', 'places.reviews'] as const;
 
 const SEARCH_QUERY_BY_SECTOR: Readonly<Record<string, string>> = {
   'Clínicas & Consultórios': 'Clínicas & Consultórios',
@@ -91,16 +110,7 @@ serve(async (req) => {
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
-      'X-Goog-FieldMask': [
-        'places.id',
-        'places.displayName',
-        'places.nationalPhoneNumber',
-        'places.internationalPhoneNumber',
-        'places.rating',
-        'places.userRatingCount',
-        'places.formattedAddress',
-        'places.websiteUri',
-      ].join(','),
+      'X-Goog-FieldMask': [...BASE_PLACE_FIELD_MASK, ...EXPENSIVE_ENRICHMENT_FIELD_MASK].join(','),
     },
     body: JSON.stringify({
       textQuery: `${SEARCH_QUERY_BY_SECTOR[sector] ?? sector} ${city}`,
@@ -129,6 +139,8 @@ serve(async (req) => {
         hasWebsite: website.hasWebsite,
         instagramHandle: website.instagramHandle,
         websiteQuality: website.websiteQuality,
+        openingHours: place.regularOpeningHours ?? null,
+        topReviews: extractTopReviews(place.reviews),
       };
     }),
   );

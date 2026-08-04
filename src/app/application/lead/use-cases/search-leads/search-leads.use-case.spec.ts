@@ -19,6 +19,8 @@ function makePlace(overrides: Partial<PlaceFinderResult> = {}): PlaceFinderResul
     hasWebsite: false,
     instagramHandle: null,
     websiteQuality: 'none',
+    openingHours: null,
+    topReviews: null,
     ...overrides,
   };
 }
@@ -171,6 +173,20 @@ describe('SearchLeadsUseCase', () => {
     expect(repository.existsByGooglePlaceId).toHaveBeenCalledWith('ChIJAcme123');
     expect(repository.save).toHaveBeenCalledTimes(1);
     expect(repository.save.mock.calls[0]?.[0].googlePlaceId).toBe('ChIJAcme123');
+  });
+
+  it('should propagate opening hours and top reviews to Lead.create', async () => {
+    const repository = makeRepositoryMock();
+    const openingHours = { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] };
+    const topReviews = [{ rating: 5, text: 'Excelente', authorName: 'Ana' }];
+    const placeFinder = makePlaceFinderMock([makePlace({ openingHours, topReviews })]);
+    const useCase = new SearchLeadsUseCase(repository, placeFinder);
+
+    await useCase.execute({ sector: 'Clínicas & Consultórios', city: 'Niterói' });
+
+    const savedLead = repository.save.mock.calls[0]?.[0];
+    expect(savedLead?.openingHours).toBe(openingHours);
+    expect(savedLead?.topReviews).toBe(topReviews);
   });
 
   it('should skip duplicate googlePlaceId values within the same search batch', async () => {

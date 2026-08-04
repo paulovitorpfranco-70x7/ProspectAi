@@ -37,8 +37,8 @@ function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
     instagram_handle: '@acme',
     website_quality: 'proper',
     lead_score: 80,
-    opening_hours: { monday: '09:00-18:00' },
-    top_reviews: [{ rating: 5, text: 'Excelente' }],
+    opening_hours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+    top_reviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
     preview_url: 'https://preview.example/acme',
     preview_views: 3,
     preview_last_viewed_at: LAST_CONTACT_AT_ISO,
@@ -70,8 +70,8 @@ function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
     instagramHandle: '@acme',
     websiteQuality: 'proper',
     leadScore: 80,
-    openingHours: { monday: '09:00-18:00' },
-    topReviews: [{ rating: 5, text: 'Excelente' }],
+    openingHours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+    topReviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
     previewUrl: 'https://preview.example/acme',
     previewViews: 3,
     previewLastViewedAt: new Date(LAST_CONTACT_AT_ISO),
@@ -137,8 +137,10 @@ describe('SupabaseLeadMapper', () => {
     expect(lead.instagramHandle).toBe('@acme');
     expect(lead.websiteQuality).toBe('proper');
     expect(lead.leadScore).toBe(80);
-    expect(lead.openingHours).toEqual({ monday: '09:00-18:00' });
-    expect(lead.topReviews).toEqual([{ rating: 5, text: 'Excelente' }]);
+    expect(lead.openingHours).toEqual({
+      weekdayDescriptions: ['segunda-feira: 09:00–18:00'],
+    });
+    expect(lead.topReviews).toEqual([{ rating: 5, text: 'Excelente', authorName: 'Ana' }]);
     expect(lead.previewUrl).toBe('https://preview.example/acme');
     expect(lead.previewViews).toBe(3);
     expect(lead.previewLastViewedAt?.toISOString()).toBe(LAST_CONTACT_AT_ISO);
@@ -181,8 +183,8 @@ describe('SupabaseLeadMapper', () => {
       instagram_handle: '@acme',
       website_quality: 'proper',
       lead_score: 80,
-      opening_hours: { monday: '09:00-18:00' },
-      top_reviews: [{ rating: 5, text: 'Excelente' }],
+      opening_hours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+      top_reviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
       preview_url: 'https://preview.example/acme',
       preview_views: 3,
       preview_last_viewed_at: LAST_CONTACT_AT_ISO,

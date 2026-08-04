@@ -14,6 +14,8 @@ describe('PlaceFinderMapper', () => {
         hasWebsite: true,
         instagramHandle: 'acmeclinic',
         websiteQuality: 'proper',
+        openingHours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+        topReviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
       },
     ]);
 
@@ -28,6 +30,8 @@ describe('PlaceFinderMapper', () => {
       hasWebsite: true,
       instagramHandle: 'acmeclinic',
       websiteQuality: 'proper',
+      openingHours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+      topReviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
     });
   });
 
@@ -47,6 +51,13 @@ describe('PlaceFinderMapper', () => {
     const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
 
     expect(result.reviewCount).toBe(0);
+  });
+
+  it('should default openingHours and topReviews to null', () => {
+    const result = PlaceFinderMapper.toResult({ name: 'Acme Clinic' });
+
+    expect(result.openingHours).toBeNull();
+    expect(result.topReviews).toBeNull();
   });
 
   it('should default address to null', () => {

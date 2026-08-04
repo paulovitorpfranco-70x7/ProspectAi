@@ -46,6 +46,8 @@ describe('PlaceFinderHttpService', () => {
           hasWebsite: false,
           instagramHandle: 'acmeclinic',
           websiteQuality: 'none',
+          openingHours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+          topReviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
         },
       ]),
     );
@@ -68,6 +70,8 @@ describe('PlaceFinderHttpService', () => {
         hasWebsite: false,
         instagramHandle: 'acmeclinic',
         websiteQuality: 'none',
+        openingHours: { weekdayDescriptions: ['segunda-feira: 09:00–18:00'] },
+        topReviews: [{ rating: 5, text: 'Excelente', authorName: 'Ana' }],
       },
     ]);
   });

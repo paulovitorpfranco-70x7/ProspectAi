@@ -21,6 +21,8 @@ export interface PlaceFinderResult {
   readonly hasWebsite: boolean;
   readonly instagramHandle: string | null;
   readonly websiteQuality: WebsiteQuality;
+  readonly openingHours: unknown | null;
+  readonly topReviews: unknown | null;
 }
 
 export interface PlaceFinderService {

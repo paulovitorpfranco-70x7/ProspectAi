@@ -11,4 +11,6 @@ export interface PlaceFinderResponseDto {
   readonly hasWebsite?: boolean | null;
   readonly instagramHandle?: string | null;
   readonly websiteQuality?: WebsiteQuality;
+  readonly openingHours?: unknown | null;
+  readonly topReviews?: unknown | null;
 }

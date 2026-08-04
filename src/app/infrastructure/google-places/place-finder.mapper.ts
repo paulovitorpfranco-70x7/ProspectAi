@@ -16,6 +16,8 @@ export class PlaceFinderMapper {
       hasWebsite: websiteQuality !== 'none',
       instagramHandle: dto.instagramHandle ?? null,
       websiteQuality,
+      openingHours: dto.openingHours ?? null,
+      topReviews: dto.topReviews ?? null,
     };
   }
 
