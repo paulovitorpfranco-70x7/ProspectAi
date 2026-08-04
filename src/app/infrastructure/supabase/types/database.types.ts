@@ -7,35 +7,51 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      lead_outreach_events: {
+        Row: {
+          id: string
+          lead_id: string
+          rendered_message: string
+          sent_at: string
+          stage: string
+          variant: string | null
+        }
+        Insert: {
+          id?: string
+          lead_id: string
+          rendered_message: string
+          sent_at?: string
+          stage: string
+          variant?: string | null
+        }
+        Update: {
+          id?: string
+          lead_id?: string
+          rendered_message?: string
+          sent_at?: string
+          stage?: string
+          variant?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_outreach_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
+          ab_variant: string | null
           address: string | null
           business_name: string
           city: string
@@ -43,6 +59,7 @@ export type Database = {
           contact_count: number
           created_at: string
           created_by: string | null
+          current_stage: string | null
           email: string | null
           google_place_id: string | null
           has_website: boolean
@@ -50,6 +67,7 @@ export type Database = {
           instagram_handle: string | null
           last_contact_at: string | null
           lead_score: number
+          next_followup_at: string | null
           notes: string
           opening_hours: Json | null
           phone_digits: string | null
@@ -58,13 +76,15 @@ export type Database = {
           preview_views: number
           rating: number | null
           sector: string
+          stage_sent_at: string | null
           status: string
           top_reviews: Json | null
           updated_at: string
           updated_by: string | null
-          website_quality: "proper" | "weak" | "none" | null
+          website_quality: string | null
         }
         Insert: {
+          ab_variant?: string | null
           address?: string | null
           business_name: string
           city: string
@@ -72,6 +92,7 @@ export type Database = {
           contact_count?: number
           created_at?: string
           created_by?: string | null
+          current_stage?: string | null
           email?: string | null
           google_place_id?: string | null
           has_website?: boolean
@@ -79,6 +100,7 @@ export type Database = {
           instagram_handle?: string | null
           last_contact_at?: string | null
           lead_score?: number
+          next_followup_at?: string | null
           notes?: string
           opening_hours?: Json | null
           phone_digits?: string | null
@@ -87,13 +109,15 @@ export type Database = {
           preview_views?: number
           rating?: number | null
           sector: string
+          stage_sent_at?: string | null
           status?: string
           top_reviews?: Json | null
           updated_at?: string
           updated_by?: string | null
-          website_quality?: "proper" | "weak" | "none" | null
+          website_quality?: string | null
         }
         Update: {
+          ab_variant?: string | null
           address?: string | null
           business_name?: string
           city?: string
@@ -101,6 +125,7 @@ export type Database = {
           contact_count?: number
           created_at?: string
           created_by?: string | null
+          current_stage?: string | null
           email?: string | null
           google_place_id?: string | null
           has_website?: boolean
@@ -108,6 +133,7 @@ export type Database = {
           instagram_handle?: string | null
           last_contact_at?: string | null
           lead_score?: number
+          next_followup_at?: string | null
           notes?: string
           opening_hours?: Json | null
           phone_digits?: string | null
@@ -116,11 +142,12 @@ export type Database = {
           preview_views?: number
           rating?: number | null
           sector?: string
+          stage_sent_at?: string | null
           status?: string
           top_reviews?: Json | null
           updated_at?: string
           updated_by?: string | null
-          website_quality?: "proper" | "weak" | "none" | null
+          website_quality?: string | null
         }
         Relationships: []
       }
@@ -129,11 +156,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      registrar_envio_outreach: {
+        Args: {
+          p_lead_id: string
+          p_mensagem: string
+          p_next_followup: string
+          p_stage: string
+          p_variant: string
+        }
+        Returns: {
+          id: string
+          lead_id: string
+          rendered_message: string
+          sent_at: string
+          stage: string
+          variant: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lead_outreach_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
-      [_ in never]: never
+      lead_status: "novo" | "contatado" | "proposta" | "fechado" | "descartado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -259,10 +309,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
-    Enums: {},
+    Enums: {
+      lead_status: ["novo", "contatado", "proposta", "fechado", "descartado"],
+    },
   },
 } as const
