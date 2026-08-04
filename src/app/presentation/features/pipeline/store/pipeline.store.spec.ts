@@ -7,6 +7,10 @@ import {
   UpdateLeadStatusUseCase,
   type LeadDto,
 } from '@application/lead';
+import {
+  OutreachQueueService,
+  type OutreachQueueItem,
+} from '@application/outreach/outreach-queue.service';
 import { InvalidStatusTransitionError } from '@domain/lead/errors/invalid-status-transition.error';
 import { Lead, type LeadSnapshot } from '@domain/lead/entities/lead.entity';
 import type { LeadRepository } from '@domain/lead/repositories/lead.repository';
@@ -97,6 +101,15 @@ function setup() {
   const deleteLead = { execute: jest.fn() };
   const sendWhatsApp = { execute: jest.fn() };
   const sendEmail = { execute: jest.fn() };
+  const outreachQueue = {
+    montarFila: jest.fn().mockResolvedValue({
+      followups: [],
+      novos: [],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    }),
+    confirmarEnvio: jest.fn(),
+  };
 
   TestBed.configureTestingModule({
     providers: [
@@ -106,6 +119,7 @@ function setup() {
       { provide: DeleteLeadUseCase, useValue: deleteLead },
       { provide: SendWhatsAppUseCase, useValue: sendWhatsApp },
       { provide: SendEmailUseCase, useValue: sendEmail },
+      { provide: OutreachQueueService, useValue: outreachQueue },
     ],
   });
 
@@ -116,6 +130,7 @@ function setup() {
     deleteLead,
     sendWhatsApp,
     sendEmail,
+    outreachQueue,
   };
 }
 
@@ -199,4 +214,60 @@ describe('PipelineStore', () => {
 
     expect(store.error()).toContain('Transição inválida');
   });
+
+  it('should load the existing daily queue with follow-ups before new leads', async () => {
+    const { store, outreachQueue } = setup();
+    const followup = makeQueueItem({ stage: 'f1_d2' });
+    const novo = makeQueueItem({ stage: 'm1a_permissao' });
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [followup],
+      novos: [novo],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+
+    await store.loadOutreachQueue();
+
+    expect(store.outreachQueueSections().map((section) => section.key)).toEqual([
+      'followups',
+      'novos',
+    ]);
+    expect(store.outreachFollowups()).toEqual([followup]);
+    expect(store.outreachNovos()).toEqual([novo]);
+  });
+
+  it('should move a confirmed item to sent today and keep the limit non-blocking', async () => {
+    const { store, outreachQueue } = setup();
+    const item = makeQueueItem();
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [],
+      novos: [item],
+      enviadosHoje: [],
+      contadorHoje: 14,
+    });
+    outreachQueue.confirmarEnvio.mockResolvedValueOnce({});
+    await store.loadOutreachQueue();
+
+    await store.confirmOutreach(item);
+
+    expect(outreachQueue.confirmarEnvio).toHaveBeenCalledWith(item);
+    expect(store.outreachNovos()).toEqual([]);
+    expect(store.outreachEnviadosHoje()).toEqual([item]);
+    expect(store.dailySentCount()).toBe(15);
+    expect(store.dailyLimitReached()).toBe(true);
+  });
 });
+
+function makeQueueItem(overrides: Partial<OutreachQueueItem> = {}): OutreachQueueItem {
+  return {
+    lead: makeLead(),
+    stage: 'm1a_permissao',
+    variant: 'A',
+    mensagemRenderizada: 'Mensagem pronta',
+    whatsappUrl: 'https://wa.me/5521999990001?text=Mensagem%20pronta',
+    telefoneInvalido: false,
+    bairro: 'Rua A, 123',
+    avaliacoes: null,
+    ...overrides,
+  };
+}

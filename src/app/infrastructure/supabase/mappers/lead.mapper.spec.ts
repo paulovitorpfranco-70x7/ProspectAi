@@ -16,6 +16,7 @@ const LEAD_ID = '550e8400-e29b-41d4-a716-446655440000';
 const CREATED_AT_ISO = '2026-05-18T12:00:00.000Z';
 const UPDATED_AT_ISO = '2026-05-19T12:00:00.000Z';
 const LAST_CONTACT_AT_ISO = '2026-05-20T15:30:00.000Z';
+const NEXT_FOLLOWUP_AT_ISO = '2026-05-22T15:30:00.000Z';
 
 function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
   return {
@@ -42,6 +43,10 @@ function makeRow(overrides: Partial<LeadRow> = {}): LeadRow {
     preview_url: 'https://preview.example/acme',
     preview_views: 3,
     preview_last_viewed_at: LAST_CONTACT_AT_ISO,
+    current_stage: 'm1a_permissao',
+    stage_sent_at: LAST_CONTACT_AT_ISO,
+    next_followup_at: NEXT_FOLLOWUP_AT_ISO,
+    ab_variant: 'A',
     created_at: CREATED_AT_ISO,
     updated_at: UPDATED_AT_ISO,
     created_by: null,
@@ -75,6 +80,10 @@ function makeSnapshot(overrides: Partial<LeadSnapshot> = {}): LeadSnapshot {
     previewUrl: 'https://preview.example/acme',
     previewViews: 3,
     previewLastViewedAt: new Date(LAST_CONTACT_AT_ISO),
+    currentStage: 'm1a_permissao',
+    stageSentAt: new Date(LAST_CONTACT_AT_ISO),
+    nextFollowupAt: new Date(NEXT_FOLLOWUP_AT_ISO),
+    abVariant: 'A',
     createdAt: new Date(CREATED_AT_ISO),
     ...overrides,
   };
@@ -115,6 +124,14 @@ function expectSameLeadValues(actual: Lead, expected: Lead): void {
   expect(actual.previewLastViewedAt?.toISOString() ?? null).toBe(
     expected.previewLastViewedAt?.toISOString() ?? null,
   );
+  expect(actual.currentStage).toBe(expected.currentStage);
+  expect(actual.stageSentAt?.toISOString() ?? null).toBe(
+    expected.stageSentAt?.toISOString() ?? null,
+  );
+  expect(actual.nextFollowupAt?.toISOString() ?? null).toBe(
+    expected.nextFollowupAt?.toISOString() ?? null,
+  );
+  expect(actual.abVariant).toBe(expected.abVariant);
   expect(actual.createdAt.toISOString()).toBe(expected.createdAt.toISOString());
 }
 
@@ -144,6 +161,10 @@ describe('SupabaseLeadMapper', () => {
     expect(lead.previewUrl).toBe('https://preview.example/acme');
     expect(lead.previewViews).toBe(3);
     expect(lead.previewLastViewedAt?.toISOString()).toBe(LAST_CONTACT_AT_ISO);
+    expect(lead.currentStage).toBe('m1a_permissao');
+    expect(lead.stageSentAt?.toISOString()).toBe(LAST_CONTACT_AT_ISO);
+    expect(lead.nextFollowupAt?.toISOString()).toBe(NEXT_FOLLOWUP_AT_ISO);
+    expect(lead.abVariant).toBe('A');
     expect(lead.createdAt.toISOString()).toBe(CREATED_AT_ISO);
     expect(lead.pullEvents()).toEqual([]);
   });
@@ -188,6 +209,10 @@ describe('SupabaseLeadMapper', () => {
       preview_url: 'https://preview.example/acme',
       preview_views: 3,
       preview_last_viewed_at: LAST_CONTACT_AT_ISO,
+      current_stage: 'm1a_permissao',
+      stage_sent_at: LAST_CONTACT_AT_ISO,
+      next_followup_at: NEXT_FOLLOWUP_AT_ISO,
+      ab_variant: 'A',
       created_at: CREATED_AT_ISO,
     });
   });

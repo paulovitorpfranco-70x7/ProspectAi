@@ -47,3 +47,126 @@
   position: relative;
   min-height: 220px;
 }
+
+.outreach-queue {
+  display: grid;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.outreach-queue__header,
+.outreach-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.outreach-queue__header h1,
+.outreach-queue__section h2,
+.outreach-card h3,
+.outreach-queue__header p,
+.outreach-card__header p,
+.outreach-queue__empty {
+  margin: 0;
+}
+
+.outreach-queue__header p,
+.outreach-card__header p,
+.outreach-queue__empty {
+  color: var(--color-text-muted);
+}
+
+.outreach-queue__header app-input {
+  width: 140px;
+}
+
+.outreach-queue__limit-warning {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  border-left: 4px solid var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.outreach-queue__section {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.outreach-queue__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: var(--space-md);
+}
+
+.outreach-queue__cards--sent {
+  opacity: 0.78;
+}
+
+.outreach-card {
+  display: grid;
+  gap: var(--space-md);
+  align-content: start;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.outreach-card--sent {
+  border-color: color-mix(in srgb, var(--color-success) 40%, var(--color-border));
+}
+
+.outreach-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.outreach-card__metrics {
+  display: flex;
+  gap: var(--space-lg);
+  margin: 0;
+}
+
+.outreach-card__metrics div {
+  display: grid;
+  gap: 2px;
+}
+
+.outreach-card__metrics dt {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.outreach-card__metrics dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.outreach-card__message {
+  overflow-x: auto;
+  margin: 0;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.outreach-card__phone-error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  font-weight: 700;
+}

@@ -1,28 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Lead } from '@domain/lead/entities/lead.entity';
-import {
-  STAGE_ORDER,
-  type AbVariant,
-  type OutreachEvent,
-  type OutreachStage,
-} from '@domain/outreach/types';
+import type {
+  OutreachRepositoryPort,
+  RegistrarEnvioParams,
+} from '@domain/outreach/outreach.repository';
+import { STAGE_ORDER, type OutreachEvent, type OutreachStage } from '@domain/outreach/types';
 import { SupabaseClientService } from '../supabase/client/supabase.client';
 import { SupabaseLeadMapper } from '../supabase/mappers/lead.mapper';
 import type { Database } from '../supabase/types/database.types';
 
 type OutreachEventRow = Database['public']['Tables']['lead_outreach_events']['Row'];
 
-export interface RegistrarEnvioParams {
-  readonly leadId: string;
-  readonly stage: OutreachStage;
-  readonly variant: AbVariant | null;
-  readonly renderedMessage: string;
-  readonly nextFollowupAt: Date | null;
-}
-
 @Injectable({ providedIn: 'root' })
-export class OutreachRepository {
+export class OutreachRepository implements OutreachRepositoryPort {
   private readonly supabaseClient = inject(SupabaseClientService);
   private readonly supabase: SupabaseClient<Database> = this.supabaseClient.client;
 
@@ -51,6 +42,21 @@ export class OutreachRepository {
       .from('lead_outreach_events')
       .select('*')
       .eq('lead_id', leadId)
+      .order('sent_at', { ascending: false });
+
+    if (error !== null) {
+      throw error;
+    }
+
+    return data.map((row) => this.toDomainEvent(row));
+  }
+
+  async listarEventosEntre(inicio: Date, fim: Date): Promise<OutreachEvent[]> {
+    const { data, error } = await this.supabase
+      .from('lead_outreach_events')
+      .select('*')
+      .gte('sent_at', inicio.toISOString())
+      .lt('sent_at', fim.toISOString())
       .order('sent_at', { ascending: false });
 
     if (error !== null) {

@@ -13,6 +13,7 @@ import { LeadStatus } from '../value-objects/lead-status.vo';
 import { Location } from '../value-objects/location.vo';
 import { Sector } from '../value-objects/sector.vo';
 import type { WebsiteQuality } from '../value-objects/website-quality.type';
+import type { AbVariant, OutreachStage } from '../../outreach/types';
 import { DomainEvent } from '../../shared/events/domain-event.base';
 
 export type ContactChannel = 'whatsapp' | 'email';
@@ -56,6 +57,10 @@ export interface LeadSnapshot {
   readonly previewUrl: string | null;
   readonly previewViews: number;
   readonly previewLastViewedAt: Date | null;
+  readonly currentStage?: OutreachStage | null;
+  readonly stageSentAt?: Date | null;
+  readonly nextFollowupAt?: Date | null;
+  readonly abVariant?: AbVariant | null;
   readonly createdAt: Date;
 }
 
@@ -86,6 +91,10 @@ export class Lead {
     private readonly _previewUrl: string | null,
     private readonly _previewViews: number,
     private readonly _previewLastViewedAt: Date | null,
+    private readonly _currentStage: OutreachStage | null,
+    private readonly _stageSentAt: Date | null,
+    private readonly _nextFollowupAt: Date | null,
+    private readonly _abVariant: AbVariant | null,
     private readonly _createdAt: Date,
     private readonly _events: DomainEvent[],
   ) {}
@@ -126,6 +135,10 @@ export class Lead {
       input.previewUrl ?? null,
       input.previewViews ?? 0,
       input.previewLastViewedAt ?? null,
+      null,
+      null,
+      null,
+      null,
       createdAt,
       [],
     );
@@ -159,6 +172,10 @@ export class Lead {
       snapshot.previewUrl,
       snapshot.previewViews,
       snapshot.previewLastViewedAt,
+      snapshot.currentStage ?? null,
+      snapshot.stageSentAt ?? null,
+      snapshot.nextFollowupAt ?? null,
+      snapshot.abVariant ?? null,
       snapshot.createdAt,
       [],
     );
@@ -242,6 +259,22 @@ export class Lead {
 
   get previewLastViewedAt(): Date | null {
     return this._previewLastViewedAt;
+  }
+
+  get currentStage(): OutreachStage | null {
+    return this._currentStage;
+  }
+
+  get stageSentAt(): Date | null {
+    return this._stageSentAt;
+  }
+
+  get nextFollowupAt(): Date | null {
+    return this._nextFollowupAt;
+  }
+
+  get abVariant(): AbVariant | null {
+    return this._abVariant;
   }
 
   get createdAt(): Date {

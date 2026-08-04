@@ -157,6 +157,24 @@ describe('OutreachRepository', () => {
     ]);
   });
 
+  it('listarEventosEntre should filter the half-open period and order newest first', async () => {
+    const order = jest.fn().mockResolvedValue({ data: [EVENT_ROW], error: null });
+    const lt = jest.fn().mockReturnValue({ order });
+    const gte = jest.fn().mockReturnValue({ lt });
+    const select = jest.fn().mockReturnValue({ gte });
+    const from = jest.fn().mockReturnValue({ select });
+    const repository = makeRepository(asSupabaseClient({ from }));
+    const inicio = new Date('2026-08-04T03:00:00.000Z');
+    const fim = new Date('2026-08-05T03:00:00.000Z');
+
+    const result = await repository.listarEventosEntre(inicio, fim);
+
+    expect(gte).toHaveBeenCalledWith('sent_at', inicio.toISOString());
+    expect(lt).toHaveBeenCalledWith('sent_at', fim.toISOString());
+    expect(order).toHaveBeenCalledWith('sent_at', { ascending: false });
+    expect(result[0]?.id).toBe(EVENT_ROW.id);
+  });
+
   it('listarFollowupsPendentes should filter, order and map leads', async () => {
     const order = jest.fn().mockResolvedValue({ data: [LEAD_ROW], error: null });
     const lte = jest.fn().mockReturnValue({ order });

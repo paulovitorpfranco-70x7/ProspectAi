@@ -40,9 +40,11 @@ export class SupabaseLeadMapper {
       topReviews: row.top_reviews,
       previewUrl: row.preview_url,
       previewViews: row.preview_views,
-      previewLastViewedAt: row.preview_last_viewed_at
-        ? new Date(row.preview_last_viewed_at)
-        : null,
+      previewLastViewedAt: row.preview_last_viewed_at ? new Date(row.preview_last_viewed_at) : null,
+      currentStage: row.current_stage as LeadSnapshot['currentStage'],
+      stageSentAt: row.stage_sent_at ? new Date(row.stage_sent_at) : null,
+      nextFollowupAt: row.next_followup_at ? new Date(row.next_followup_at) : null,
+      abVariant: row.ab_variant as LeadSnapshot['abVariant'],
       createdAt: new Date(row.created_at),
     };
 
@@ -73,6 +75,10 @@ export class SupabaseLeadMapper {
       preview_url: lead.previewUrl,
       preview_views: lead.previewViews,
       preview_last_viewed_at: lead.previewLastViewedAt?.toISOString() ?? null,
+      current_stage: lead.currentStage,
+      stage_sent_at: lead.stageSentAt?.toISOString() ?? null,
+      next_followup_at: lead.nextFollowupAt?.toISOString() ?? null,
+      ab_variant: lead.abVariant,
       created_at: lead.createdAt.toISOString(),
     };
   }

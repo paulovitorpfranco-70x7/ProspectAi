@@ -6,6 +6,7 @@ import {
   SendWhatsAppUseCase,
   UpdateLeadStatusUseCase,
 } from '@application/lead';
+import { OutreachQueueService } from '@application/outreach/outreach-queue.service';
 import type { LeadRepository } from '@domain/lead/repositories/lead.repository';
 import { PipelinePage } from './pipeline.page';
 
@@ -33,6 +34,18 @@ describe('PipelinePage', () => {
         { provide: DeleteLeadUseCase, useValue: { execute: jest.fn() } },
         { provide: SendWhatsAppUseCase, useValue: { execute: jest.fn() } },
         { provide: SendEmailUseCase, useValue: { execute: jest.fn() } },
+        {
+          provide: OutreachQueueService,
+          useValue: {
+            montarFila: jest.fn().mockResolvedValue({
+              followups: [],
+              novos: [],
+              enviadosHoje: [],
+              contadorHoje: 0,
+            }),
+            confirmarEnvio: jest.fn(),
+          },
+        },
       ],
     }).compileComponents();
 
