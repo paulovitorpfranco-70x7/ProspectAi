@@ -14,6 +14,11 @@ export interface MessageTemplateVariables {
   readonly nome: string;
   readonly setor: string;
   readonly cidade: string;
+  readonly bairro?: string | null;
+  readonly nota?: number | null;
+  readonly avaliacoes?: number | null;
+  readonly previewUrl?: string | null;
+  readonly primeiroNome?: string | null;
 }
 
 export interface MessageTemplateService {

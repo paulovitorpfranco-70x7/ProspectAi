@@ -1,5 +1,20 @@
 import type { SectorValue } from '@domain/lead/value-objects/sector.vo';
+import { Sector } from '@domain/lead/value-objects/sector.vo';
+import { assertNoOrphanTokens } from '@domain/outreach/render.guard';
+import { renderTemplate } from '@domain/outreach/render';
+import type { LeadOutreachContext } from '@domain/outreach/types';
 import { MessageTemplateInMemoryService } from './message-template.in-memory-service';
+
+const COMPLETE_OUTREACH_CONTEXT: LeadOutreachContext = {
+  nome: 'Barbearia Central',
+  cidade: 'Teresópolis',
+  bairro: 'Várzea',
+  setor: 'Salões & Barbearias',
+  nota: 4.8,
+  avaliacoes: 1234,
+  previewUrl: 'https://preview.example.com/barbearia-central',
+  primeiroNome: 'Carlos',
+};
 
 const EXPECTED_WHATSAPP_BODIES: Record<SectorValue, string> = {
   'Clínicas & Consultórios':
@@ -110,5 +125,21 @@ describe('MessageTemplateInMemoryService', () => {
     expect(rendered.body).toBe(
       'Acme Clinic - Clínicas & Consultórios - Niterói - Acme Clinic - {{desconhecido}}',
     );
+  });
+
+  it('should render all 22 WhatsApp sector templates without orphan tokens', () => {
+    const service = new MessageTemplateInMemoryService();
+
+    expect(Sector.ALL).toHaveLength(22);
+
+    for (const sector of Sector.ALL) {
+      const template = service.getTemplateForSector(sector, 'whatsapp');
+      const rendered = renderTemplate(template.body, {
+        ...COMPLETE_OUTREACH_CONTEXT,
+        setor: sector,
+      });
+
+      expect(() => assertNoOrphanTokens(rendered)).not.toThrow();
+    }
   });
 });
