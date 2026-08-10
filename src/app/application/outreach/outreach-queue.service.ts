@@ -83,7 +83,9 @@ export class OutreachQueueService {
       )
       .map((lead) => {
         const sequenceIndex = sequenceByLeadId.get(lead.id.getValue()) ?? 0;
-        const variant = pickAbVariant(sequenceIndex);
+        const selectedVariant = pickAbVariant(sequenceIndex);
+        const hasPreview = lead.previewUrl !== null && lead.previewUrl.trim().length > 0;
+        const variant = selectedVariant === 'B' && !hasPreview ? 'A' : selectedVariant;
         const stage = variant === 'A' ? 'm1a_permissao' : 'm1b_direto';
         return this.buildItem(lead, stage, variant);
       });
@@ -140,8 +142,12 @@ export class OutreachQueueService {
       primeiroNome: null,
     };
     const mensagemRenderizada =
-      renderedMessage ?? renderTemplate(getCadenceTemplate(stage, lead.id.getValue()), context);
-    assertNoOrphanTokens(mensagemRenderizada);
+      renderedMessage ??
+      renderTemplate(getCadenceTemplate(stage, lead.id.getValue()), context, stage);
+
+    if (renderedMessage !== undefined) {
+      assertNoOrphanTokens(mensagemRenderizada);
+    }
     const phone = lead.contactInfo.getPhone()?.getValue() ?? '';
     const whatsappUrl = buildWhatsappUrl(phone, mensagemRenderizada);
 

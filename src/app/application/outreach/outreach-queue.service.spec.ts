@@ -18,6 +18,7 @@ import { OUTREACH_REPOSITORY } from './outreach-repository.token';
 const IDS = {
   followup: '550e8400-e29b-41d4-a716-446655440001',
   newLead: '550e8400-e29b-41d4-a716-446655440002',
+  oddNewLead: '550e8400-e29b-41d4-a716-446655440003',
 } as const;
 
 function makeLead(overrides: Partial<LeadSnapshot> = {}): Lead {
@@ -169,6 +170,44 @@ describe('OutreachQueueService', () => {
 
     expect(queue.novos).toEqual([]);
     expect(queue.contadorHoje).toBe(1);
+  });
+
+  it.each([null, '', '   '])(
+    'should force variant A for an odd-index lead without a usable preview URL (%p)',
+    async (previewUrl) => {
+      const { service, leadRepository } = setup();
+      const evenLead = makeLead();
+      const oddLead = makeLead({
+        id: LeadId.fromString(IDS.oddNewLead),
+        previewUrl,
+        createdAt: new Date('2026-08-02T12:00:00.000Z'),
+      });
+      leadRepository.findAll.mockResolvedValue([evenLead, oddLead]);
+
+      const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+      const item = queue.novos.find((candidate) => candidate.lead.id.equals(oddLead.id));
+
+      expect(item?.variant).toBe('A');
+      expect(item?.stage).toBe('m1a_permissao');
+    },
+  );
+
+  it('should allow variant B for an odd-index lead with a preview URL', async () => {
+    const { service, leadRepository } = setup();
+    const evenLead = makeLead();
+    const oddLead = makeLead({
+      id: LeadId.fromString(IDS.oddNewLead),
+      previewUrl: 'https://preview.example.com/lead-impar',
+      createdAt: new Date('2026-08-02T12:00:00.000Z'),
+    });
+    leadRepository.findAll.mockResolvedValue([evenLead, oddLead]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+    const item = queue.novos.find((candidate) => candidate.lead.id.equals(oddLead.id));
+
+    expect(item?.variant).toBe('B');
+    expect(item?.stage).toBe('m1b_direto');
+    expect(item?.mensagemRenderizada).toContain('https://preview.example.com/lead-impar');
   });
 
   it('should count a 02:00 UTC event on the previous day in America/Sao_Paulo', async () => {

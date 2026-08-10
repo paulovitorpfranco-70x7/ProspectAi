@@ -1,5 +1,6 @@
 import { assertNoOrphanTokens } from './render.guard';
 import { renderTemplate } from './render';
+import { CADENCE_TEMPLATES } from './templates/cadence.templates';
 import type { LeadOutreachContext } from './types';
 
 const COMPLETE_CONTEXT: LeadOutreachContext = {
@@ -92,4 +93,20 @@ describe('assertNoOrphanTokens', () => {
       expect(() => assertNoOrphanTokens(rendered)).toThrow();
     },
   );
+
+  it('should reject an excessive blank-line gap left by an empty token', () => {
+    expect(() => assertNoOrphanTokens('Antes\n\n\nDepois')).toThrow(
+      'O texto renderizado contém uma lacuna causada por token vazio',
+    );
+  });
+
+  it('should reject m1b_direto when preview_url resolves to an empty value', () => {
+    expect(() =>
+      renderTemplate(
+        CADENCE_TEMPLATES.m1b_direto[0] as string,
+        { ...COMPLETE_CONTEXT, previewUrl: null },
+        'm1b_direto',
+      ),
+    ).toThrow('Token obrigatório vazio no estágio m1b_direto: preview_url');
+  });
 });

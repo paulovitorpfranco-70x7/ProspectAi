@@ -1,4 +1,5 @@
-import type { LeadOutreachContext } from './types';
+import { assertValidRenderedMessage } from './render.guard';
+import type { LeadOutreachContext, OutreachStage } from './types';
 
 type ConditionalFlag = 'tem_reputacao' | 'tem_bairro' | 'tem_preview';
 
@@ -6,7 +7,11 @@ const FALSE_BLOCK_MARKER = '\u0000outreach-false-block\u0000';
 const CONDITIONAL_PATTERN =
   /{{#se\s+(tem_reputacao|tem_bairro|tem_preview)\s*}}([\s\S]*?){{\/se}}/g;
 
-export function renderTemplate(template: string, ctx: LeadOutreachContext): string {
+export function renderTemplate(
+  template: string,
+  ctx: LeadOutreachContext,
+  stage?: OutreachStage,
+): string {
   const flags: Record<ConditionalFlag, boolean> = {
     tem_reputacao:
       ctx.nota !== null && ctx.avaliacoes !== null && ctx.nota >= 4.5 && ctx.avaliacoes >= 20,
@@ -41,10 +46,16 @@ export function renderTemplate(template: string, ctx: LeadOutreachContext): stri
     rendered = rendered.replaceAll(`{{${token}}}`, value);
   }
 
-  return rendered
+  const normalized = rendered
     .replace(new RegExp(`^[ \\t]*${FALSE_BLOCK_MARKER}[ \\t]*(?:\\r?\\n|$)`, 'gm'), '')
     .replaceAll(FALSE_BLOCK_MARKER, '')
     .replace(/[ \t]{2,}/g, ' ')
     .replace(/\s+([,.;:!?])/g, '$1')
     .trim();
+
+  if (stage !== undefined) {
+    assertValidRenderedMessage(stage, ctx, normalized);
+  }
+
+  return normalized;
 }
