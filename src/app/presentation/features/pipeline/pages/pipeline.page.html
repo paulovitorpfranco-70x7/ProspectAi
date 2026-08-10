@@ -14,6 +14,34 @@
       />
     </div>
 
+    @if (!store.outreachLoading()) {
+      <div class="outreach-queue__sector-filters" aria-label="Filtrar fila por setor">
+        <button
+          type="button"
+          class="outreach-queue__sector-chip"
+          [class.outreach-queue__sector-chip--active]="store.setorFilaSelecionado() === null"
+          [attr.aria-pressed]="store.setorFilaSelecionado() === null"
+          (click)="store.selecionarSetorFila(null)"
+        >
+          Todos <span>{{ store.outreachQueueTotal() }}</span>
+        </button>
+
+        @for (item of store.setoresFila(); track item.sector) {
+          <button
+            type="button"
+            class="outreach-queue__sector-chip"
+            [class.outreach-queue__sector-chip--active]="
+              store.setorFilaSelecionado() === item.sector
+            "
+            [attr.aria-pressed]="store.setorFilaSelecionado() === item.sector"
+            (click)="store.selecionarSetorFila(item.sector)"
+          >
+            {{ item.sector }} <span>{{ item.count }}</span>
+          </button>
+        }
+      </div>
+    }
+
     @if (store.dailyLimitReached()) {
       <p class="outreach-queue__limit-warning" role="status">
         Número novo? Segura em 15/dia nas primeiras 2 semanas.

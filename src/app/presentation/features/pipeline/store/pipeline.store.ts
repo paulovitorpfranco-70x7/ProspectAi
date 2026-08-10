@@ -14,6 +14,7 @@ import {
   type OutreachQueueItem,
 } from '@application/outreach/outreach-queue.service';
 import type { LeadRepository } from '@domain/lead/repositories/lead.repository';
+import type { SectorValue } from '@domain/lead/value-objects/sector.vo';
 import type { LeadStatusValue } from '@domain/lead/value-objects/lead-status.vo';
 
 export type PipelineFilterStatus = LeadStatusValue | 'all';
@@ -34,6 +35,7 @@ export interface PipelineState {
   readonly outreachFollowups: OutreachQueueItem[];
   readonly outreachNovos: OutreachQueueItem[];
   readonly outreachEnviadosHoje: OutreachQueueItem[];
+  readonly setorFilaSelecionado: SectorValue | null;
   readonly outreachLoading: boolean;
   readonly dailySentCount: number;
   readonly dailyLimit: number;
@@ -43,6 +45,11 @@ export interface OutreachQueueSection {
   readonly key: 'followups' | 'novos';
   readonly label: string;
   readonly items: OutreachQueueItem[];
+}
+
+export interface OutreachQueueSectorCount {
+  readonly sector: SectorValue;
+  readonly count: number;
 }
 
 export interface PipelineStatsByStatus {
@@ -66,6 +73,7 @@ const initialState: PipelineState = {
   outreachFollowups: [],
   outreachNovos: [],
   outreachEnviadosHoje: [],
+  setorFilaSelecionado: null,
   outreachLoading: false,
   dailySentCount: 0,
   dailyLimit: 15,
@@ -91,51 +99,65 @@ export const PipelineStore = signalStore(
       sortBy,
       outreachFollowups,
       outreachNovos,
+      setorFilaSelecionado,
       dailySentCount,
       dailyLimit,
-    }) => ({
-      filteredLeads: computed(() => {
-        const normalizedQuery = searchQuery().trim().toLowerCase();
-        const filtered = leads().filter((lead) => {
-          const matchesStatus = filterStatus() === 'all' || lead.status === filterStatus();
-          const matchesQuery =
-            normalizedQuery.length === 0 ||
-            lead.businessName.toLowerCase().includes(normalizedQuery) ||
-            lead.city.toLowerCase().includes(normalizedQuery) ||
-            lead.sector.toLowerCase().includes(normalizedQuery);
+    }) => {
+      const outreachFollowupsFiltrados = computed(() =>
+        filterQueueBySector(outreachFollowups(), setorFilaSelecionado()),
+      );
+      const outreachNovosFiltrados = computed(() =>
+        filterQueueBySector(outreachNovos(), setorFilaSelecionado()),
+      );
 
-          return matchesStatus && matchesQuery;
-        });
+      return {
+        filteredLeads: computed(() => {
+          const normalizedQuery = searchQuery().trim().toLowerCase();
+          const filtered = leads().filter((lead) => {
+            const matchesStatus = filterStatus() === 'all' || lead.status === filterStatus();
+            const matchesQuery =
+              normalizedQuery.length === 0 ||
+              lead.businessName.toLowerCase().includes(normalizedQuery) ||
+              lead.city.toLowerCase().includes(normalizedQuery) ||
+              lead.sector.toLowerCase().includes(normalizedQuery);
 
-        return [...filtered].sort((left, right) => compareLeads(left, right, sortBy()));
-      }),
+            return matchesStatus && matchesQuery;
+          });
 
-      statsByStatus: computed(() => {
-        const stats: PipelineStatsByStatus = {
-          total: leads().length,
-          novo: 0,
-          contatado: 0,
-          respondeu: 0,
-          preview_enviado: 0,
-          proposta: 0,
-          fechado: 0,
-          perdido: 0,
-        };
+          return [...filtered].sort((left, right) => compareLeads(left, right, sortBy()));
+        }),
 
-        return leads().reduce(
-          (accumulator, lead) => ({
-            ...accumulator,
-            [lead.status]: accumulator[lead.status] + 1,
-          }),
-          stats,
-        );
-      }),
-      outreachQueueSections: computed<OutreachQueueSection[]>(() => [
-        { key: 'followups', label: 'Follow-ups', items: outreachFollowups() },
-        { key: 'novos', label: 'Novos contatos', items: outreachNovos() },
-      ]),
-      dailyLimitReached: computed(() => dailySentCount() >= dailyLimit()),
-    }),
+        statsByStatus: computed(() => {
+          const stats: PipelineStatsByStatus = {
+            total: leads().length,
+            novo: 0,
+            contatado: 0,
+            respondeu: 0,
+            preview_enviado: 0,
+            proposta: 0,
+            fechado: 0,
+            perdido: 0,
+          };
+
+          return leads().reduce(
+            (accumulator, lead) => ({
+              ...accumulator,
+              [lead.status]: accumulator[lead.status] + 1,
+            }),
+            stats,
+          );
+        }),
+        outreachFollowupsFiltrados,
+        outreachNovosFiltrados,
+        setoresFila: computed(() => countQueueItemsBySector(outreachFollowups(), outreachNovos())),
+        outreachQueueTotal: computed(() => outreachFollowups().length + outreachNovos().length),
+        outreachQueueSections: computed<OutreachQueueSection[]>(() => [
+          { key: 'followups', label: 'Follow-ups', items: outreachFollowupsFiltrados() },
+          { key: 'novos', label: 'Novos contatos', items: outreachNovosFiltrados() },
+        ]),
+        dailyLimitReached: computed(() => dailySentCount() >= dailyLimit()),
+      };
+    },
   ),
   withMethods(
     (
@@ -266,9 +288,40 @@ export const PipelineStore = signalStore(
           patchState(store, { dailyLimit: parsed });
         }
       },
+
+      selecionarSetorFila(setor: SectorValue | null): void {
+        patchState(store, {
+          setorFilaSelecionado: store.setorFilaSelecionado() === setor ? null : setor,
+        });
+      },
     }),
   ),
 );
+
+function filterQueueBySector(
+  items: readonly OutreachQueueItem[],
+  sector: SectorValue | null,
+): OutreachQueueItem[] {
+  return sector === null
+    ? [...items]
+    : items.filter((item) => item.lead.sector.getValue() === sector);
+}
+
+function countQueueItemsBySector(
+  followups: readonly OutreachQueueItem[],
+  novos: readonly OutreachQueueItem[],
+): OutreachQueueSectorCount[] {
+  const counts = new Map<SectorValue, number>();
+
+  for (const item of [...followups, ...novos]) {
+    const sector = item.lead.sector.getValue();
+    counts.set(sector, (counts.get(sector) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .map(([sector, count]) => ({ sector, count }))
+    .sort((left, right) => right.count - left.count || left.sector.localeCompare(right.sector));
+}
 
 function replaceLead(leads: readonly LeadDto[], updatedLead: LeadDto): LeadDto[] {
   return leads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead));

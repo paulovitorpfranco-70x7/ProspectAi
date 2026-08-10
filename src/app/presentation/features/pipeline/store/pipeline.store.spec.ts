@@ -238,6 +238,117 @@ describe('PipelineStore', () => {
     expect(store.outreachNovos()).toEqual([novo]);
   });
 
+  it('should filter follow-ups and new leads by the selected sector', async () => {
+    const { store, outreachQueue } = setup();
+    const followupClinica = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174001',
+      'Clínicas & Consultórios',
+      { stage: 'f1_d2' },
+    );
+    const novoSalao = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174002',
+      'Salões & Barbearias',
+    );
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [followupClinica],
+      novos: [novoSalao],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+    await store.loadOutreachQueue();
+
+    store.selecionarSetorFila('Clínicas & Consultórios');
+
+    expect(store.outreachFollowupsFiltrados()).toEqual([followupClinica]);
+    expect(store.outreachNovosFiltrados()).toEqual([]);
+    expect(store.outreachQueueSections().map((section) => section.items)).toEqual([
+      [followupClinica],
+      [],
+    ]);
+  });
+
+  it('should return the entire queue for a null sector and reset when clicking the active sector', async () => {
+    const { store, outreachQueue } = setup();
+    const followup = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174001',
+      'Clínicas & Consultórios',
+      { stage: 'f1_d2' },
+    );
+    const novo = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174002',
+      'Salões & Barbearias',
+    );
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [followup],
+      novos: [novo],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+    await store.loadOutreachQueue();
+
+    expect(store.setorFilaSelecionado()).toBeNull();
+    expect(store.outreachFollowupsFiltrados()).toEqual([followup]);
+    expect(store.outreachNovosFiltrados()).toEqual([novo]);
+
+    store.selecionarSetorFila('Salões & Barbearias');
+    store.selecionarSetorFila('Salões & Barbearias');
+
+    expect(store.setorFilaSelecionado()).toBeNull();
+    expect(store.outreachQueueSections().flatMap((section) => section.items)).toEqual([
+      followup,
+      novo,
+    ]);
+  });
+
+  it('should count queue leads by sector across follow-ups and new leads', async () => {
+    const { store, outreachQueue } = setup();
+    const followupSalao = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174001',
+      'Salões & Barbearias',
+      { stage: 'f1_d2' },
+    );
+    const novoSalao = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174002',
+      'Salões & Barbearias',
+    );
+    const novoClinica = makeQueueItemForSector(
+      '123e4567-e89b-42d3-a456-426614174003',
+      'Clínicas & Consultórios',
+    );
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [followupSalao],
+      novos: [novoSalao, novoClinica],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+    await store.loadOutreachQueue();
+
+    expect(store.setoresFila()).toEqual([
+      { sector: 'Salões & Barbearias', count: 2 },
+      { sector: 'Clínicas & Consultórios', count: 1 },
+    ]);
+    expect(store.setoresFila().reduce((total, item) => total + item.count, 0)).toBe(
+      store.outreachQueueTotal(),
+    );
+    expect(store.outreachQueueTotal()).toBe(3);
+  });
+
+  it('should omit sectors without queue leads from the chip list', async () => {
+    const { store, outreachQueue } = setup();
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [],
+      novos: [
+        makeQueueItemForSector('123e4567-e89b-42d3-a456-426614174001', 'Salões & Barbearias'),
+      ],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+    await store.loadOutreachQueue();
+
+    expect(store.setoresFila().map((item) => item.sector)).toEqual(['Salões & Barbearias']);
+    expect(store.setoresFila().some((item) => item.sector === 'Restaurantes')).toBe(false);
+  });
+
   it('should move a confirmed item to sent today and keep the limit non-blocking', async () => {
     const { store, outreachQueue } = setup();
     const item = makeQueueItem();
@@ -272,4 +383,15 @@ function makeQueueItem(overrides: Partial<OutreachQueueItem> = {}): OutreachQueu
     avaliacoes: null,
     ...overrides,
   };
+}
+
+function makeQueueItemForSector(
+  id: string,
+  sector: string,
+  overrides: Partial<OutreachQueueItem> = {},
+): OutreachQueueItem {
+  return makeQueueItem({
+    lead: makeLead({ id: LeadId.fromString(id), sector: Sector.create(sector) }),
+    ...overrides,
+  });
 }
