@@ -63,6 +63,7 @@ export class OutreachQueueService {
           return [];
         }
 
+        // O repositório exclui status terminais; todo follow-up pendente está sem resposta.
         const stage = nextStage(lead.currentStage, 'sem_resposta');
 
         if (stage === 'encerrar') {

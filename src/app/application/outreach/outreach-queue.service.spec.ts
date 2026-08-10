@@ -121,6 +121,7 @@ describe('OutreachQueueService', () => {
     const { service, leadRepository, outreachRepository } = setup();
     const due = makeLead({
       id: LeadId.fromString(IDS.followup),
+      status: LeadStatus.contatado(),
       currentStage: 'f1_d2',
       nextFollowupAt: new Date('2026-08-01T12:00:00.000Z'),
     });
@@ -131,6 +132,30 @@ describe('OutreachQueueService', () => {
 
     expect(queue.followups[0]?.lead.id.getValue()).toBe(IDS.followup);
   });
+
+  it.each([
+    ['respondeu', LeadStatus.respondeu()],
+    ['proposta', LeadStatus.proposta()],
+    ['fechado', LeadStatus.fechado()],
+    ['perdido', LeadStatus.perdido()],
+  ])(
+    'should not include a due lead with terminal status %s in follow-ups',
+    async (_status, status) => {
+      const { service, leadRepository, outreachRepository } = setup();
+      const due = makeLead({
+        id: LeadId.fromString(IDS.followup),
+        status,
+        currentStage: 'f1_d2',
+        nextFollowupAt: new Date('2026-08-01T12:00:00.000Z'),
+      });
+      leadRepository.findAll.mockResolvedValue([due]);
+      outreachRepository.listarFollowupsPendentes.mockResolvedValue([]);
+
+      const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+      expect(queue.followups).toEqual([]);
+    },
+  );
 
   it('should not show a new lead that was already sent today', async () => {
     const { service, leadRepository, outreachRepository } = setup();

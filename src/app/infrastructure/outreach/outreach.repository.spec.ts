@@ -177,7 +177,8 @@ describe('OutreachRepository', () => {
 
   it('listarFollowupsPendentes should filter, order and map leads', async () => {
     const order = jest.fn().mockResolvedValue({ data: [LEAD_ROW], error: null });
-    const lte = jest.fn().mockReturnValue({ order });
+    const not = jest.fn().mockReturnValue({ order });
+    const lte = jest.fn().mockReturnValue({ not });
     const select = jest.fn().mockReturnValue({ lte });
     const from = jest.fn().mockReturnValue({ select });
     const repository = makeRepository(asSupabaseClient({ from }));
@@ -187,6 +188,7 @@ describe('OutreachRepository', () => {
 
     expect(from).toHaveBeenCalledWith('leads');
     expect(lte).toHaveBeenCalledWith('next_followup_at', ate.toISOString());
+    expect(not).toHaveBeenCalledWith('status', 'in', '(respondeu,proposta,fechado,perdido)');
     expect(order).toHaveBeenCalledWith('next_followup_at', { ascending: true });
     expect(result).toHaveLength(1);
     expect(result[0]?.id.getValue()).toBe(LEAD_ROW.id);

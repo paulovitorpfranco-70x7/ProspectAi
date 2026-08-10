@@ -71,6 +71,7 @@ export class OutreachRepository implements OutreachRepositoryPort {
       .from('leads')
       .select('*')
       .lte('next_followup_at', ate.toISOString())
+      .not('status', 'in', '(respondeu,proposta,fechado,perdido)')
       .order('next_followup_at', { ascending: true });
 
     if (error !== null) {
