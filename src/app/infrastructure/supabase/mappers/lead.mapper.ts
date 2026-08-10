@@ -7,6 +7,10 @@ import { LeadStatus } from '@domain/lead/value-objects/lead-status.vo';
 import { Location } from '@domain/lead/value-objects/location.vo';
 import { PhoneNumber } from '@domain/lead/value-objects/phone-number.vo';
 import { Sector } from '@domain/lead/value-objects/sector.vo';
+import {
+  isWebsiteQuality,
+  type WebsiteQuality,
+} from '@domain/lead/value-objects/website-quality.type';
 import type { Database, Json } from '../types/database.types';
 
 type LeadRow = Database['public']['Tables']['leads']['Row'];
@@ -20,6 +24,7 @@ export class SupabaseLeadMapper {
   static toDomain(row: LeadRow): Lead {
     const phone = row.phone_digits ? PhoneNumber.create(row.phone_digits) : null;
     const email = row.email ? Email.create(row.email) : null;
+    const websiteQuality = this.toWebsiteQuality(row.website_quality);
     const snapshot: LeadSnapshot = {
       id: LeadId.fromString(row.id),
       googlePlaceId: row.google_place_id,
@@ -36,7 +41,7 @@ export class SupabaseLeadMapper {
       lastContactAt: row.last_contact_at ? new Date(row.last_contact_at) : null,
       hasWebsite: row.has_website,
       instagramHandle: row.instagram_handle,
-      websiteQuality: row.website_quality,
+      websiteQuality,
       leadScore: row.lead_score,
       openingHours: row.opening_hours,
       topReviews: row.top_reviews,
@@ -51,6 +56,14 @@ export class SupabaseLeadMapper {
     };
 
     return Lead.reconstitute(snapshot);
+  }
+
+  private static toWebsiteQuality(value: string | null): WebsiteQuality | null {
+    if (value !== null && !isWebsiteQuality(value)) {
+      throw new Error(`Qualidade de site inválida recebida do Supabase: ${value}`);
+    }
+
+    return value;
   }
 
   static toRow(lead: Lead): LeadPersistenceRow {

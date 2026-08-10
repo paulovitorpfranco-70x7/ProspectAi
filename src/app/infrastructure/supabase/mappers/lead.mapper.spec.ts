@@ -191,6 +191,12 @@ describe('SupabaseLeadMapper', () => {
     expect(lead.contactInfo.getEmail()?.getValue()).toBe('contato@acme.com');
   });
 
+  it('toDomain: should reject an invalid website_quality from Supabase', () => {
+    expect(() => SupabaseLeadMapper.toDomain(makeRow({ website_quality: 'invalid' }))).toThrow(
+      'Qualidade de site inválida recebida do Supabase: invalid',
+    );
+  });
+
   it('toRow: should produce row matching supabase types', () => {
     const row: LeadPersistenceRow = SupabaseLeadMapper.toRow(makeLead());
 
