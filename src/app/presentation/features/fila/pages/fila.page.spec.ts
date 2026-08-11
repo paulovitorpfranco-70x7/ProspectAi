@@ -57,6 +57,29 @@ describe('FilaPage', () => {
     expect(fixture.nativeElement.textContent).toContain('Fila diária de abordagem');
   });
 
+  it('should render the Instagram badge with the normalized profile URL', async () => {
+    const item = makeQueueItem({
+      lead: makeLead({ instagramHandle: '  @@casa.da.fada  ' }),
+    });
+    const { fixture } = await setup({ ...emptyQueue(), novos: [item] });
+
+    const link = fixture.nativeElement.querySelector<HTMLAnchorElement>(
+      '.outreach-card__instagram',
+    );
+
+    expect(link).not.toBeNull();
+    expect(link?.getAttribute('href')).toBe('https://instagram.com/casa.da.fada');
+    expect(link?.getAttribute('target')).toBe('_blank');
+    expect(link?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(link?.textContent?.trim()).toBe('@casa.da.fada');
+  });
+
+  it('should not render an Instagram element when the lead has no handle', async () => {
+    const { fixture } = await setup({ ...emptyQueue(), novos: [makeQueueItem()] });
+
+    expect(fixture.nativeElement.querySelector('.outreach-card__instagram')).toBeNull();
+  });
+
   it('copying should not create an event and confirming should create exactly one', async () => {
     const item = makeQueueItem();
     const { fixture, outreachQueue, writeText, open } = await setup({

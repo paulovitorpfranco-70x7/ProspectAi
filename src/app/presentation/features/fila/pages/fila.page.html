@@ -73,6 +73,17 @@
                         {{ item.bairro ?? item.lead.location.getCity() }} ·
                         {{ item.lead.sector.getValue() }}
                       </p>
+                      @if (instagramHandle(item); as handle) {
+                        <a
+                          class="outreach-card__instagram"
+                          [href]="instagramUrl(handle)"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          [attr.aria-label]="'Abrir Instagram de @' + handle"
+                        >
+                          <app-badge color="info">@{{ handle }}</app-badge>
+                        </a>
+                      }
                     </div>
 
                     <div class="outreach-card__badges">

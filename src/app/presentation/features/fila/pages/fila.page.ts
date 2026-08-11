@@ -23,6 +23,16 @@ export class FilaPage implements OnInit {
     void this.store.loadOutreachQueue();
   }
 
+  protected instagramHandle(item: OutreachQueueItem): string | null {
+    const handle = item.lead.instagramHandle?.trim().replace(/^@+/, '') ?? '';
+
+    return handle.length > 0 ? handle : null;
+  }
+
+  protected instagramUrl(handle: string): string {
+    return `https://instagram.com/${encodeURIComponent(handle)}`;
+  }
+
   protected async copyAndOpenWhatsapp(item: OutreachQueueItem): Promise<void> {
     if (item.whatsappUrl === null) {
       return;
