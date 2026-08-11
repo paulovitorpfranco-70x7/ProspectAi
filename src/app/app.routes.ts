@@ -7,6 +7,11 @@ export const appRoutes: Routes = [
       import('./presentation/features/search/search.routes').then((m) => m.SEARCH_ROUTES),
   },
   {
+    path: 'fila',
+    loadChildren: () =>
+      import('./presentation/features/fila/fila.routes').then((m) => m.FILA_ROUTES),
+  },
+  {
     path: 'pipeline',
     loadChildren: () =>
       import('./presentation/features/pipeline/pipeline.routes').then((m) => m.PIPELINE_ROUTES),

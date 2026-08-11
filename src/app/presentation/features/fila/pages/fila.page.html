@@ -1,0 +1,176 @@
+<main class="fila-page">
+  <section class="outreach-queue" aria-labelledby="outreach-queue-title">
+    <div class="outreach-queue__header">
+      <div>
+        <h1 id="outreach-queue-title">Fila diária de abordagem</h1>
+        <p>{{ store.dailySentCount() }} enviados hoje</p>
+      </div>
+
+      <app-input
+        label="Limite diário"
+        type="number"
+        [value]="store.dailyLimit().toString()"
+        (valueChange)="store.setDailyLimit($event)"
+      />
+    </div>
+
+    @if (!store.outreachLoading()) {
+      <div class="outreach-queue__sector-filters" aria-label="Filtrar fila por setor">
+        <button
+          type="button"
+          class="outreach-queue__sector-chip"
+          [class.outreach-queue__sector-chip--active]="store.setorFilaSelecionado() === null"
+          [attr.aria-pressed]="store.setorFilaSelecionado() === null"
+          (click)="store.selecionarSetorFila(null)"
+        >
+          Todos <span>{{ store.outreachQueueTotal() }}</span>
+        </button>
+
+        @for (item of store.setoresFila(); track item.sector) {
+          <button
+            type="button"
+            class="outreach-queue__sector-chip"
+            [class.outreach-queue__sector-chip--active]="
+              store.setorFilaSelecionado() === item.sector
+            "
+            [attr.aria-pressed]="store.setorFilaSelecionado() === item.sector"
+            (click)="store.selecionarSetorFila(item.sector)"
+          >
+            {{ item.sector }} <span>{{ item.count }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (store.dailyLimitReached()) {
+      <p class="outreach-queue__limit-warning" role="status">
+        Número novo? Segura em 15/dia nas primeiras 2 semanas.
+      </p>
+    }
+
+    @if (store.outreachLoading()) {
+      <app-spinner />
+    } @else {
+      @for (section of store.outreachQueueSections(); track section.key) {
+        <section class="outreach-queue__section" [attr.aria-labelledby]="section.key + '-title'">
+          <h2 [id]="section.key + '-title'">{{ section.label }}</h2>
+
+          @if (section.items.length === 0) {
+            <p class="outreach-queue__empty">Nenhum item nesta seção.</p>
+          } @else {
+            <div class="outreach-queue__cards">
+              @for (item of section.items; track item.lead.id.getValue() + item.stage) {
+                <article
+                  class="outreach-card"
+                  [class.outreach-card--awaiting-confirmation]="
+                    store.isOutreachAwaitingConfirmation(item)
+                  "
+                >
+                  <div class="outreach-card__header">
+                    <div>
+                      <h3>{{ item.lead.businessName.getValue() }}</h3>
+                      <p>
+                        {{ item.bairro ?? item.lead.location.getCity() }} ·
+                        {{ item.lead.sector.getValue() }}
+                      </p>
+                    </div>
+
+                    <div class="outreach-card__badges">
+                      <app-badge color="info">{{ stageLabels[item.stage] }}</app-badge>
+                      <app-badge color="accent">Variante {{ item.variant }}</app-badge>
+                      @if (store.isOutreachAwaitingConfirmation(item)) {
+                        <app-badge color="warning">Aguardando confirmação</app-badge>
+                      }
+                    </div>
+                  </div>
+
+                  <dl class="outreach-card__metrics">
+                    <div>
+                      <dt>Nota</dt>
+                      <dd>{{ item.lead.rating ?? '—' }}</dd>
+                    </div>
+                    <div>
+                      <dt>Avaliações</dt>
+                      <dd>{{ item.avaliacoes ?? '—' }}</dd>
+                    </div>
+                  </dl>
+
+                  <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
+
+                  @if (item.telefoneInvalido) {
+                    <p class="outreach-card__phone-error">Telefone inválido ou ausente.</p>
+                  }
+
+                  <div class="outreach-card__actions">
+                    <app-button
+                      [disabled]="item.telefoneInvalido"
+                      (click)="copyAndOpenWhatsapp(item)"
+                    >
+                      Copiar e abrir WhatsApp
+                    </app-button>
+
+                    @if (store.isOutreachAwaitingConfirmation(item)) {
+                      <app-button
+                        variant="secondary"
+                        [disabled]="store.isOutreachConfirming(item)"
+                        (click)="store.confirmOutreach(item)"
+                      >
+                        Confirmar envio
+                      </app-button>
+                      <app-button
+                        variant="ghost"
+                        [disabled]="store.isOutreachConfirming(item)"
+                        (click)="store.discardOutreachConfirmation(item)"
+                      >
+                        Descartar
+                      </app-button>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </section>
+      }
+
+      <section class="outreach-queue__section" aria-labelledby="sent-today-title">
+        <h2 id="sent-today-title">Enviados hoje</h2>
+
+        @if (store.outreachEnviadosHoje().length === 0) {
+          <p class="outreach-queue__empty">Nenhum envio registrado hoje.</p>
+        } @else {
+          <div class="outreach-queue__cards outreach-queue__cards--sent">
+            @for (
+              item of store.outreachEnviadosHoje();
+              track item.lead.id.getValue() + item.stage
+            ) {
+              <article class="outreach-card outreach-card--sent">
+                <div class="outreach-card__header">
+                  <div>
+                    <h3>{{ item.lead.businessName.getValue() }}</h3>
+                    <p>{{ stageLabels[item.stage] }} · Variante {{ item.variant }}</p>
+                  </div>
+                  <app-badge color="success">Enviado</app-badge>
+                </div>
+                <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
+                <div class="outreach-card__actions">
+                  <app-button
+                    variant="danger"
+                    [disabled]="store.isOutreachUndoing(item)"
+                    (click)="undoOutreach(item)"
+                  >
+                    Desfazer
+                  </app-button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+  </section>
+
+  @if (store.error()) {
+    <p class="fila-page__error">{{ store.error() }}</p>
+  }
+</main>

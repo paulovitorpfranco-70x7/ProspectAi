@@ -1,7 +1,17 @@
 <nav class="nav" aria-label="Navegação principal">
-  <a class="nav-btn" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+  <a
+    class="nav-btn"
+    routerLink="/"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
     <span aria-hidden="true">🔍</span>
     <span>Buscar</span>
+  </a>
+
+  <a class="nav-btn" routerLink="/fila" routerLinkActive="active">
+    <span aria-hidden="true">📨</span>
+    <span>Fila</span>
   </a>
 
   <a class="nav-btn" routerLink="/pipeline" routerLinkActive="active">

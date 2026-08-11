@@ -1,9 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import type { OutreachQueueItem } from '@application/outreach/outreach-queue.service';
 import type { LeadStatusValue } from '@domain/lead/value-objects/lead-status.vo';
-import { STAGE_LABELS } from '@domain/outreach/types';
-import { BadgeComponent } from '@presentation/shared/components/badge/badge.component';
-import { ButtonComponent } from '@presentation/shared/components/button/button.component';
 import { EmptyStateComponent } from '@presentation/shared/components/empty-state/empty-state.component';
 import { InputComponent } from '@presentation/shared/components/input/input.component';
 import {
@@ -41,8 +37,6 @@ const SORT_OPTIONS: readonly SelectOption[] = [
   selector: 'app-pipeline-page',
   standalone: true,
   imports: [
-    BadgeComponent,
-    ButtonComponent,
     EmptyStateComponent,
     InputComponent,
     PipelineColumnComponent,
@@ -57,11 +51,9 @@ export class PipelinePage implements OnInit {
   protected readonly store = inject(PipelineStore);
   protected readonly filterOptions = FILTER_OPTIONS;
   protected readonly sortOptions = SORT_OPTIONS;
-  protected readonly stageLabels = STAGE_LABELS;
 
   ngOnInit(): void {
     void this.store.loadLeads();
-    void this.store.loadOutreachQueue();
   }
 
   protected onFilterChanged(value: string): void {
@@ -76,26 +68,5 @@ export class PipelinePage implements OnInit {
 
   protected onStatusChange(event: { leadId: string; newStatus: LeadStatusValue }): void {
     void this.store.updateStatus(event.leadId, event.newStatus);
-  }
-
-  protected async copyAndOpenWhatsapp(item: OutreachQueueItem): Promise<void> {
-    if (item.whatsappUrl === null) {
-      return;
-    }
-
-    const copyOperation = navigator.clipboard.writeText(item.mensagemRenderizada);
-    window.open(item.whatsappUrl, '_blank', 'noopener,noreferrer');
-    this.store.markOutreachAwaitingConfirmation(item);
-    await copyOperation;
-  }
-
-  protected async undoOutreach(item: OutreachQueueItem): Promise<void> {
-    const confirmed = window.confirm(
-      `Desfazer o envio para ${item.lead.businessName.getValue()}? O lead voltará para a fila.`,
-    );
-
-    if (confirmed) {
-      await this.store.undoOutreach(item);
-    }
   }
 }
