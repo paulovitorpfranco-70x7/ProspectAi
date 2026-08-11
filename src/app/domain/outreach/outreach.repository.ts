@@ -11,6 +11,7 @@ export interface RegistrarEnvioParams {
 
 export interface OutreachRepositoryPort {
   registrarEnvio(params: RegistrarEnvioParams): Promise<OutreachEvent>;
+  desfazerUltimoEnvio(leadId: string, eventId: string): Promise<OutreachEvent>;
   listarEventosPorLead(leadId: string): Promise<OutreachEvent[]>;
   listarEventosEntre(inicio: Date, fim: Date): Promise<OutreachEvent[]>;
   listarFollowupsPendentes(ate: Date): Promise<Lead[]>;

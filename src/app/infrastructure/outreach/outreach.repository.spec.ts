@@ -132,6 +132,29 @@ describe('OutreachRepository', () => {
     ).rejects.toBe(error);
   });
 
+  it('desfazerUltimoEnvio should call the atomic RPC with lead and event IDs', async () => {
+    const rpc = jest.fn().mockResolvedValue({ data: EVENT_ROW, error: null });
+    const repository = makeRepository(asSupabaseClient({ rpc }));
+
+    const result = await repository.desfazerUltimoEnvio(EVENT_ROW.lead_id, EVENT_ROW.id);
+
+    expect(rpc).toHaveBeenCalledWith('desfazer_ultimo_envio_outreach', {
+      p_lead_id: EVENT_ROW.lead_id,
+      p_event_id: EVENT_ROW.id,
+    });
+    expect(result.id).toBe(EVENT_ROW.id);
+  });
+
+  it('desfazerUltimoEnvio should propagate a Supabase rejection', async () => {
+    const error = { message: 'Somente eventos criados hoje podem ser desfeitos', code: 'P0001' };
+    const rpc = jest.fn().mockResolvedValue({ data: null, error });
+    const repository = makeRepository(asSupabaseClient({ rpc }));
+
+    await expect(repository.desfazerUltimoEnvio(EVENT_ROW.lead_id, EVENT_ROW.id)).rejects.toBe(
+      error,
+    );
+  });
+
   it('listarEventosPorLead should map snake_case rows to camelCase domain events', async () => {
     const order = jest.fn().mockResolvedValue({ data: [EVENT_ROW], error: null });
     const eq = jest.fn().mockReturnValue({ order });

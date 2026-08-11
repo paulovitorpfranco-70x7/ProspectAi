@@ -71,6 +71,7 @@ function makeLeadRepository(): jest.Mocked<LeadRepository> {
 function makeOutreachRepository(): jest.Mocked<OutreachRepositoryPort> {
   return {
     registrarEnvio: jest.fn(),
+    desfazerUltimoEnvio: jest.fn(),
     listarEventosPorLead: jest.fn(),
     listarEventosEntre: jest.fn().mockResolvedValue([]),
     listarFollowupsPendentes: jest.fn().mockResolvedValue([]),
@@ -294,6 +295,8 @@ describe('OutreachQueueService', () => {
       telefoneInvalido: false,
       bairro: 'Icaraí',
       avaliacoes: 2,
+      eventId: null,
+      sentAt: null,
     };
     outreachRepository.registrarEnvio.mockResolvedValue(makeEvent({ stage: 'f1_d2' }));
 
@@ -306,6 +309,52 @@ describe('OutreachQueueService', () => {
       renderedMessage: 'Mensagem pronta',
       nextFollowupAt: new Date('2026-08-07T15:00:00.000Z'),
     });
+  });
+
+  it('should undo the event associated with a sent queue item', async () => {
+    const { service, outreachRepository } = setup();
+    const event = makeEvent();
+    const item: OutreachQueueItem = {
+      lead: makeLead(),
+      stage: event.stage,
+      variant: 'A',
+      mensagemRenderizada: event.renderedMessage,
+      whatsappUrl: 'https://wa.me/5521999998888?text=Mensagem%20enviada',
+      telefoneInvalido: false,
+      bairro: 'Icaraí',
+      avaliacoes: 30,
+      eventId: event.id,
+      sentAt: event.sentAt,
+    };
+    outreachRepository.desfazerUltimoEnvio.mockResolvedValue(event);
+
+    await service.desfazerEnvio(item);
+
+    expect(outreachRepository.desfazerUltimoEnvio).toHaveBeenCalledWith(
+      item.lead.id.getValue(),
+      event.id,
+    );
+  });
+
+  it('should reject undo for a queue item without an event', async () => {
+    const { service, outreachRepository } = setup();
+    const item: OutreachQueueItem = {
+      lead: makeLead(),
+      stage: 'm1a_permissao',
+      variant: 'A',
+      mensagemRenderizada: 'Mensagem pronta',
+      whatsappUrl: 'https://wa.me/5521999998888?text=Mensagem%20pronta',
+      telefoneInvalido: false,
+      bairro: 'Icaraí',
+      avaliacoes: 30,
+      eventId: null,
+      sentAt: null,
+    };
+
+    await expect(service.desfazerEnvio(item)).rejects.toThrow(
+      'não possui evento de outreach associado',
+    );
+    expect(outreachRepository.desfazerUltimoEnvio).not.toHaveBeenCalled();
   });
 });
 

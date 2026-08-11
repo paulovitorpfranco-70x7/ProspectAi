@@ -27,6 +27,8 @@ export interface OutreachQueueItem {
   readonly telefoneInvalido: boolean;
   readonly bairro: string | null;
   readonly avaliacoes: number | null;
+  readonly eventId: string | null;
+  readonly sentAt: Date | null;
 }
 
 export interface OutreachDailyQueue {
@@ -99,7 +101,7 @@ export class OutreachQueueService {
 
       const sequenceIndex = sequenceByLeadId.get(event.leadId) ?? 0;
       const variant = event.variant ?? lead.abVariant ?? pickAbVariant(sequenceIndex);
-      return [this.buildItem(lead, event.stage, variant, event.renderedMessage)];
+      return [this.buildItem(lead, event.stage, variant, event)];
     });
 
     return {
@@ -123,11 +125,19 @@ export class OutreachQueueService {
     });
   }
 
+  async desfazerEnvio(item: OutreachQueueItem): Promise<OutreachEvent> {
+    if (item.eventId === null) {
+      throw new Error('O item enviado não possui evento de outreach associado');
+    }
+
+    return this.outreachRepository.desfazerUltimoEnvio(item.lead.id.getValue(), item.eventId);
+  }
+
   private buildItem(
     lead: Lead,
     stage: OutreachStage,
     variant: AbVariant,
-    renderedMessage?: string,
+    event?: OutreachEvent,
   ): OutreachQueueItem {
     const bairro = lead.bairro;
     const avaliacoes = lead.reviewCount;
@@ -142,10 +152,10 @@ export class OutreachQueueService {
       primeiroNome: null,
     };
     const mensagemRenderizada =
-      renderedMessage ??
+      event?.renderedMessage ??
       renderTemplate(getCadenceTemplate(stage, lead.id.getValue()), context, stage);
 
-    if (renderedMessage !== undefined) {
+    if (event !== undefined) {
       assertNoOrphanTokens(mensagemRenderizada);
     }
     const phone = lead.contactInfo.getPhone()?.getValue() ?? '';
@@ -160,6 +170,8 @@ export class OutreachQueueService {
       telefoneInvalido: whatsappUrl === null,
       bairro,
       avaliacoes,
+      eventId: event?.id ?? null,
+      sentAt: event?.sentAt ?? null,
     };
   }
 }

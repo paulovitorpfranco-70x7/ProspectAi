@@ -85,7 +85,17 @@ export class PipelinePage implements OnInit {
 
     const copyOperation = navigator.clipboard.writeText(item.mensagemRenderizada);
     window.open(item.whatsappUrl, '_blank', 'noopener,noreferrer');
+    this.store.markOutreachAwaitingConfirmation(item);
     await copyOperation;
-    await this.store.confirmOutreach(item);
+  }
+
+  protected async undoOutreach(item: OutreachQueueItem): Promise<void> {
+    const confirmed = window.confirm(
+      `Desfazer o envio para ${item.lead.businessName.getValue()}? O lead voltará para a fila.`,
+    );
+
+    if (confirmed) {
+      await this.store.undoOutreach(item);
+    }
   }
 }

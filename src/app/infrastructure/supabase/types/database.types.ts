@@ -182,6 +182,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      desfazer_ultimo_envio_outreach: {
+        Args: { p_event_id: string; p_lead_id: string }
+        Returns: {
+          id: string
+          lead_id: string
+          rendered_message: string
+          sent_at: string
+          stage: string
+          variant: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lead_outreach_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       registrar_envio_outreach: {
         Args: {
           p_lead_id: string

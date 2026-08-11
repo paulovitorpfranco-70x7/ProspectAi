@@ -60,7 +60,12 @@
           } @else {
             <div class="outreach-queue__cards">
               @for (item of section.items; track item.lead.id.getValue() + item.stage) {
-                <article class="outreach-card">
+                <article
+                  class="outreach-card"
+                  [class.outreach-card--awaiting-confirmation]="
+                    store.isOutreachAwaitingConfirmation(item)
+                  "
+                >
                   <div class="outreach-card__header">
                     <div>
                       <h3>{{ item.lead.businessName.getValue() }}</h3>
@@ -73,6 +78,9 @@
                     <div class="outreach-card__badges">
                       <app-badge color="info">{{ stageLabels[item.stage] }}</app-badge>
                       <app-badge color="accent">Variante {{ item.variant }}</app-badge>
+                      @if (store.isOutreachAwaitingConfirmation(item)) {
+                        <app-badge color="warning">Aguardando confirmação</app-badge>
+                      }
                     </div>
                   </div>
 
@@ -93,12 +101,31 @@
                     <p class="outreach-card__phone-error">Telefone inválido ou ausente.</p>
                   }
 
-                  <app-button
-                    [disabled]="item.telefoneInvalido"
-                    (click)="copyAndOpenWhatsapp(item)"
-                  >
-                    Copiar e abrir WhatsApp
-                  </app-button>
+                  <div class="outreach-card__actions">
+                    <app-button
+                      [disabled]="item.telefoneInvalido"
+                      (click)="copyAndOpenWhatsapp(item)"
+                    >
+                      Copiar e abrir WhatsApp
+                    </app-button>
+
+                    @if (store.isOutreachAwaitingConfirmation(item)) {
+                      <app-button
+                        variant="secondary"
+                        [disabled]="store.isOutreachConfirming(item)"
+                        (click)="store.confirmOutreach(item)"
+                      >
+                        Confirmar envio
+                      </app-button>
+                      <app-button
+                        variant="ghost"
+                        [disabled]="store.isOutreachConfirming(item)"
+                        (click)="store.discardOutreachConfirmation(item)"
+                      >
+                        Descartar
+                      </app-button>
+                    }
+                  </div>
                 </article>
               }
             </div>
@@ -126,6 +153,15 @@
                   <app-badge color="success">Enviado</app-badge>
                 </div>
                 <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
+                <div class="outreach-card__actions">
+                  <app-button
+                    variant="danger"
+                    [disabled]="store.isOutreachUndoing(item)"
+                    (click)="undoOutreach(item)"
+                  >
+                    Desfazer
+                  </app-button>
+                </div>
               </article>
             }
           </div>

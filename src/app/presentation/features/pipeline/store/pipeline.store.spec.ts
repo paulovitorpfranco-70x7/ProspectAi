@@ -11,6 +11,7 @@ import {
   OutreachQueueService,
   type OutreachQueueItem,
 } from '@application/outreach/outreach-queue.service';
+import type { OutreachEvent } from '@domain/outreach/types';
 import { InvalidStatusTransitionError } from '@domain/lead/errors/invalid-status-transition.error';
 import { Lead, type LeadSnapshot } from '@domain/lead/entities/lead.entity';
 import type { LeadRepository } from '@domain/lead/repositories/lead.repository';
@@ -111,6 +112,7 @@ function setup() {
       contadorHoje: 0,
     }),
     confirmarEnvio: jest.fn(),
+    desfazerEnvio: jest.fn(),
   };
 
   TestBed.configureTestingModule({
@@ -358,16 +360,92 @@ describe('PipelineStore', () => {
       enviadosHoje: [],
       contadorHoje: 14,
     });
-    outreachQueue.confirmarEnvio.mockResolvedValueOnce({});
+    outreachQueue.confirmarEnvio.mockResolvedValueOnce(makeOutreachEvent());
     await store.loadOutreachQueue();
 
     await store.confirmOutreach(item);
 
     expect(outreachQueue.confirmarEnvio).toHaveBeenCalledWith(item);
     expect(store.outreachNovos()).toEqual([]);
-    expect(store.outreachEnviadosHoje()).toEqual([item]);
+    expect(store.outreachEnviadosHoje()).toEqual([
+      {
+        ...item,
+        eventId: '123e4567-e89b-42d3-a456-426614174010',
+        sentAt: new Date('2026-08-11T12:00:00.000Z'),
+      },
+    ]);
     expect(store.dailySentCount()).toBe(15);
     expect(store.dailyLimitReached()).toBe(true);
+  });
+
+  it('should confirm an awaiting item exactly once even for concurrent requests', async () => {
+    const { store, outreachQueue } = setup();
+    const item = makeQueueItem();
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [],
+      novos: [item],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+    outreachQueue.confirmarEnvio.mockResolvedValueOnce(makeOutreachEvent());
+    await store.loadOutreachQueue();
+    store.markOutreachAwaitingConfirmation(item);
+
+    await Promise.all([store.confirmOutreach(item), store.confirmOutreach(item)]);
+
+    expect(outreachQueue.confirmarEnvio).toHaveBeenCalledTimes(1);
+    expect(store.outreachEnviadosHoje()).toHaveLength(1);
+    expect(store.isOutreachAwaitingConfirmation(item)).toBe(false);
+  });
+
+  it('should discard the pending confirmation without removing the item from the queue', async () => {
+    const { store, outreachQueue } = setup();
+    const item = makeQueueItem();
+    outreachQueue.montarFila.mockResolvedValueOnce({
+      followups: [],
+      novos: [item],
+      enviadosHoje: [],
+      contadorHoje: 0,
+    });
+    await store.loadOutreachQueue();
+    store.markOutreachAwaitingConfirmation(item);
+
+    store.discardOutreachConfirmation(item);
+
+    expect(store.isOutreachAwaitingConfirmation(item)).toBe(false);
+    expect(store.outreachNovos()).toEqual([item]);
+    expect(outreachQueue.confirmarEnvio).not.toHaveBeenCalled();
+  });
+
+  it('should undo a sent item and reload it into the new-lead queue', async () => {
+    const { store, outreachQueue } = setup();
+    const sentItem = makeQueueItem({
+      eventId: '123e4567-e89b-42d3-a456-426614174010',
+      sentAt: new Date('2026-08-11T12:00:00.000Z'),
+    });
+    const restoredItem = makeQueueItem();
+    outreachQueue.montarFila
+      .mockResolvedValueOnce({
+        followups: [],
+        novos: [],
+        enviadosHoje: [sentItem],
+        contadorHoje: 1,
+      })
+      .mockResolvedValueOnce({
+        followups: [],
+        novos: [restoredItem],
+        enviadosHoje: [],
+        contadorHoje: 0,
+      });
+    outreachQueue.desfazerEnvio.mockResolvedValueOnce(makeOutreachEvent());
+    await store.loadOutreachQueue();
+
+    await store.undoOutreach(sentItem);
+
+    expect(outreachQueue.desfazerEnvio).toHaveBeenCalledWith(sentItem);
+    expect(store.outreachEnviadosHoje()).toEqual([]);
+    expect(store.outreachNovos()).toEqual([restoredItem]);
+    expect(store.dailySentCount()).toBe(0);
   });
 });
 
@@ -381,6 +459,20 @@ function makeQueueItem(overrides: Partial<OutreachQueueItem> = {}): OutreachQueu
     telefoneInvalido: false,
     bairro: null,
     avaliacoes: null,
+    eventId: null,
+    sentAt: null,
+    ...overrides,
+  };
+}
+
+function makeOutreachEvent(overrides: Partial<OutreachEvent> = {}): OutreachEvent {
+  return {
+    id: '123e4567-e89b-42d3-a456-426614174010',
+    leadId: LEAD_ID,
+    stage: 'm1a_permissao',
+    variant: 'A',
+    renderedMessage: 'Mensagem pronta',
+    sentAt: new Date('2026-08-11T12:00:00.000Z'),
     ...overrides,
   };
 }

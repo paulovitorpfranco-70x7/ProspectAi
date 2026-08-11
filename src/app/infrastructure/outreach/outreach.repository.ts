@@ -37,6 +37,23 @@ export class OutreachRepository implements OutreachRepositoryPort {
     return this.toDomainEvent(data);
   }
 
+  async desfazerUltimoEnvio(leadId: string, eventId: string): Promise<OutreachEvent> {
+    const { data, error } = await this.supabase.rpc('desfazer_ultimo_envio_outreach', {
+      p_lead_id: leadId,
+      p_event_id: eventId,
+    });
+
+    if (error !== null) {
+      throw error;
+    }
+
+    if (data === null) {
+      throw new Error('A RPC desfazer_ultimo_envio_outreach não retornou o evento removido');
+    }
+
+    return this.toDomainEvent(data);
+  }
+
   async listarEventosPorLead(leadId: string): Promise<OutreachEvent[]> {
     const { data, error } = await this.supabase
       .from('lead_outreach_events')

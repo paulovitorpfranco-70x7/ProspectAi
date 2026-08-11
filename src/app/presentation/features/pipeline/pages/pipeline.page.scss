@@ -163,10 +163,21 @@
   border-color: color-mix(in srgb, var(--color-success) 40%, var(--color-border));
 }
 
+.outreach-card--awaiting-confirmation {
+  border-color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 8%, var(--color-surface));
+}
+
 .outreach-card__badges {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
+}
+
+.outreach-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
 }
 
 .outreach-card__metrics {

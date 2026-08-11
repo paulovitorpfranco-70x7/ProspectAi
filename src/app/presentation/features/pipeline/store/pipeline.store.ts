@@ -35,6 +35,9 @@ export interface PipelineState {
   readonly outreachFollowups: OutreachQueueItem[];
   readonly outreachNovos: OutreachQueueItem[];
   readonly outreachEnviadosHoje: OutreachQueueItem[];
+  readonly outreachAwaitingConfirmationKeys: string[];
+  readonly outreachConfirmingKeys: string[];
+  readonly outreachUndoingEventIds: string[];
   readonly setorFilaSelecionado: SectorValue | null;
   readonly outreachLoading: boolean;
   readonly dailySentCount: number;
@@ -73,6 +76,9 @@ const initialState: PipelineState = {
   outreachFollowups: [],
   outreachNovos: [],
   outreachEnviadosHoje: [],
+  outreachAwaitingConfirmationKeys: [],
+  outreachConfirmingKeys: [],
+  outreachUndoingEventIds: [],
   setorFilaSelecionado: null,
   outreachLoading: false,
   dailySentCount: 0,
@@ -250,21 +256,110 @@ export const PipelineStore = signalStore(
       },
 
       async confirmOutreach(item: OutreachQueueItem): Promise<void> {
-        patchState(store, { error: null });
+        const itemKey = outreachQueueItemKey(item);
+
+        if (store.outreachConfirmingKeys().includes(itemKey)) {
+          return;
+        }
+
+        patchState(store, {
+          outreachConfirmingKeys: [...store.outreachConfirmingKeys(), itemKey],
+          error: null,
+        });
 
         try {
-          await outreachQueueService.confirmarEnvio(item);
+          const event = await outreachQueueService.confirmarEnvio(item);
+          const sentItem: OutreachQueueItem = {
+            ...item,
+            eventId: event.id,
+            sentAt: event.sentAt,
+          };
           patchState(store, {
             outreachFollowups: removeQueueItem(store.outreachFollowups(), item),
             outreachNovos: removeQueueItem(store.outreachNovos(), item),
-            outreachEnviadosHoje: [item, ...store.outreachEnviadosHoje()],
+            outreachEnviadosHoje: [sentItem, ...store.outreachEnviadosHoje()],
+            outreachAwaitingConfirmationKeys: store
+              .outreachAwaitingConfirmationKeys()
+              .filter((key) => key !== itemKey),
+            outreachConfirmingKeys: store.outreachConfirmingKeys().filter((key) => key !== itemKey),
             dailySentCount: store.dailySentCount() + 1,
             error: null,
           });
         } catch (error) {
-          patchState(store, { error: getErrorMessage(error) });
+          patchState(store, {
+            outreachConfirmingKeys: store.outreachConfirmingKeys().filter((key) => key !== itemKey),
+            error: getErrorMessage(error),
+          });
           throw error;
         }
+      },
+
+      async undoOutreach(item: OutreachQueueItem): Promise<void> {
+        if (item.eventId === null || store.outreachUndoingEventIds().includes(item.eventId)) {
+          return;
+        }
+
+        patchState(store, {
+          outreachUndoingEventIds: [...store.outreachUndoingEventIds(), item.eventId],
+          error: null,
+        });
+
+        try {
+          await outreachQueueService.desfazerEnvio(item);
+          const queue = await outreachQueueService.montarFila();
+          patchState(store, {
+            outreachFollowups: queue.followups,
+            outreachNovos: queue.novos,
+            outreachEnviadosHoje: queue.enviadosHoje,
+            dailySentCount: queue.contadorHoje,
+            outreachUndoingEventIds: store
+              .outreachUndoingEventIds()
+              .filter((eventId) => eventId !== item.eventId),
+            error: null,
+          });
+        } catch (error) {
+          patchState(store, {
+            outreachUndoingEventIds: store
+              .outreachUndoingEventIds()
+              .filter((eventId) => eventId !== item.eventId),
+            error: getErrorMessage(error),
+          });
+          throw error;
+        }
+      },
+
+      markOutreachAwaitingConfirmation(item: OutreachQueueItem): void {
+        const itemKey = outreachQueueItemKey(item);
+
+        if (!store.outreachAwaitingConfirmationKeys().includes(itemKey)) {
+          patchState(store, {
+            outreachAwaitingConfirmationKeys: [
+              ...store.outreachAwaitingConfirmationKeys(),
+              itemKey,
+            ],
+          });
+        }
+      },
+
+      discardOutreachConfirmation(item: OutreachQueueItem): void {
+        const itemKey = outreachQueueItemKey(item);
+        patchState(store, {
+          outreachAwaitingConfirmationKeys: store
+            .outreachAwaitingConfirmationKeys()
+            .filter((key) => key !== itemKey),
+        });
+      },
+
+      isOutreachAwaitingConfirmation(item: OutreachQueueItem): boolean {
+        return store.outreachAwaitingConfirmationKeys().includes(outreachQueueItemKey(item));
+      },
+
+      isOutreachConfirming(item: OutreachQueueItem): boolean {
+        return store.outreachConfirmingKeys().includes(outreachQueueItemKey(item));
+      },
+
+      isOutreachUndoing(item: OutreachQueueItem): boolean {
+        return item.eventId !== null && store.outreachUndoingEventIds().includes(item.eventId);
       },
 
       setFilter(status: PipelineFilterStatus): void {
@@ -305,6 +400,10 @@ function filterQueueBySector(
   return sector === null
     ? [...items]
     : items.filter((item) => item.lead.sector.getValue() === sector);
+}
+
+function outreachQueueItemKey(item: OutreachQueueItem): string {
+  return `${item.lead.id.getValue()}:${item.stage}`;
 }
 
 function countQueueItemsBySector(
@@ -366,7 +465,20 @@ function isPipelineSortBy(field: string): field is PipelineSortBy {
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'Erro ao executar operação.';
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
+  }
+
+  return 'Erro ao executar operação.';
 }
 
 export function isLeadStatusValue(value: string): value is LeadStatusValue {
