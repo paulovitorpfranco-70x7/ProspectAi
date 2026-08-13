@@ -62,81 +62,93 @@
               @for (item of section.items; track item.lead.id.getValue() + item.stage) {
                 <article
                   class="outreach-card"
+                  [class.outreach-card--error]="item.renderError !== null"
                   [class.outreach-card--awaiting-confirmation]="
-                    store.isOutreachAwaitingConfirmation(item)
+                    item.renderError === null && store.isOutreachAwaitingConfirmation(item)
                   "
                 >
-                  <div class="outreach-card__header">
-                    <div>
-                      <h3>{{ item.lead.businessName.getValue() }}</h3>
-                      <p>
-                        {{ item.bairro ?? item.lead.location.getCity() }} ·
-                        {{ item.lead.sector.getValue() }}
-                      </p>
-                      @if (instagramHandle(item); as handle) {
-                        <a
-                          class="outreach-card__instagram"
-                          [href]="instagramUrl(handle)"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          [attr.aria-label]="'Abrir Instagram de @' + handle"
-                        >
-                          <app-badge color="info">@{{ handle }}</app-badge>
-                        </a>
-                      }
+                  @if (item.renderError; as renderError) {
+                    <div class="outreach-card__header">
+                      <div>
+                        <h3>{{ item.lead.businessName.getValue() }}</h3>
+                        <p>Estágio atual: {{ stageLabels[item.stage] }} ({{ item.stage }})</p>
+                      </div>
+                      <app-badge color="danger">Erro de renderização</app-badge>
+                    </div>
+                    <p class="fila-page__error" role="alert">{{ renderError }}</p>
+                  } @else {
+                    <div class="outreach-card__header">
+                      <div>
+                        <h3>{{ item.lead.businessName.getValue() }}</h3>
+                        <p>
+                          {{ item.bairro ?? item.lead.location.getCity() }} ·
+                          {{ item.lead.sector.getValue() }}
+                        </p>
+                        @if (instagramHandle(item); as handle) {
+                          <a
+                            class="outreach-card__instagram"
+                            [href]="instagramUrl(handle)"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            [attr.aria-label]="'Abrir Instagram de @' + handle"
+                          >
+                            <app-badge color="info">@{{ handle }}</app-badge>
+                          </a>
+                        }
+                      </div>
+
+                      <div class="outreach-card__badges">
+                        <app-badge color="info">{{ stageLabels[item.stage] }}</app-badge>
+                        <app-badge color="accent">Variante {{ item.variant }}</app-badge>
+                        @if (store.isOutreachAwaitingConfirmation(item)) {
+                          <app-badge color="warning">Aguardando confirmação</app-badge>
+                        }
+                      </div>
                     </div>
 
-                    <div class="outreach-card__badges">
-                      <app-badge color="info">{{ stageLabels[item.stage] }}</app-badge>
-                      <app-badge color="accent">Variante {{ item.variant }}</app-badge>
-                      @if (store.isOutreachAwaitingConfirmation(item)) {
-                        <app-badge color="warning">Aguardando confirmação</app-badge>
-                      }
-                    </div>
-                  </div>
+                    <dl class="outreach-card__metrics">
+                      <div>
+                        <dt>Nota</dt>
+                        <dd>{{ item.lead.rating ?? '—' }}</dd>
+                      </div>
+                      <div>
+                        <dt>Avaliações</dt>
+                        <dd>{{ item.avaliacoes ?? '—' }}</dd>
+                      </div>
+                    </dl>
 
-                  <dl class="outreach-card__metrics">
-                    <div>
-                      <dt>Nota</dt>
-                      <dd>{{ item.lead.rating ?? '—' }}</dd>
-                    </div>
-                    <div>
-                      <dt>Avaliações</dt>
-                      <dd>{{ item.avaliacoes ?? '—' }}</dd>
-                    </div>
-                  </dl>
+                    <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
 
-                  <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
-
-                  @if (item.telefoneInvalido) {
-                    <p class="outreach-card__phone-error">Telefone inválido ou ausente.</p>
-                  }
-
-                  <div class="outreach-card__actions">
-                    <app-button
-                      [disabled]="item.telefoneInvalido"
-                      (click)="copyAndOpenWhatsapp(item)"
-                    >
-                      Copiar e abrir WhatsApp
-                    </app-button>
-
-                    @if (store.isOutreachAwaitingConfirmation(item)) {
-                      <app-button
-                        variant="secondary"
-                        [disabled]="store.isOutreachConfirming(item)"
-                        (click)="store.confirmOutreach(item)"
-                      >
-                        Confirmar envio
-                      </app-button>
-                      <app-button
-                        variant="ghost"
-                        [disabled]="store.isOutreachConfirming(item)"
-                        (click)="store.discardOutreachConfirmation(item)"
-                      >
-                        Descartar
-                      </app-button>
+                    @if (item.telefoneInvalido) {
+                      <p class="outreach-card__phone-error">Telefone inválido ou ausente.</p>
                     }
-                  </div>
+
+                    <div class="outreach-card__actions">
+                      <app-button
+                        [disabled]="item.telefoneInvalido"
+                        (click)="copyAndOpenWhatsapp(item)"
+                      >
+                        Copiar e abrir WhatsApp
+                      </app-button>
+
+                      @if (store.isOutreachAwaitingConfirmation(item)) {
+                        <app-button
+                          variant="secondary"
+                          [disabled]="store.isOutreachConfirming(item)"
+                          (click)="store.confirmOutreach(item)"
+                        >
+                          Confirmar envio
+                        </app-button>
+                        <app-button
+                          variant="ghost"
+                          [disabled]="store.isOutreachConfirming(item)"
+                          (click)="store.discardOutreachConfirmation(item)"
+                        >
+                          Descartar
+                        </app-button>
+                      }
+                    </div>
+                  }
                 </article>
               }
             </div>
@@ -155,15 +167,29 @@
               item of store.outreachEnviadosHoje();
               track item.lead.id.getValue() + item.stage
             ) {
-              <article class="outreach-card outreach-card--sent">
-                <div class="outreach-card__header">
-                  <div>
-                    <h3>{{ item.lead.businessName.getValue() }}</h3>
-                    <p>{{ stageLabels[item.stage] }} · Variante {{ item.variant }}</p>
+              <article
+                class="outreach-card outreach-card--sent"
+                [class.outreach-card--error]="item.renderError !== null"
+              >
+                @if (item.renderError; as renderError) {
+                  <div class="outreach-card__header">
+                    <div>
+                      <h3>{{ item.lead.businessName.getValue() }}</h3>
+                      <p>Estágio atual: {{ stageLabels[item.stage] }} ({{ item.stage }})</p>
+                    </div>
+                    <app-badge color="danger">Erro de renderização</app-badge>
                   </div>
-                  <app-badge color="success">Enviado</app-badge>
-                </div>
-                <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
+                  <p class="fila-page__error" role="alert">{{ renderError }}</p>
+                } @else {
+                  <div class="outreach-card__header">
+                    <div>
+                      <h3>{{ item.lead.businessName.getValue() }}</h3>
+                      <p>{{ stageLabels[item.stage] }} · Variante {{ item.variant }}</p>
+                    </div>
+                    <app-badge color="success">Enviado</app-badge>
+                  </div>
+                  <pre class="outreach-card__message">{{ item.mensagemRenderizada }}</pre>
+                }
                 <div class="outreach-card__actions">
                   <app-button
                     variant="danger"

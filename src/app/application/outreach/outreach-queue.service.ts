@@ -22,6 +22,7 @@ export interface OutreachQueueItem {
   readonly lead: Lead;
   readonly stage: OutreachStage;
   readonly variant: AbVariant;
+  readonly renderError: string | null;
   readonly mensagemRenderizada: string;
   readonly whatsappUrl: string | null;
   readonly telefoneInvalido: boolean;
@@ -74,7 +75,7 @@ export class OutreachQueueService {
 
         const sequenceIndex = sequenceByLeadId.get(lead.id.getValue()) ?? 0;
         const variant = lead.abVariant ?? pickAbVariant(sequenceIndex);
-        return [this.buildItem(lead, stage, variant)];
+        return [this.buildItemSafely(lead, stage, variant)];
       });
 
     const novos = leads
@@ -89,7 +90,7 @@ export class OutreachQueueService {
         const hasPreview = lead.previewUrl !== null && lead.previewUrl.trim().length > 0;
         const variant = selectedVariant === 'B' && !hasPreview ? 'A' : selectedVariant;
         const stage = variant === 'A' ? 'm1a_permissao' : 'm1b_direto';
-        return this.buildItem(lead, stage, variant);
+        return this.buildItemSafely(lead, stage, variant);
       });
 
     const enviadosHoje = sentToday.flatMap((event) => {
@@ -101,7 +102,7 @@ export class OutreachQueueService {
 
       const sequenceIndex = sequenceByLeadId.get(event.leadId) ?? 0;
       const variant = event.variant ?? lead.abVariant ?? pickAbVariant(sequenceIndex);
-      return [this.buildItem(lead, event.stage, variant, event)];
+      return [this.buildItemSafely(lead, event.stage, variant, event)];
     });
 
     return {
@@ -131,6 +132,34 @@ export class OutreachQueueService {
     }
 
     return this.outreachRepository.desfazerUltimoEnvio(item.lead.id.getValue(), item.eventId);
+  }
+
+  private buildItemSafely(
+    lead: Lead,
+    stage: OutreachStage,
+    variant: AbVariant,
+    event?: OutreachEvent,
+  ): OutreachQueueItem {
+    try {
+      return this.buildItem(lead, stage, variant, event);
+    } catch (error) {
+      const leadId = lead.id.getValue();
+      console.error(`[Fila] Falha ao renderizar o lead ${leadId} no estágio ${stage}`, error);
+
+      return {
+        lead,
+        stage,
+        variant,
+        renderError: getErrorMessage(error),
+        mensagemRenderizada: '',
+        whatsappUrl: null,
+        telefoneInvalido: true,
+        bairro: lead.bairro,
+        avaliacoes: lead.reviewCount,
+        eventId: event?.id ?? null,
+        sentAt: event?.sentAt ?? null,
+      };
+    }
   }
 
   private buildItem(
@@ -165,6 +194,7 @@ export class OutreachQueueService {
       lead,
       stage,
       variant,
+      renderError: null,
       mensagemRenderizada,
       whatsappUrl,
       telefoneInvalido: whatsappUrl === null,
@@ -174,6 +204,14 @@ export class OutreachQueueService {
       sentAt: event?.sentAt ?? null,
     };
   }
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return typeof error === 'string' ? error : 'Erro desconhecido ao renderizar a mensagem.';
 }
 
 function saoPauloDayBounds(date: Date): { inicio: Date; fim: Date } {

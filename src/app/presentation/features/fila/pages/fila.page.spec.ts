@@ -80,6 +80,51 @@ describe('FilaPage', () => {
     expect(fixture.nativeElement.querySelector('.outreach-card__instagram')).toBeNull();
   });
 
+  it('should render two valid cards and one isolated error card without a copy button', async () => {
+    const firstValidItem = makeQueueItem({
+      lead: makeLead({
+        id: LeadId.fromString('123e4567-e89b-42d3-a456-426614174001'),
+        businessName: BusinessName.create('Lead válido 1'),
+      }),
+    });
+    const secondValidItem = makeQueueItem({
+      lead: makeLead({
+        id: LeadId.fromString('123e4567-e89b-42d3-a456-426614174002'),
+        businessName: BusinessName.create('Lead válido 2'),
+      }),
+    });
+    const failedItem = makeQueueItem({
+      lead: makeLead({
+        id: LeadId.fromString('123e4567-e89b-42d3-a456-426614174003'),
+        businessName: BusinessName.create('Lead com erro'),
+      }),
+      stage: 'f1_d2',
+      renderError: 'Token obrigatório vazio no estágio f1_d2: preview_url',
+      mensagemRenderizada: '',
+      whatsappUrl: null,
+      telefoneInvalido: true,
+    });
+    const { fixture } = await setup({
+      ...emptyQueue(),
+      followups: [failedItem],
+      novos: [firstValidItem, secondValidItem],
+    });
+
+    const cards = fixture.nativeElement.querySelectorAll<HTMLElement>('.outreach-card');
+    const errorCard = fixture.nativeElement.querySelector<HTMLElement>('.outreach-card--error');
+
+    expect(cards).toHaveLength(3);
+    expect(
+      fixture.nativeElement.querySelectorAll('.outreach-card:not(.outreach-card--error)'),
+    ).toHaveLength(2);
+    expect(errorCard?.textContent).toContain('Lead com erro');
+    expect(errorCard?.textContent).toContain('Follow-up D+2 (f1_d2)');
+    expect(errorCard?.textContent).toContain(
+      'Token obrigatório vazio no estágio f1_d2: preview_url',
+    );
+    expect(findButtonWithin(errorCard, 'Copiar e abrir WhatsApp')).toBeNull();
+  });
+
   it('copying should not create an event and confirming should create exactly one', async () => {
     const item = makeQueueItem();
     const { fixture, outreachQueue, writeText, open } = await setup({
@@ -179,6 +224,7 @@ function makeQueueItem(overrides: Partial<OutreachQueueItem> = {}): OutreachQueu
     lead: makeLead(),
     stage: 'm1a_permissao',
     variant: 'A',
+    renderError: null,
     mensagemRenderizada: 'Mensagem pronta',
     whatsappUrl: 'https://wa.me/5521999990001?text=Mensagem%20pronta',
     telefoneInvalido: false,
@@ -215,4 +261,16 @@ function findButton(fixture: { nativeElement: HTMLElement }, label: string): HTM
   }
 
   return button;
+}
+
+function findButtonWithin(container: HTMLElement | null, label: string): HTMLButtonElement | null {
+  if (container === null) {
+    return null;
+  }
+
+  return (
+    [...container.querySelectorAll('button')].find(
+      (candidate) => candidate.textContent?.trim() === label,
+    ) ?? null
+  );
 }

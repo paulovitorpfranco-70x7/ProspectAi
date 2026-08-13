@@ -217,6 +217,7 @@ function makeQueueItem(overrides: Partial<OutreachQueueItem> = {}): OutreachQueu
     lead: makeLead(),
     stage: 'm1a_permissao',
     variant: 'A',
+    renderError: null,
     mensagemRenderizada: 'Mensagem pronta',
     whatsappUrl: 'https://wa.me/5521999990001?text=Mensagem%20pronta',
     telefoneInvalido: false,

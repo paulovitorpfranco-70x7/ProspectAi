@@ -134,6 +134,11 @@
   background: color-mix(in srgb, var(--color-warning) 8%, var(--color-surface));
 }
 
+.outreach-card--error {
+  border-color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
+}
+
 .outreach-card__badges {
   display: flex;
   flex-wrap: wrap;

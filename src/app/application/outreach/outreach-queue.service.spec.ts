@@ -211,6 +211,45 @@ describe('OutreachQueueService', () => {
     expect(item?.mensagemRenderizada).toContain('https://preview.example.com/lead-impar');
   });
 
+  it('should isolate a render failure to its lead and keep the remaining queue items', async () => {
+    const { service, leadRepository, outreachRepository } = setup();
+    const failingFollowup = makeLead({
+      id: LeadId.fromString(IDS.followup),
+      businessName: BusinessName.create('Lead com erro'),
+      previewUrl: null,
+      currentStage: 'm1a_permissao',
+      stageSentAt: new Date('2026-08-01T12:00:00.000Z'),
+      nextFollowupAt: new Date('2026-08-03T12:00:00.000Z'),
+      abVariant: 'A',
+    });
+    const firstValidLead = makeLead();
+    const secondValidLead = makeLead({
+      id: LeadId.fromString(IDS.oddNewLead),
+      createdAt: new Date('2026-08-02T12:00:00.000Z'),
+    });
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    leadRepository.findAll.mockResolvedValue([failingFollowup, firstValidLead, secondValidLead]);
+    outreachRepository.listarFollowupsPendentes.mockResolvedValue([failingFollowup]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+    expect(queue.followups).toHaveLength(1);
+    expect(queue.followups[0]).toMatchObject({
+      lead: failingFollowup,
+      stage: 'f1_d2',
+      renderError: 'Token obrigatório vazio no estágio f1_d2: preview_url',
+      mensagemRenderizada: '',
+      whatsappUrl: null,
+    });
+    expect(queue.novos).toHaveLength(2);
+    expect(queue.novos.every((item) => item.renderError === null)).toBe(true);
+    expect(queue.novos.every((item) => item.mensagemRenderizada.length > 0)).toBe(true);
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.stringContaining(IDS.followup),
+      expect.any(Error),
+    );
+  });
+
   it('should count a 02:00 UTC event on the previous day in America/Sao_Paulo', async () => {
     const { service, outreachRepository } = setup();
     const event = makeEvent({ sentAt: new Date('2026-08-05T02:00:00.000Z') });
@@ -290,6 +329,7 @@ describe('OutreachQueueService', () => {
       lead: makeLead(),
       stage: 'f1_d2',
       variant: 'A',
+      renderError: null,
       mensagemRenderizada: 'Mensagem pronta',
       whatsappUrl: 'https://wa.me/5521999998888?text=Mensagem%20pronta',
       telefoneInvalido: false,
@@ -318,6 +358,7 @@ describe('OutreachQueueService', () => {
       lead: makeLead(),
       stage: event.stage,
       variant: 'A',
+      renderError: null,
       mensagemRenderizada: event.renderedMessage,
       whatsappUrl: 'https://wa.me/5521999998888?text=Mensagem%20enviada',
       telefoneInvalido: false,
@@ -342,6 +383,7 @@ describe('OutreachQueueService', () => {
       lead: makeLead(),
       stage: 'm1a_permissao',
       variant: 'A',
+      renderError: null,
       mensagemRenderizada: 'Mensagem pronta',
       whatsappUrl: 'https://wa.me/5521999998888?text=Mensagem%20pronta',
       telefoneInvalido: false,
