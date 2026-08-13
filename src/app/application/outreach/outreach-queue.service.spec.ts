@@ -211,16 +211,61 @@ describe('OutreachQueueService', () => {
     expect(item?.mensagemRenderizada).toContain('https://preview.example.com/lead-impar');
   });
 
-  it('should isolate a render failure to its lead and keep the remaining queue items', async () => {
+  it.each([null, '', '   '])(
+    'should force variant A for f1_d2 without a usable preview URL (%p)',
+    async (previewUrl) => {
+      const { service, leadRepository, outreachRepository } = setup();
+      const followup = makeLead({
+        id: LeadId.fromString(IDS.followup),
+        previewUrl,
+        currentStage: 'm1a_permissao',
+        stageSentAt: new Date('2026-08-01T12:00:00.000Z'),
+        nextFollowupAt: new Date('2026-08-03T12:00:00.000Z'),
+        abVariant: 'B',
+      });
+      leadRepository.findAll.mockResolvedValue([followup]);
+      outreachRepository.listarFollowupsPendentes.mockResolvedValue([followup]);
+
+      const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+      const item = queue.followups[0];
+
+      expect(item).toMatchObject({
+        lead: followup,
+        stage: 'f1_d2',
+        variant: 'A',
+        renderError: null,
+      });
+      expect(item?.mensagemRenderizada).not.toContain('http');
+      expect(item?.mensagemRenderizada).toMatch(/\?$/);
+    },
+  );
+
+  it('should preserve variant B for f1_d2 with a usable preview URL', async () => {
     const { service, leadRepository, outreachRepository } = setup();
-    const failingFollowup = makeLead({
+    const followup = makeLead({
       id: LeadId.fromString(IDS.followup),
-      businessName: BusinessName.create('Lead com erro'),
-      previewUrl: null,
+      previewUrl: 'https://preview.example.com/followup',
       currentStage: 'm1a_permissao',
       stageSentAt: new Date('2026-08-01T12:00:00.000Z'),
       nextFollowupAt: new Date('2026-08-03T12:00:00.000Z'),
-      abVariant: 'A',
+      abVariant: 'B',
+    });
+    leadRepository.findAll.mockResolvedValue([followup]);
+    outreachRepository.listarFollowupsPendentes.mockResolvedValue([followup]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+    const item = queue.followups[0];
+
+    expect(item).toMatchObject({ stage: 'f1_d2', variant: 'B', renderError: null });
+    expect(item?.mensagemRenderizada).toContain('https://preview.example.com/followup');
+    expect(item?.mensagemRenderizada).toMatch(/\?$/);
+  });
+
+  it('should isolate a render failure to its lead and keep the remaining queue items', async () => {
+    const { service, leadRepository, outreachRepository } = setup();
+    const failingSentLead = makeLead({
+      id: LeadId.fromString(IDS.followup),
+      businessName: BusinessName.create('Lead com erro'),
     });
     const firstValidLead = makeLead();
     const secondValidLead = makeLead({
@@ -228,16 +273,22 @@ describe('OutreachQueueService', () => {
       createdAt: new Date('2026-08-02T12:00:00.000Z'),
     });
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    leadRepository.findAll.mockResolvedValue([failingFollowup, firstValidLead, secondValidLead]);
-    outreachRepository.listarFollowupsPendentes.mockResolvedValue([failingFollowup]);
+    leadRepository.findAll.mockResolvedValue([failingSentLead, firstValidLead, secondValidLead]);
+    outreachRepository.listarEventosEntre.mockResolvedValue([
+      makeEvent({
+        leadId: failingSentLead.id.getValue(),
+        stage: 'f1_d2',
+        renderedMessage: 'Mensagem com {{preview_url}}',
+      }),
+    ]);
 
     const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
 
-    expect(queue.followups).toHaveLength(1);
-    expect(queue.followups[0]).toMatchObject({
-      lead: failingFollowup,
+    expect(queue.enviadosHoje).toHaveLength(1);
+    expect(queue.enviadosHoje[0]).toMatchObject({
+      lead: failingSentLead,
       stage: 'f1_d2',
-      renderError: 'Token obrigatório vazio no estágio f1_d2: preview_url',
+      renderError: 'O texto renderizado contém tokens não resolvidos',
       mensagemRenderizada: '',
       whatsappUrl: null,
     });

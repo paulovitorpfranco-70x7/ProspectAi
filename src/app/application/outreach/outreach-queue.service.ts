@@ -74,7 +74,11 @@ export class OutreachQueueService {
         }
 
         const sequenceIndex = sequenceByLeadId.get(lead.id.getValue()) ?? 0;
-        const variant = lead.abVariant ?? pickAbVariant(sequenceIndex);
+        const selectedVariant = lead.abVariant ?? pickAbVariant(sequenceIndex);
+        const variant =
+          stage === 'f1_d2'
+            ? fallbackToVariantAWithoutPreview(selectedVariant, lead.previewUrl)
+            : selectedVariant;
         return [this.buildItemSafely(lead, stage, variant)];
       });
 
@@ -87,8 +91,7 @@ export class OutreachQueueService {
       .map((lead) => {
         const sequenceIndex = sequenceByLeadId.get(lead.id.getValue()) ?? 0;
         const selectedVariant = pickAbVariant(sequenceIndex);
-        const hasPreview = lead.previewUrl !== null && lead.previewUrl.trim().length > 0;
-        const variant = selectedVariant === 'B' && !hasPreview ? 'A' : selectedVariant;
+        const variant = fallbackToVariantAWithoutPreview(selectedVariant, lead.previewUrl);
         const stage = variant === 'A' ? 'm1a_permissao' : 'm1b_direto';
         return this.buildItemSafely(lead, stage, variant);
       });
@@ -182,7 +185,12 @@ export class OutreachQueueService {
     };
     const mensagemRenderizada =
       event?.renderedMessage ??
-      renderTemplate(getCadenceTemplate(stage, lead.id.getValue()), context, stage);
+      renderTemplate(
+        getCadenceTemplate(stage, lead.id.getValue(), variant),
+        context,
+        stage,
+        variant,
+      );
 
     if (event !== undefined) {
       assertNoOrphanTokens(mensagemRenderizada);
@@ -204,6 +212,14 @@ export class OutreachQueueService {
       sentAt: event?.sentAt ?? null,
     };
   }
+}
+
+function fallbackToVariantAWithoutPreview(
+  selectedVariant: AbVariant,
+  previewUrl: string | null,
+): AbVariant {
+  const hasPreview = previewUrl !== null && previewUrl.trim().length > 0;
+  return selectedVariant === 'B' && !hasPreview ? 'A' : selectedVariant;
 }
 
 function getErrorMessage(error: unknown): string {

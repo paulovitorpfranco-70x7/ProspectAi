@@ -1,6 +1,6 @@
 import { assertNoOrphanTokens } from './render.guard';
 import { renderTemplate } from './render';
-import { CADENCE_TEMPLATES } from './templates/cadence.templates';
+import { CADENCE_TEMPLATES, F1_D2_TEMPLATES } from './templates/cadence.templates';
 import type { LeadOutreachContext } from './types';
 
 const COMPLETE_CONTEXT: LeadOutreachContext = {
@@ -106,7 +106,20 @@ describe('assertNoOrphanTokens', () => {
         CADENCE_TEMPLATES.m1b_direto[0] as string,
         { ...COMPLETE_CONTEXT, previewUrl: null },
         'm1b_direto',
+        'B',
       ),
     ).toThrow('Token obrigatório vazio no estágio m1b_direto: preview_url');
+  });
+
+  it('should render f1_d2 variant A without preview_url', () => {
+    expect(() =>
+      renderTemplate(F1_D2_TEMPLATES.A, { ...COMPLETE_CONTEXT, previewUrl: null }, 'f1_d2', 'A'),
+    ).not.toThrow();
+  });
+
+  it('should require preview_url only for f1_d2 variant B', () => {
+    expect(() =>
+      renderTemplate(F1_D2_TEMPLATES.B, { ...COMPLETE_CONTEXT, previewUrl: null }, 'f1_d2', 'B'),
+    ).toThrow('Token obrigatório vazio no estágio f1_d2: preview_url');
   });
 });

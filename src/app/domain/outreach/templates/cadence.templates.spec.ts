@@ -1,7 +1,7 @@
 import { assertNoOrphanTokens } from '../render.guard';
 import { renderTemplate } from '../render';
-import { STAGE_ORDER, type LeadOutreachContext } from '../types';
-import { CADENCE_TEMPLATES, getCadenceTemplate } from './cadence.templates';
+import { STAGE_ORDER, type AbVariant, type LeadOutreachContext } from '../types';
+import { CADENCE_TEMPLATES, F1_D2_TEMPLATES, getCadenceTemplate } from './cadence.templates';
 
 const COMPLETE_CONTEXT: LeadOutreachContext = {
   nome: 'Barbearia Central',
@@ -75,10 +75,42 @@ describe('CADENCE_TEMPLATES', () => {
   it('should select a stable template for the same stage and lead id', () => {
     const stage = 'm1a_permissao';
     const leadId = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
-    const expected = getCadenceTemplate(stage, leadId);
+    const expected = getCadenceTemplate(stage, leadId, 'A');
 
     for (let call = 0; call < 100; call += 1) {
-      expect(getCadenceTemplate(stage, leadId)).toBe(expected);
+      expect(getCadenceTemplate(stage, leadId, 'A')).toBe(expected);
+    }
+  });
+
+  it('should select the explicit f1_d2 template for each A/B variant', () => {
+    const leadId = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
+
+    expect(getCadenceTemplate('f1_d2', leadId, 'A')).toBe(F1_D2_TEMPLATES.A);
+    expect(getCadenceTemplate('f1_d2', leadId, 'B')).toBe(F1_D2_TEMPLATES.B);
+  });
+
+  it('should keep f1_d2 variant A independent from links or page promises', () => {
+    const rendered = renderTemplate(
+      F1_D2_TEMPLATES.A,
+      { ...COMPLETE_CONTEXT, previewUrl: null },
+      'f1_d2',
+      'A',
+    );
+
+    expect(rendered.toLocaleLowerCase('pt-BR')).not.toMatch(
+      /https?:\/\/|\blink\b|\bpágina\b|\bsite\b/,
+    );
+  });
+
+  it('should end every f1_d2 variant with a question instead of a URL', () => {
+    for (const [variant, template] of Object.entries(F1_D2_TEMPLATES) as [AbVariant, string][]) {
+      const context =
+        variant === 'A' ? { ...COMPLETE_CONTEXT, previewUrl: null } : COMPLETE_CONTEXT;
+      const rendered = renderTemplate(template, context, 'f1_d2', variant);
+      const lastLine = rendered.split('\n').at(-1) ?? '';
+
+      expect(lastLine).toMatch(/\?$/);
+      expect(lastLine).not.toMatch(/^https?:\/\//);
     }
   });
 

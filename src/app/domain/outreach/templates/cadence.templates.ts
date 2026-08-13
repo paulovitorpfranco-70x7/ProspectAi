@@ -1,5 +1,16 @@
-import type { OutreachStage } from '../types';
+import type { AbVariant, OutreachStage } from '../types';
 import { pickVariation } from '../variation';
+
+export const F1_D2_TEMPLATES: Readonly<Record<AbVariant, string>> = {
+  A: `Fala, {{primeiro_nome}}! Passei de novo pelo perfil da {{nome}} e pensei numa coisa: quem encontra vocês no Google provavelmente quer ver serviços, horários e contato sem precisar procurar muito.
+
+Hoje o pessoal chama mais pelo WhatsApp ou pelo Instagram?`,
+  B: `{{primeiro_nome}}, ajustei a página: coloquei os horários e a localização de vocês.
+
+{{preview_url}}
+
+Quer que eu ajuste mais alguma informação antes de você dar uma olhada?`,
+};
 
 export const CADENCE_TEMPLATES: Record<OutreachStage, readonly string[]> = {
   m1a_permissao: [
@@ -66,11 +77,7 @@ Metade pra começar, metade na entrega.
 
 Tem versão com galeria, página de serviços e agendamento também, mas pro que vocês precisam agora o Essencial resolve.`,
   ],
-  f1_d2: [
-    `{{primeiro_nome}}, ajustei a página: coloquei os horários e a localização de vocês.
-
-{{preview_url}}`,
-  ],
+  f1_d2: [F1_D2_TEMPLATES.A, F1_D2_TEMPLATES.B],
   f2_d5: [
     `Fala {{primeiro_nome}}, só pra não deixar em aberto: faz sentido pra vocês ou deixo quieto?`,
   ],
@@ -81,6 +88,14 @@ Se quiser que eu deixe no ar, me avisa. Qualquer coisa no futuro tô por aqui �
   ],
 };
 
-export function getCadenceTemplate(stage: OutreachStage, leadId: string): string {
+export function getCadenceTemplate(
+  stage: OutreachStage,
+  leadId: string,
+  variant: AbVariant,
+): string {
+  if (stage === 'f1_d2') {
+    return F1_D2_TEMPLATES[variant];
+  }
+
   return pickVariation(CADENCE_TEMPLATES[stage], leadId);
 }

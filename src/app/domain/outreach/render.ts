@@ -1,5 +1,5 @@
 import { assertValidRenderedMessage } from './render.guard';
-import type { LeadOutreachContext, OutreachStage } from './types';
+import type { AbVariant, LeadOutreachContext, OutreachStage } from './types';
 
 type ConditionalFlag = 'tem_reputacao' | 'tem_bairro' | 'tem_preview';
 
@@ -7,10 +7,18 @@ const FALSE_BLOCK_MARKER = '\u0000outreach-false-block\u0000';
 const CONDITIONAL_PATTERN =
   /{{#se\s+(tem_reputacao|tem_bairro|tem_preview)\s*}}([\s\S]*?){{\/se}}/g;
 
+export function renderTemplate(template: string, ctx: LeadOutreachContext): string;
+export function renderTemplate(
+  template: string,
+  ctx: LeadOutreachContext,
+  stage: OutreachStage,
+  variant: AbVariant,
+): string;
 export function renderTemplate(
   template: string,
   ctx: LeadOutreachContext,
   stage?: OutreachStage,
+  variant?: AbVariant,
 ): string {
   const flags: Record<ConditionalFlag, boolean> = {
     tem_reputacao:
@@ -54,7 +62,11 @@ export function renderTemplate(
     .trim();
 
   if (stage !== undefined) {
-    assertValidRenderedMessage(stage, ctx, normalized);
+    if (variant === undefined) {
+      throw new Error(`Variante obrigatória para validar o estágio ${stage}`);
+    }
+
+    assertValidRenderedMessage(stage, ctx, normalized, variant);
   }
 
   return normalized;
