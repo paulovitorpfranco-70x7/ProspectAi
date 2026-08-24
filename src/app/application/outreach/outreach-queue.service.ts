@@ -186,7 +186,7 @@ export class OutreachQueueService {
     const mensagemRenderizada =
       event?.renderedMessage ??
       renderTemplate(
-        getCadenceTemplate(stage, lead.id.getValue(), variant),
+        getCadenceTemplate(stage, lead.id.getValue(), variant, lead.sector.getValue()),
         context,
         stage,
         variant,

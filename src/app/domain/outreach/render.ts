@@ -1,11 +1,11 @@
 import { assertValidRenderedMessage } from './render.guard';
 import type { AbVariant, LeadOutreachContext, OutreachStage } from './types';
 
-type ConditionalFlag = 'tem_reputacao' | 'tem_bairro' | 'tem_preview';
+type ConditionalFlag = 'tem_reputacao' | 'sem_reputacao' | 'tem_bairro' | 'tem_preview';
 
 const FALSE_BLOCK_MARKER = '\u0000outreach-false-block\u0000';
 const CONDITIONAL_PATTERN =
-  /{{#se\s+(tem_reputacao|tem_bairro|tem_preview)\s*}}([\s\S]*?){{\/se}}/g;
+  /{{#se\s+(tem_reputacao|sem_reputacao|tem_bairro|tem_preview)\s*}}([\s\S]*?){{\/se}}/g;
 
 export function renderTemplate(template: string, ctx: LeadOutreachContext): string;
 export function renderTemplate(
@@ -20,9 +20,11 @@ export function renderTemplate(
   stage?: OutreachStage,
   variant?: AbVariant,
 ): string {
+  const temReputacao =
+    ctx.nota !== null && ctx.avaliacoes !== null && ctx.nota >= 4.5 && ctx.avaliacoes >= 20;
   const flags: Record<ConditionalFlag, boolean> = {
-    tem_reputacao:
-      ctx.nota !== null && ctx.avaliacoes !== null && ctx.nota >= 4.5 && ctx.avaliacoes >= 20,
+    tem_reputacao: temReputacao,
+    sem_reputacao: !temReputacao,
     tem_bairro: ctx.bairro !== null,
     tem_preview: ctx.previewUrl !== null,
   };
@@ -46,6 +48,9 @@ export function renderTemplate(
     setor: ctx.setor,
     nota: ctx.nota === null ? '' : ctx.nota.toFixed(1).replace('.', ','),
     avaliacoes: ctx.avaliacoes === null ? '' : Math.trunc(ctx.avaliacoes).toString(),
+    rating: ctx.nota === null ? '' : ctx.nota.toFixed(1).replace('.', ','),
+    review_count: ctx.avaliacoes === null ? '' : Math.trunc(ctx.avaliacoes).toString(),
+    procedimento: ctx.procedimento?.trim() || 'clínica de estética',
     preview_url: ctx.previewUrl ?? '',
     primeiro_nome: ctx.primeiroNome ?? '',
   };

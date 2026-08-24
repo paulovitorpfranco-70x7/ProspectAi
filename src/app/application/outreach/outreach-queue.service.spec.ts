@@ -362,6 +362,23 @@ describe('OutreachQueueService', () => {
     expect(queue.novos[0]?.avaliacoes).toBeNull();
   });
 
+  it('should select the clinica_estetica cadence template from the lead sector', async () => {
+    const { service, leadRepository } = setup();
+    leadRepository.findAll.mockResolvedValue([
+      makeLead({
+        businessName: BusinessName.create('Clínica Lumina'),
+        sector: Sector.create('Clínicas de Estética'),
+      }),
+    ]);
+
+    const queue = await service.montarFila(new Date('2026-08-04T12:00:00.000Z'));
+
+    expect(queue.novos[0]?.mensagemRenderizada).toContain(
+      'Trabalho com sites para clínicas de estética.',
+    );
+    expect(queue.novos[0]?.mensagemRenderizada).not.toContain('Fala');
+  });
+
   it('should use persisted bairro and never derive it from the full address', async () => {
     const { service, leadRepository } = setup();
     const lead = makeLead({ bairro: null });

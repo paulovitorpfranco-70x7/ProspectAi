@@ -1,7 +1,12 @@
 import { assertNoOrphanTokens } from '../render.guard';
 import { renderTemplate } from '../render';
 import { STAGE_ORDER, type AbVariant, type LeadOutreachContext } from '../types';
-import { CADENCE_TEMPLATES, F1_D2_TEMPLATES, getCadenceTemplate } from './cadence.templates';
+import {
+  CADENCE_TEMPLATES,
+  CLINICA_ESTETICA_TEMPLATES,
+  F1_D2_TEMPLATES,
+  getCadenceTemplate,
+} from './cadence.templates';
 
 const COMPLETE_CONTEXT: LeadOutreachContext = {
   nome: 'Barbearia Central',
@@ -37,6 +42,13 @@ const FORBIDDEN_EXPRESSIONS = [
   'venho por meio desta',
   'prezado',
 ] as const;
+
+const CLINICA_CONTEXT: LeadOutreachContext = {
+  ...COMPLETE_CONTEXT,
+  nome: 'Clínica Lumina',
+  setor: 'Clínicas de Estética',
+  procedimento: 'limpeza de pele',
+};
 
 describe('CADENCE_TEMPLATES', () => {
   it('should contain all eight stages with at least one template each', () => {
@@ -87,6 +99,79 @@ describe('CADENCE_TEMPLATES', () => {
 
     expect(getCadenceTemplate('f1_d2', leadId, 'A')).toBe(F1_D2_TEMPLATES.A);
     expect(getCadenceTemplate('f1_d2', leadId, 'B')).toBe(F1_D2_TEMPLATES.B);
+  });
+
+  it('should render the exact clinica_estetica m1a_permissao copy when reputation exists', () => {
+    const rendered = renderTemplate(
+      getCadenceTemplate('m1a_permissao', 'lead-clinica', 'A', CLINICA_CONTEXT.setor),
+      CLINICA_CONTEXT,
+      'm1a_permissao',
+      'A',
+    );
+
+    expect(rendered).toBe(`Bom dia! Falo com a responsável pela Clínica Lumina?
+
+Sou o Paulo, desenvolvedor web aqui de Niterói.
+Trabalho com sites para clínicas de estética.
+
+Vi vocês no Google — 120 avaliações,
+nota 4,8. Reputação boa, mas quem pesquisa
+antes de marcar um procedimento não encontra
+nenhuma página de vocês.
+
+Posso te explicar em duas linhas o que isso
+custa em paciente novo?`);
+  });
+
+  it('should render clinica_estetica m1b_direto without procedimento or orphan tokens', () => {
+    const context = { ...CLINICA_CONTEXT, procedimento: null, previewUrl: null };
+    const template = getCadenceTemplate('m1b_direto', 'lead-clinica', 'B', context.setor);
+    const rendered = renderTemplate(template, context, 'm1b_direto', 'B');
+
+    expect(rendered).toContain('quem procura "clínica de estética em\nIcaraí" no Google');
+    expect(() => assertNoOrphanTokens(rendered)).not.toThrow();
+  });
+
+  it('should use the geographic block for clinica_estetica m1a_permissao without reviews', () => {
+    const context = { ...CLINICA_CONTEXT, avaliacoes: null };
+    const template = getCadenceTemplate('m1a_permissao', 'lead-clinica', 'A', context.setor);
+    const rendered = renderTemplate(template, context, 'm1a_permissao', 'A');
+
+    expect(rendered).toContain('quem procura "clínica de estética em\nIcaraí" no Google');
+    expect(rendered).not.toContain('avaliações');
+    expect(() => assertNoOrphanTokens(rendered)).not.toThrow();
+  });
+
+  it('should fall back to barbearia templates for an unknown sector', () => {
+    const stage = 'm1a_permissao';
+    const leadId = 'lead-setor-desconhecido';
+
+    expect(getCadenceTemplate(stage, leadId, 'A', 'setor_desconhecido')).toBe(
+      getCadenceTemplate(stage, leadId, 'A', 'barbearia'),
+    );
+  });
+
+  it('should keep clinica_estetica variants free of forbidden sales vocabulary', () => {
+    for (const [stage, template] of Object.entries(CLINICA_ESTETICA_TEMPLATES)) {
+      const normalizedTemplate = template.toLocaleLowerCase('pt-BR');
+
+      for (const expression of FORBIDDEN_EXPRESSIONS) {
+        if (normalizedTemplate.includes(expression)) {
+          throw new Error(`Estágio ${stage} contém a expressão proibida: ${expression}`);
+        }
+      }
+    }
+  });
+
+  it('should not end any clinica_estetica variant with a URL', () => {
+    for (const [stage, template] of Object.entries(CLINICA_ESTETICA_TEMPLATES)) {
+      const rendered = renderTemplate(template, CLINICA_CONTEXT);
+      const lastLine = rendered.split('\n').at(-1) ?? '';
+
+      expect(lastLine).not.toMatch(/^https?:\/\//);
+      expect(lastLine).toMatch(/\?$/);
+      expect(stage).toMatch(/^m1[ab]_/);
+    }
   });
 
   it('should keep f1_d2 variant A independent from links or page promises', () => {

@@ -1,4 +1,9 @@
-import type { AbVariant, LeadOutreachContext, OutreachStage } from './types';
+import {
+  resolveCadenceTemplateSector,
+  type AbVariant,
+  type LeadOutreachContext,
+  type OutreachStage,
+} from './types';
 
 type RequiredTemplateToken = 'preview_url';
 
@@ -46,7 +51,12 @@ export function assertValidRenderedMessage(
 ): void {
   const variantTokens = REQUIRED_TOKENS_BY_STAGE_AND_VARIANT[stage]?.[variant] ?? [];
 
-  for (const token of [...REQUIRED_TOKENS_BY_STAGE[stage], ...variantTokens]) {
+  const stageTokens =
+    stage === 'm1b_direto' && resolveCadenceTemplateSector(context.setor) === 'clinica_estetica'
+      ? []
+      : REQUIRED_TOKENS_BY_STAGE[stage];
+
+  for (const token of [...stageTokens, ...variantTokens]) {
     const value = token === 'preview_url' ? context.previewUrl : null;
 
     if (value === null || value.trim().length === 0) {

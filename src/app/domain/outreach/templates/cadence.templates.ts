@@ -1,5 +1,49 @@
-import type { AbVariant, OutreachStage } from '../types';
+import {
+  resolveCadenceTemplateSector,
+  type AbVariant,
+  type CadenceTemplateSector,
+  type OutreachStage,
+} from '../types';
 import { pickVariation } from '../variation';
+
+type SectorTemplates = Readonly<
+  Partial<Record<CadenceTemplateSector, Readonly<Partial<Record<OutreachStage, string>>>>>
+>;
+
+export const CLINICA_ESTETICA_TEMPLATES = {
+  m1a_permissao: `Bom dia! Falo com a responsável pela {{nome}}?
+
+Sou o Paulo, desenvolvedor web aqui de Niterói.
+Trabalho com sites para clínicas de estética.
+
+{{#se tem_reputacao}}Vi vocês no Google — {{review_count}} avaliações,
+nota {{rating}}. Reputação boa, mas quem pesquisa
+antes de marcar um procedimento não encontra
+nenhuma página de vocês.{{/se}}
+{{#se sem_reputacao}}Reparei que vocês não têm site. Na prática isso
+significa que quem procura "clínica de estética em
+{{bairro}}" no Google não chega até vocês —
+chega nas concorrentes que têm página.{{/se}}
+
+Posso te explicar em duas linhas o que isso
+custa em paciente novo?`,
+  m1b_direto: `Bom dia! Falo com a responsável pela {{nome}}?
+
+Sou o Paulo, desenvolvedor web de Niterói,
+trabalho com sites para clínicas de estética.
+
+Reparei que vocês não têm site. Na prática isso
+significa que quem procura "{{procedimento}} em
+{{bairro}}" no Google não chega até vocês —
+chega nas concorrentes que têm página.
+
+Vocês já pensaram em resolver isso ou nunca
+chegou a ser prioridade?`,
+} as const;
+
+const CADENCE_TEMPLATES_BY_SECTOR: SectorTemplates = {
+  clinica_estetica: CLINICA_ESTETICA_TEMPLATES,
+};
 
 export const F1_D2_TEMPLATES: Readonly<Record<AbVariant, string>> = {
   A: `Fala, {{primeiro_nome}}! Passei de novo pelo perfil da {{nome}} e pensei numa coisa: quem encontra vocês no Google provavelmente quer ver serviços, horários e contato sem precisar procurar muito.
@@ -92,9 +136,16 @@ export function getCadenceTemplate(
   stage: OutreachStage,
   leadId: string,
   variant: AbVariant,
+  sector: string = 'barbearia',
 ): string {
   if (stage === 'f1_d2') {
     return F1_D2_TEMPLATES[variant];
+  }
+
+  const sectorTemplate = CADENCE_TEMPLATES_BY_SECTOR[resolveCadenceTemplateSector(sector)]?.[stage];
+
+  if (sectorTemplate !== undefined) {
+    return sectorTemplate;
   }
 
   return pickVariation(CADENCE_TEMPLATES[stage], leadId);

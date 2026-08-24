@@ -10,6 +10,16 @@ export type OutreachStage =
 
 export type AbVariant = 'A' | 'B';
 
+export type CadenceTemplateSector = 'barbearia' | 'clinica_estetica';
+
+export function resolveCadenceTemplateSector(
+  sector: string | null | undefined,
+): CadenceTemplateSector {
+  return sector === 'clinica_estetica' || sector === 'Clínicas de Estética'
+    ? 'clinica_estetica'
+    : 'barbearia';
+}
+
 export type LeadOutreachContext = {
   readonly nome: string;
   readonly cidade: string;
@@ -19,6 +29,7 @@ export type LeadOutreachContext = {
   readonly avaliacoes: number | null;
   readonly previewUrl: string | null;
   readonly primeiroNome: string | null;
+  readonly procedimento?: string | null;
 };
 
 export type OutreachEvent = {
